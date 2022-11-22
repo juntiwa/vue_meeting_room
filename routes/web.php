@@ -22,7 +22,7 @@ use function Termwind\render;
 Route::get('/', function () {
    //  return view('welcome');
    return Inertia::render('Dashboard');
-})->middleware(['auth']);
+})->name('dashboard')->middleware(['auth']);
 
 Route::controller(LoginController::class)->group(function(){
     Route::get('/login', 'create')->name('login')->middleware(['guest']);

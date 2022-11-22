@@ -34,7 +34,7 @@ class LoginController extends Controller
         }
 
         Auth::login($user);
-        return redirect()->route('Dashboard');
+        return redirect()->route('dashboard');
     }
 
     public function destroy(){
