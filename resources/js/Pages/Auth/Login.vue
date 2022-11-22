@@ -8,14 +8,14 @@
         <InputTextComponent type="password" name="password" id="password" v-model="form.password"/>
         <a :href="forgetPassword" target="_blank" class="text-right text-blue-600 hover:text-rose-600 cursor-pointer">ลืมรหัสผ่าน ?</a>
 
-        <ButtonSubmitComponent @click="login" buttonText="Test" class="bg-blue-400 hover:bg-blue-500 text-white"/>
+        <ButtonComponent @click="login" buttonText="Test" class="bg-blue-400 hover:bg-blue-500 text-white"/>
     </div>
 
 </template>
 
 <script setup>
 import InputTextComponent from "../../Components/InputTextComponent";
-import ButtonSubmitComponent from "../../Components/ButtonSubmitComponent";
+import ButtonComponent from "../../Components/ButtonComponent";
 import {useForm} from "@inertiajs/inertia-vue3";
 
 const form = useForm({
