@@ -14,8 +14,11 @@
         </label>
 
         <label for="set_room" class="cursor-pointer">
-            <InputCheckboxComponent name="set_room" id="set_room" /> ต้องการให้จัดห้องประชุม (ในการจัดห้องประชุมจะต้องเผื่อเวลา 30 นาที โดยระบบจะเพิ่มอัตโนมัติ)
+            <InputCheckboxComponent name="set_room" id="set_room" />
+            ต้องการให้จัดห้องประชุม (ในการจัดห้องประชุมจะต้องเผื่อเวลา 30 นาที โดยระบบจะเพิ่มอัตโนมัติ)
         </label>
+
+        <ButtonSubmitComponent @click="checkCondition" class="bg-amber-300 hover:bg-amber-400" buttonText="ตรวจสอบเงื่อนไข"/>
     </div>
 </template>
 
@@ -23,11 +26,31 @@
 import InputTextComponent from "../../Components/InputTextComponent";
 import {useForm} from "@inertiajs/inertia-vue3";
 import InputCheckboxComponent from "../../Components/InputCheckboxComponent";
+import ButtonSubmitComponent from "../../Components/ButtonComponent";
+import {ref} from "vue";
 
 const form = useForm({
     start: null,
     end: null,
     attendees: null,
-    set_room: null,
+    set_room: {
+        status: false,
+
+    },
 })
+const result = ref([]);
+const checkCondition = () => {
+    window.axios
+        .post(window.route("formBookRoomCheckCondition"), form)
+        .then((res) => {
+            console.log(res.data);
+            result.value = [...res.data.result];
+        })
+        .catch((err) => console.log(err));
+}
+
+const save = () => {
+    form.post(window.route("department.booking-room.store"));
+    // console.log('save button')
+};
 </script>

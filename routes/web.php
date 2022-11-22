@@ -35,5 +35,7 @@ Route::controller(RegisterController::class)->group(function(){
     Route::post('/register', 'store')->name('registerStore')->middleware(['guest']);
 });
 Route::controller(FormBookRoomController::class)->group(function(){
-    Route::get('/formBookRoom','index')->name('formBookRoom')->middleware(['auth']);
+    Route::get('/formBookRoom','create')->name('formBookRoom')->middleware(['auth']);
+    Route::post('/checkCondition','checkCondition')->name('formBookRoomCheckCondition')->middleware(['auth']);
+    Route::post('/formBookRoom','store')->name('formBookRoomStore')->middleware(['auth']);
 });

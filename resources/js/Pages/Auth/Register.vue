@@ -22,13 +22,13 @@
         <label for="phone">เบอร์มือถือ</label>
         <InputTextComponent name="phone" id="phone" v-model="form.phone"/>
 
-        <ButtonSubmitComponent @click="register" buttonText="ลงทะเบียน"/>
+        <ButtonComponent @click="register" buttonText="ลงทะเบียน"/>
     </div>
 </template>
 
 <script setup>
 import InputTextComponent from "../../Components/InputTextComponent";
-import ButtonSubmitComponent from "../../Components/ButtonSubmitComponent";
+import ButtonComponent from "../../Components/ButtonComponent";
 import {useForm} from '@inertiajs/inertia-vue3';
 const props = defineProps(['sirirajUser']);
 console.log(props.sirirajUser.org_id);
