@@ -1,7 +1,7 @@
 <template>
     <input type="checkbox"
-           :value="modelValue"
-           @input="$emit('update:modelValue', $event.target.value)"
+           :value="modelValueCheck"
+           @input="$emit('update:modelValueCheck', $event.target.value)"
            class="bg-white border border-slate-500 rounded py-1.5 px-1 mt-2 mb-3 cursor-pointer"/>
 </template>
 
@@ -9,7 +9,7 @@
 export default {
     name: "InputCheckboxComponent",
     props: {
-        modelValue: String,
+        modelValueCheck: Boolean,
     },
 }
 </script>
