@@ -5,6 +5,7 @@ namespace App\Http\Controllers\BookRoomMedicine;
 use App\Casts\BookingStatus;
 use App\Http\Controllers\Controller;
 use App\Models\DepartmentBookRoom;
+use App\Models\DepartmentPurposeBookRoom;
 use App\Models\DepartmentRoom;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -75,10 +76,16 @@ class FormBookRoomController extends Controller
         $col = collect($result);
         $sort = $col->sortBy('available');
         $resultComplete = $sort->values()->all();
-
+        $purposes = DepartmentPurposeBookRoom::query()->get();
         return [
             'start_date' => $start_date,
-            'result' => $resultComplete
+            'result' => $resultComplete,
+            'purposes' => $purposes
         ];
+    }
+
+    public function store(Request $request)
+    {
+        return $request->all();
     }
 }
