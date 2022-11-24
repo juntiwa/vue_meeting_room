@@ -24,7 +24,7 @@ class FormBookRoomController extends Controller
             'start_date' => 'required|date',
             'end_date' => 'required|date',
             'attendees' => 'required|integer|min:3|max:200',
-            'set_room.status' => 'nullable'
+            'set_room.status' => 'required|boolean'
         ]);
         $attendees = $validated['attendees'];
 
@@ -86,6 +86,36 @@ class FormBookRoomController extends Controller
 
     public function store(Request $request)
     {
-        return $request->all();
+        $validated = $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
+            'attendees' => 'required|integer|min:3|max:200',
+            'set_room.status' => 'required|boolean',
+            'set_room.type_table' => 'required|string', //exits
+            'set_room.number_group' => 'required|numeric',
+            'set_room.each_group' => 'required|numeric',
+            'meeting_room_id' => 'required|exists:department_rooms,id',
+            'topic' => 'required',
+            'description' => 'nullable',
+            'purpose_id' => 'required|exists:department_purpose_book_rooms,id',
+            'equipment.computer' => 'nullable|numeric',
+            'equipment.lcdprojector' => 'nullable|numeric',
+            'equipment.visualizer' => 'nullable|numeric',
+            'equipment.sound' => 'nullable|numeric',
+            'equipment.other' => 'nullable|string',
+            'equipment.notebook' => 'required|boolean',
+            'food.status' => 'required|boolean',
+            'food.lunch' => 'nullable|numeric',
+            'food.snack' => 'nullable|numeric',
+            'food.drink' => 'nullable|numeric',
+            'food.note' => 'nullable|string',
+        ]);
+
+        $validated['requester_id'] = $request->user()->id;
+        $validated['unit_level'] = 0;
+        $validated['unit_id'] = $request->user()->unit_id;
+
+        DepartmentBookRoom::query()->create($validated);
+        return $validated;
     }
 }

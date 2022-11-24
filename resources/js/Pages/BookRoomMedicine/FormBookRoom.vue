@@ -1,7 +1,7 @@
 <template>
     <div class="m-3">
         ระบบจองห้องประชุม
-        <section id="condition">
+        <section id="condition" class="flex flex-col">
             <label for="start"> วันเวลาเริ่ม
                 <InputTextComponent type="datetime-local" name="start" id="start" class="w-1/6"
                                     v-model="form.start_date"/>
@@ -27,12 +27,13 @@
                 <input type="checkbox" name="set_room[status]" id="set_room[status]"
                        v-model="form.set_room.status"/>
                 ต้องการให้จัดห้องประชุม (ในการจัดห้องประชุมจะต้องเผื่อเวลา 30 นาที โดยระบบจะเพิ่มอัตโนมัติ
-                และสามารถเลือกได้เฉพาะห้องที่สามารถจัดห้องได้เท่านั้น)
+                และระบบจะแสดงเฉพาะห้องที่สามารถเปลี่ยนแปลงรูปแบบโต๊ะได้เท่านั้น)
             </label>
 
-            <ButtonSubmitComponent @click="checkCondition"
-                                   class="bg-amber-300 hover:bg-amber-400"
-                                   buttonText="ตรวจสอบเงื่อนไข"/>
+            {{messageCalculateTime}} {{messageAttendeesInvalid}}
+            <ButtonComponent @click="checkCondition"
+                             class="bg-amber-300 hover:bg-amber-400 w-fit"
+                             buttonText="ตรวจสอบเงื่อนไข"/>
         </section>
         <section id="room" v-show="result.length !== 0" v-for="room in result" :key="room.id">
             <label :for="room.id"
@@ -60,7 +61,7 @@
                 วัตถุประสงค์
                 <div v-for="purpose in purposes" :key="purpose.id">
                     <label :for="purpose.id">
-                        <InputRadioComponent name="purpose"
+                        <InputRadioComponent name="purpose_id"
                                              :id="purpose.id"
                                              :value="purpose.id"
                                              v-model="form.purpose_id"/>
@@ -180,8 +181,8 @@
                     </label>
                     <label for="food[snack]"> อาหารว่าง
                         <InputTextComponent type="number"
-                               name="food[snack]" id="food[snack]"
-                               v-model="form.food.snack"/>
+                                            name="food[snack]" id="food[snack]"
+                                            v-model="form.food.snack"/>
                     </label>
                     <label for="food[drink]"> เครื่องดื่ม
                         <InputTextComponent type="number"
@@ -210,12 +211,12 @@
 <script setup>
 import InputTextComponent from "../../Components/InputTextComponent";
 import InputCheckboxComponent from "../../Components/InputCheckboxComponent";
-import ButtonSubmitComponent from "../../Components/ButtonComponent";
 import InputRadioComponent from "../../Components/InputRadioComponent";
 import TextareaComponent from "../../Components/TextareaComponent";
-import {useForm} from "@inertiajs/inertia-vue3";
-import {ref} from "vue";
 import ButtonComponent from "../../Components/ButtonComponent";
+import {useForm} from "@inertiajs/inertia-vue3";
+import {computed, ref, watch} from "vue";
+import dayjs from "dayjs";
 
 const form = useForm({
     start_date: null,
@@ -224,8 +225,8 @@ const form = useForm({
     set_room: {
         status: false,
         type_table: null,
-        number_group: null,
-        each_group: null,
+        number_group: '0',
+        each_group: '0',
     },
     meeting_room_id: null,
     topic: null,
@@ -247,7 +248,6 @@ const form = useForm({
         note: null
     }
 })
-
 const result = ref([]);
 const purposes = ref([]);
 const checkCondition = () => {
@@ -260,9 +260,44 @@ const checkCondition = () => {
         })
         .catch((err) => console.log(err));
 }
-
 const save = () => {
     form.post(window.route("formBookRoomStore"));
     // console.log('save button')
 };
+
+const messageCalculateTime = ref(null);
+watch(
+    () => [form.end_date, form.start_date],
+    (val) => {
+        if (val) {
+            const end = dayjs(form.end_date);
+            const diffTime = end.diff(form.start_date, "minute", true);
+            const Hours = Math.floor(diffTime / 60);
+            const Minute = diffTime % 60;
+            if (Hours > 0) {
+                messageCalculateTime.value = "เวลาใช้งานจำนวน " + Hours + " ชั่วโมง " + Minute + " นาที";
+            } else if (Hours === 0) {
+                messageCalculateTime.value = "เวลาใช้งานจำนวน " + Minute + " นาที";
+            } else {
+                messageCalculateTime.value = "กรุณาตรวจสอบเวลาอีกครั้ง";
+            }
+        }
+    }
+)
+
+const messageAttendeesInvalid = ref(null)
+watch(
+    () => form.attendees,
+    (val) => {
+        if (val < 3 || val > 200) {
+            messageAttendeesInvalid.value = 'กรุณาระบุจำนวนมากกว่า 3 หรือ น้อยกว่า 200'
+        }else{
+            messageAttendeesInvalid.value = null
+        }
+    }
+)
+
+const conditionInCompleted = computed(() => {
+    return !form.start_date || !form.end_date
+})
 </script>
