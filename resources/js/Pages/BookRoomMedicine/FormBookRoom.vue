@@ -262,11 +262,15 @@ const form = useForm({
 })
 const result = ref([]);
 const purposes = ref([]);
+const props = defineProps(['message']);
+console.log(props)
 const checkCondition = () => {
+    result.value = [];
+    form.meeting_room_id = null;
     window.axios
         .post(window.route("formBookRoomCheckCondition"), form)
         .then((res) => {
-            console.log(res.data);
+            // console.log(res.data);
             result.value = [...res.data.result];
             purposes.value = [...res.data.purposes];
         })

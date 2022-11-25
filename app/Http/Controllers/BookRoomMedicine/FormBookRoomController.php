@@ -164,13 +164,38 @@ class FormBookRoomController extends Controller
             'food.note' => 'nullable|string',
         ]);
 
+        if ($validated['set_room']['status'] === true) {
+            $start_date = Carbon::create($validated['start_date'])->subMinute(30);
+        } else {
+            $start_date = Carbon::create($validated['start_date']);
+        }
+        $validated['start_date'] = $start_date;
+        $end_date = Carbon::create($validated['end_date']);
+
+        $overlap = DepartmentBookRoom::query()
+            ->overlap($start_date, $end_date)
+            ->where('meeting_room_id', $validated['meeting_room_id'])
+            ->where('status', 1)
+            ->count();
+
+        if ($overlap) {
+            $message = 'ไม่สามารถจองได้ กรุณาเลือกเวลาใหม่';
+            $params = [
+                'start_date' => $validated['start_date'],
+                'end_date' => $validated['end_date'],
+                'attendees' => $validated['attendees'],
+            ];
+            logger($message);
+            session()->put('message',$message);
+            return back();
+        }
+        logger('test');
         $validated['requester_id'] = $request->user()->id;
         $validated['unit_level'] = 0;
         $validated['unit_id'] = $request->user()->unit_id;
 
         DepartmentBookRoom::query()->create($validated);
         return $validated;
-
 
     }
 }
