@@ -22,7 +22,7 @@ return new class extends Migration
             $table->foreignId('meeting_room_id');
             $table->foreign('meeting_room_id')->references('id')->on('department_rooms');
             $table->string('topic');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->foreignId('purpose_id');
             $table->foreign('purpose_id')->references('id')->on('department_purpose_book_rooms');
             $table->json('equipment');

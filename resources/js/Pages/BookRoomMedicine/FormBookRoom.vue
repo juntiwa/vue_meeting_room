@@ -2,16 +2,17 @@
     <div class="m-3">
         ระบบจองห้องประชุม
         <section id="condition" class="flex flex-col">
+            กรอกข้อมูลการขอใช้งานห้องประชุม
             <div id="date_time">
                 <label for="start"> วันเวลาเริ่ม
-                    <InputTextComponent type="datetime-local" name="start" id="start" class="w-1/6"
+                    <InputTextComponent type="datetime-local" name="start" id="start" class="w-fit"
                                         v-model="form.start_date"/>
                 </label>
 
                 <label for="end"> วันเวลาสิ้นสุด
                     <InputTextComponent type="datetime-local"
                                         name="end" id="end"
-                                        class="w-1/6"
+                                        class="w-fit"
                                         v-model="form.end_date"/>
                 </label>
             </div>
@@ -29,7 +30,8 @@
                    class="cursor-pointer">
 
                 <input type="checkbox" name="set_room[status]" id="set_room[status]"
-                       v-model="form.set_room.status"/>
+                       v-model="form.set_room.status"
+                       class="hover:scale-125 disabled:scale-100"/>
                 ต้องการให้จัดห้องประชุม (ในการจัดห้องประชุมจะต้องเผื่อเวลา 30 นาที โดยระบบจะเพิ่มอัตโนมัติ
                 และระบบจะแสดงเฉพาะห้องที่สามารถเปลี่ยนแปลงรูปแบบโต๊ะได้เท่านั้น)
             </label>
@@ -60,6 +62,7 @@
 
         </section>
         <section id="detail" v-show="form.meeting_room_id !== null" class="flex flex-col w-1/2">
+            กรอกรายละเอียดการขอใช้งานห้องประชุม
             <label for="topic">หัวเรื่อง</label>
             <InputTextComponent name="topic" id="topic" v-model="form.topic"/>
 
@@ -307,7 +310,7 @@ watch(
 )
 
 watch(
-    () => [form.start_date, form.end_date, form.attendees, form.attendees],
+    () => [form.start_date, form.end_date, form.attendees, form.set_room.status, !form.set_room.status],
     (val) => {
         if (val) {
             result.value = [];
@@ -316,7 +319,16 @@ watch(
     }
 )
 
+watch(
+    () => !form.set_room.status,
+    (val) => {
+        if (val) {
+            form.set_room.type_table = null;
+            form.set_room.number_group = null;
+            form.set_room.each_group = null;
+        }
+    })
 const conditionInCompleted = computed(() => {
-    return !form.start_date || !form.end_date || !form.attendees || !(200 >= form.attendees >= 3)
+    return !form.start_date || !form.end_date || !form.attendees || !(form.attendees >= 3)
 })
 </script>
