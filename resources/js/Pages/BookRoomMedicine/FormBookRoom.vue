@@ -2,17 +2,21 @@
     <div class="m-3">
         ระบบจองห้องประชุม
         <section id="condition" class="flex flex-col">
-            <label for="start"> วันเวลาเริ่ม
-                <InputTextComponent type="datetime-local" name="start" id="start" class="w-1/6"
-                                    v-model="form.start_date"/>
-            </label>
+            <div id="date_time">
+                <label for="start"> วันเวลาเริ่ม
+                    <InputTextComponent type="datetime-local" name="start" id="start" class="w-1/6"
+                                        v-model="form.start_date"/>
+                </label>
 
-            <label for="end"> วันเวลาสิ้นสุด
-                <InputTextComponent type="datetime-local"
-                                    name="end" id="end"
-                                    class="w-1/6"
-                                    v-model="form.end_date"/>
-            </label>
+                <label for="end"> วันเวลาสิ้นสุด
+                    <InputTextComponent type="datetime-local"
+                                        name="end" id="end"
+                                        class="w-1/6"
+                                        v-model="form.end_date"/>
+                </label>
+            </div>
+
+            {{ messageCalculateTime }}
 
             <label for="attendees"> จำนวนผู้เข้าร่วม
                 <InputTextComponent type="number"
@@ -20,7 +24,7 @@
                                     class="w-36"
                                     v-model="form.attendees"/>
             </label>
-
+            {{ messageAttendeesInvalid }}
             <label for="set_room[status]"
                    class="cursor-pointer">
 
@@ -30,25 +34,30 @@
                 และระบบจะแสดงเฉพาะห้องที่สามารถเปลี่ยนแปลงรูปแบบโต๊ะได้เท่านั้น)
             </label>
 
-            {{messageCalculateTime}} {{messageAttendeesInvalid}}
+
             <ButtonComponent @click="checkCondition"
                              class="bg-amber-300 hover:bg-amber-400 w-fit"
+                             :disabled="conditionInCompleted"
                              buttonText="ตรวจสอบเงื่อนไข"/>
         </section>
-        <section id="room" v-show="result.length !== 0" v-for="room in result" :key="room.id">
-            <label :for="room.id"
-                   :class="{
+        <section id="room" v-show="result.length !== 0">
+            เลือกห้องประชุมที่ต้องการจอง
+            <div v-for="room in result" :key="room.id">
+                <label :for="room.id"
+                       :class="{
                   'text-rose-600 cursor-not-allowed': !room.available,
                   'cursor-pointer': room.available,
                 }">
-                <InputRadioComponent type="radio"
-                                     name="meeting_room_id"
-                                     :id="room.id"
-                                     v-model="form.meeting_room_id"
-                                     :value="room.id"
-                                     :disabled="!room.available"/>
-                {{ room.status }}
-            </label>
+                    <InputRadioComponent type="radio"
+                                         name="meeting_room_id"
+                                         :id="room.id"
+                                         v-model="form.meeting_room_id"
+                                         :value="room.id"
+                                         :disabled="!room.available"/>
+                    {{ room.status }}
+                </label>
+            </div>
+
         </section>
         <section id="detail" v-show="form.meeting_room_id !== null" class="flex flex-col w-1/2">
             <label for="topic">หัวเรื่อง</label>
@@ -267,7 +276,7 @@ const save = () => {
 
 const messageCalculateTime = ref(null);
 watch(
-    () => [form.end_date, form.start_date],
+    () => [form.start_date, form.end_date],
     (val) => {
         if (val) {
             const end = dayjs(form.end_date);
@@ -291,13 +300,23 @@ watch(
     (val) => {
         if (val < 3 || val > 200) {
             messageAttendeesInvalid.value = 'กรุณาระบุจำนวนมากกว่า 3 หรือ น้อยกว่า 200'
-        }else{
+        } else {
             messageAttendeesInvalid.value = null
         }
     }
 )
 
+watch(
+    () => [form.start_date, form.end_date, form.attendees, form.attendees],
+    (val) => {
+        if (val) {
+            result.value = [];
+            form.meeting_room_id = null;
+        }
+    }
+)
+
 const conditionInCompleted = computed(() => {
-    return !form.start_date || !form.end_date
+    return !form.start_date || !form.end_date || !form.attendees || !(200 >= form.attendees >= 3)
 })
 </script>
