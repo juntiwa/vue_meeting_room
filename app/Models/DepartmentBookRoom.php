@@ -13,7 +13,22 @@ class DepartmentBookRoom extends Model
     use HasFactory;
 
     protected $fillable = [
-
+        'start_date',
+        'end_date',
+        'attendees',
+        'set_room',
+        'meeting_room_id',
+        'topic',
+        'description',
+        'purpose_id',
+        'equipment',
+        'food',
+        'requester_id',
+        'unit_level',
+        'unit_id',
+        'status',
+        'reason',
+        'approver_id',
     ];
 
     protected $casts = [
@@ -21,7 +36,7 @@ class DepartmentBookRoom extends Model
         'end_date' => 'datetime',
         'status' => BookingStatus::class,
         'equipment' => AsArrayObject::class,
-        'set_table' => AsArrayObject::class,
+        'set_room' => AsArrayObject::class,
         'food' => AsArrayObject::class,
     ];
 
