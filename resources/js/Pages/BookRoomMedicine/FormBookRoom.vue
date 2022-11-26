@@ -1,4 +1,5 @@
 <template>
+    {{ props.message }}
     <div class="m-3">
         ระบบจองห้องประชุม
         <section id="condition" class="flex flex-col">
@@ -263,7 +264,7 @@ const form = useForm({
 const result = ref([]);
 const purposes = ref([]);
 const props = defineProps(['message']);
-console.log(props)
+console.log('props + ' + props.message)
 const checkCondition = () => {
     result.value = [];
     form.meeting_room_id = null;
@@ -277,9 +278,45 @@ const checkCondition = () => {
         .catch((err) => console.log(err));
 }
 const save = () => {
+
+    console.log('บันทึก')
+
     form.post(window.route("formBookRoomStore"));
+
     // console.log('save button')
-};
+}
+
+watch(
+    () => props.message,
+    (val) => {
+        if (val === 'true') {
+            const Toast = window.swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', window.swal.stopTimer)
+                    toast.addEventListener('mouseleave', window.swal.resumeTimer)
+                }
+            })
+
+            Toast.fire({
+                icon: 'success',
+                title: 'Signed in successfully',
+                text: 'test'
+            })
+        } else {
+            window.swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'ไม่สามารถจองได้ เนื่องจากมีการบันทึกข้อมูลก่อนแล้ว กรุณากรอกเวลาใหม่',
+
+            })
+        }
+    }
+)
 
 const messageCalculateTime = ref(null);
 watch(

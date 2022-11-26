@@ -15,11 +15,17 @@ class FormBookRoomController extends Controller
 {
     public function create()
     {
-        return Inertia::render('BookRoomMedicine/FormBookRoom');
+        $message = session('message');
+        if (!$message){
+            return Inertia::render('BookRoomMedicine/FormBookRoom');
+        }
+        logger($message);
+        return Inertia::render('BookRoomMedicine/FormBookRoom',['message' => $message]);
     }
 
     public function checkCondition(Request $request)
     {
+        session()->forget('message');
         $validated = $request->validate([
             'start_date' => 'required|date',
             'end_date' => 'required|date',
@@ -186,16 +192,19 @@ class FormBookRoomController extends Controller
                 'attendees' => $validated['attendees'],
             ];
             logger($message);
+
             session()->put('message',$message);
-            return back();
+            return redirect()->route('formBookRoom');
         }
-        logger('test');
+        logger('true');
         $validated['requester_id'] = $request->user()->id;
         $validated['unit_level'] = 0;
         $validated['unit_id'] = $request->user()->unit_id;
 
         DepartmentBookRoom::query()->create($validated);
-        return $validated;
 
+        $message = 'true';
+        session()->put('message',$message);
+        return redirect()->route('dashboard');
     }
 }

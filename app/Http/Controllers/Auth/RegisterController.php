@@ -31,7 +31,7 @@ class RegisterController extends Controller
         ]);
         $validated['role'] = 0;
 
-        $user = User::create($validated);
+        $user = User::query()->create($validated);
 
         session()->forget('sirirajUser');
 
