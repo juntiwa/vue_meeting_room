@@ -6,7 +6,10 @@
             กรอกข้อมูลการขอใช้งานห้องประชุม
             <div id="date_time">
                 <label for="start"> วันเวลาเริ่ม
-                    <InputTextComponent type="datetime-local" name="start" id="start" class="w-fit"
+                    <InputTextComponent type="datetime-local"
+                                        name="start"
+                                        id="start"
+                                        class="w-fit"
                                         v-model="form.start_date"/>
                 </label>
 
@@ -40,20 +43,20 @@
 
             <ButtonComponent @click="checkCondition"
                              class="bg-amber-300 hover:bg-amber-400 w-fit"
-                             :disabled="conditionInCompleted"
+                             :disabled="conditionIncompleted"
                              buttonText="ตรวจสอบเงื่อนไข"/>
         </section>
         <section id="room" v-show="result.length !== 0">
             เลือกห้องประชุมที่ต้องการจอง
             <div v-for="room in result" :key="room.id">
-                <label :for="room.id"
+                <label :for="'room' + room.id"
                        :class="{
                   'text-rose-600 cursor-not-allowed': !room.available,
                   'cursor-pointer': room.available,
                 }">
                     <InputRadioComponent type="radio"
                                          name="meeting_room_id"
-                                         :id="room.id"
+                                         :id="'room' + room.id"
                                          v-model="form.meeting_room_id"
                                          :value="room.id"
                                          :disabled="!room.available"/>
@@ -73,9 +76,9 @@
             <div id="purpose">
                 วัตถุประสงค์
                 <div v-for="purpose in purposes" :key="purpose.id">
-                    <label :for="purpose.id">
+                    <label :for="'purpose' + purpose.id" class="cursor-pointer">
                         <InputRadioComponent name="purpose_id"
-                                             :id="purpose.id"
+                                             :id="'purpose' + purpose.id"
                                              :value="purpose.id"
                                              v-model="form.purpose_id"/>
                         {{ purpose.name_th }}
@@ -215,6 +218,7 @@
             <ButtonComponent
                 @click="save"
                 class="bg-teal-600 hover:bg-teal-700 text-white"
+                :disabled="detailIncomplete"
                 buttonText="บันทึกข้อมูล"/>
         </section>
     </div>
@@ -264,7 +268,6 @@ const form = useForm({
 const result = ref([]);
 const purposes = ref([]);
 const props = defineProps(['message']);
-console.log('props + ' + props.message)
 const checkCondition = () => {
     result.value = [];
     form.meeting_room_id = null;
@@ -278,12 +281,7 @@ const checkCondition = () => {
         .catch((err) => console.log(err));
 }
 const save = () => {
-
-    console.log('บันทึก')
-
     form.post(window.route("formBookRoomStore"));
-
-    // console.log('save button')
 }
 
 watch(
@@ -327,6 +325,13 @@ watch(
             const diffTime = end.diff(form.start_date, "minute", true);
             const Hours = Math.floor(diffTime / 60);
             const Minute = diffTime % 60;
+
+            const start_date = new Date(form.start_date)
+            const now = new Date();
+            const dateNow = start_date.getTime() - now.getTime()
+            let TotalDays = Math.floor(dateNow / (1000 * 3600 * 24));
+            console.log(TotalDays);
+
             if (Hours > 0) {
                 messageCalculateTime.value = "เวลาใช้งานจำนวน " + Hours + " ชั่วโมง " + Minute + " นาที";
             } else if (Hours === 0) {
@@ -365,11 +370,55 @@ watch(
     (val) => {
         if (val) {
             form.set_room.type_table = null;
-            form.set_room.number_group = null;
-            form.set_room.each_group = null;
+            form.set_room.number_group = '0';
+            form.set_room.each_group = '0';
         }
-    })
-const conditionInCompleted = computed(() => {
+    }
+)
+
+watch(
+    () => form.set_room.type_table !== 'groups',
+    (val) => {
+        if (val) {
+            form.set_room.number_group = '0';
+            form.set_room.each_group = '0';
+        }
+    }
+)
+
+watch(
+    () => !form.food.status,
+    (val) => {
+        if (val) {
+            form.food.lunch = '0';
+            form.food.snack = '0';
+            form.food.drink = '0';
+            form.food.note = null;
+        }
+    }
+)
+const conditionIncompleted = computed(() => {
     return !form.start_date || !form.end_date || !form.attendees || !(form.attendees >= 3)
+})
+
+const detailIncomplete = computed(() => {
+    /**
+     * ตรวจสอบเงื่อนไข ถ้าสถานะจัดห้อง = true
+     * ตรวจสอบ type_table = groups หรือไม่ ถ้าใช่ ห้ามเว้นว่าง หัวเรื่อง วัตถุประสงค์ รูปแบบห้อง จำนวนกลุ่ม และจำนวนคนต่อกลุ่ม
+     * ถ้าไม่ใช่ ห้ามเว้นว่าง หัวเรื่อง วัตถุประสงค์ และรูปแบบห้อง
+     *
+     * สถานะการจัดห้อง != true
+     * ห้ามเว้นว่าง หัวเรื่อง และ วัตถุประสงค์
+     */
+    if (form.set_room.status === true) {
+        if (form.set_room.type_table === 'groups') {
+            return !form.topic || !form.purpose_id || !form.set_room.type_table || !(form.set_room.each_group > 0) || !(form.set_room.number_group > 0)
+        } else {
+            return !form.topic || !form.purpose_id || !form.set_room.type_table
+        }
+    } else {
+        return !form.topic || !form.purpose_id
+    }
+
 })
 </script>

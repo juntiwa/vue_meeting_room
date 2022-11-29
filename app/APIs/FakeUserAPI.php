@@ -3,13 +3,14 @@
 namespace App\APIs;
 
 use App\Contracts\AuthUserAPI;
+use Illuminate\Support\Facades\Http;
 
 class FakeUserAPI implements AuthUserAPI
 {
     public function authenticate($login, $password)
     {
         if ($login == $password) {
-            return [
+            $data = [
                 'ok' => true,
                 'found' => true,
                 'login' => 'admin.sys',
@@ -28,11 +29,17 @@ class FakeUserAPI implements AuthUserAPI
                 'reply_code' => 0,
             ];
         } else {
-            return [
+            $data = [
                 'reply_code' => 1,
                 'reply_text' => 'Username or Password is incorrect',
                 'found' => 'false',
             ];
         }
+
+        if ($data['found'] !== true) {
+            return ['reply_code' => '1', 'reply_text' => 'ตรวจสอบ username หรือ password อีกครั้ง', 'found' => 'false'];
+        }
+
+        return $data;
     }
 }
