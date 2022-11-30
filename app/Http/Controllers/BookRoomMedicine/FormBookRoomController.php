@@ -196,12 +196,14 @@ class FormBookRoomController extends Controller
             session()->put('message',$message);
             return redirect()->route('formBookRoom');
         }
-        logger('true');
+
         $validated['requester_id'] = $request->user()->id;
         $validated['unit_level'] = 0;
         $validated['unit_id'] = $request->user()->unit_id;
+        return $validated;
 
         DepartmentBookRoom::query()->create($validated);
+
 
         $message = 'true';
         session()->put('message',$message);

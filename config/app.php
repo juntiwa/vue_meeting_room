@@ -221,5 +221,6 @@ return [
         'hannah_api_service_url' => env('HAN_API_SERVICE_URL'),
         'hannah_api_service_token' => env('HAN_API_SERVICE_TOKEN'),
         'hannah_api_service_secret' => env('HAN_API_SERVICE_SECRET'),
+        'hannah_api_service_expires' => env('HAN_API_SERVICE_EXPIRES'),
     ],
 ];

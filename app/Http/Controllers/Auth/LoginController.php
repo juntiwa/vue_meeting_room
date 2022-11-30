@@ -20,19 +20,18 @@ class LoginController extends Controller
     {
         $sirirajUser = $api->authenticate($request->login, $request->password);
 
-        if($sirirajUser['found'] !== true){
-            return back()->withErrors([
-                'login' => $sirirajUser['reply_text'] ?? 'not allow',
-            ]);
+        if($sirirajUser['found'] !== true)
+        {
+            return redirect()->back()->with(['sirirajUser'=>$sirirajUser['reply_text']]);
         }
 
         $user = User::query()->where('sap_id',$sirirajUser['org_id'])->first();
         if(!$user){
-            // return Inertia::render('Auth/Register',['sirirajUser'=>$sirirajUser]);
             session()->put('sirirajUser',$sirirajUser);
             return redirect()->route('register');
         }
 
+        return redirect()->back()->with(['sirirajUser'=>$sirirajUser]);
         Auth::login($user);
         return redirect()->route('dashboard');
     }
