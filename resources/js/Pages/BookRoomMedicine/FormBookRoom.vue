@@ -1,5 +1,6 @@
 <template>
     {{ props.message }}
+    <button type="button" @click="$inertia.delete(route('loginDestroy'))">logout</button>
     <div class="m-3">
         ระบบจองห้องประชุม
         <section id="condition" class="flex flex-col">
@@ -288,15 +289,15 @@ watch(
     () => props.message,
     (val) => {
         if (val === 'true') {
-            const Toast = window.swal.mixin({
+            const Toast = swal.mixin({
                 toast: true,
                 position: 'top-end',
                 showConfirmButton: false,
                 timer: 3000,
                 timerProgressBar: true,
                 didOpen: (toast) => {
-                    toast.addEventListener('mouseenter', window.swal.stopTimer)
-                    toast.addEventListener('mouseleave', window.swal.resumeTimer)
+                    toast.addEventListener('mouseenter', swal.stopTimer)
+                    toast.addEventListener('mouseleave', swal.resumeTimer)
                 }
             })
 
@@ -306,11 +307,10 @@ watch(
                 text: 'test'
             })
         } else {
-            window.swal.fire({
+            swal.fire({
                 icon: 'error',
                 title: 'Oops...',
                 text: 'ไม่สามารถจองได้ เนื่องจากมีการบันทึกข้อมูลก่อนแล้ว กรุณากรอกเวลาใหม่',
-
             })
         }
     }
