@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BookRoomMedicine\FormBookRoomController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -18,7 +19,7 @@ use function Termwind\render;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+//Auth::logout();
 Route::get('/', function () {
    //  return view('welcome');
     $message = session('message');

@@ -5,15 +5,15 @@
 <script setup>
 const props = defineProps(['message']);
 if (props.message === 'true') {
-    const Toast = window.swal.mixin({
+    const Toast = swal.mixin({
         toast: true,
         position: 'top-end',
         showConfirmButton: false,
         timer: 3000,
         timerProgressBar: true,
         didOpen: (toast) => {
-            toast.addEventListener('mouseenter', window.swal.stopTimer)
-            toast.addEventListener('mouseleave', window.swal.resumeTimer)
+            toast.addEventListener('mouseenter', swal.stopTimer)
+            toast.addEventListener('mouseleave', swal.resumeTimer)
         }
     })
 

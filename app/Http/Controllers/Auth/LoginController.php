@@ -20,23 +20,24 @@ class LoginController extends Controller
     {
         $sirirajUser = $api->authenticate($request->login, $request->password);
 
-        if($sirirajUser['found'] !== true)
-        {
-            return redirect()->back()->with(['sirirajUser'=>$sirirajUser['reply_text']]);
+        logger($sirirajUser);
+        if ($sirirajUser['found'] !== true) {
+            return redirect()->back()->with(['sirirajUser' => $sirirajUser['reply_text'], 'replyCode' => $sirirajUser['reply_code']]);
         }
 
-        $user = User::query()->where('sap_id',$sirirajUser['org_id'])->first();
-        if(!$user){
-            session()->put('sirirajUser',$sirirajUser);
+        $user = User::query()->where('sap_id', $sirirajUser['org_id'])->first();
+        if (!$user) {
+            session()->put('sirirajUser', $sirirajUser);
             return redirect()->route('register');
         }
 
-        return redirect()->back()->with(['sirirajUser'=>$sirirajUser]);
+
         Auth::login($user);
         return redirect()->route('dashboard');
     }
 
-    public function destroy(){
+    public function destroy()
+    {
         Auth::logout();
 
         return redirect()->route('login');
