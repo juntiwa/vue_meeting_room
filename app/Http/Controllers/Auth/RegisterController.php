@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\AddPermissionAuto;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,10 +14,10 @@ class RegisterController extends Controller
     public function create(Request $request)
     {
         $sirirajUser = session('sirirajUser');
-        if (!$sirirajUser){
+        if (!$sirirajUser) {
             return redirect()->route('login');
         }
-        return Inertia::render('Auth/Register',['sirirajUser'=>$sirirajUser]);
+        return Inertia::render('Auth/Register', ['sirirajUser' => $sirirajUser]);
     }
 
     public function store(Request $request)
@@ -29,9 +30,14 @@ class RegisterController extends Controller
             'tel' => 'required',
             'phone' => 'required'
         ]);
-        $validated['role'] = 0;
 
         $user = User::query()->create($validated);
+        $addPermission = AddPermissionAuto::query()->where('sap_id', $validated['sap_id'])->first();
+        if ($addPermission) {
+            $user->assignRole($addPermission['role']);
+        } else {
+            $user->assignRole('user');
+        }
 
         session()->forget('sirirajUser');
 

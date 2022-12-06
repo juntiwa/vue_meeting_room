@@ -20,7 +20,7 @@ class LoginController extends Controller
     {
         $sirirajUser = $api->authenticate($request->login, $request->password);
 
-        logger($sirirajUser);
+        //return $sirirajUser;
         if ($sirirajUser['found'] !== true) {
             return redirect()->back()->with(['sirirajUser' => $sirirajUser['reply_text'], 'replyCode' => $sirirajUser['reply_code']]);
         }
