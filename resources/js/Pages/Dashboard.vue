@@ -4,6 +4,7 @@
                      class="bg-rose-500 hover:bg-rose-600 text-white"
                      @click="$inertia.delete(route('loginDestroy'))"
                      buttonText="logout"/> <br>
+
     <a href="/formBookRoom">จองห้องประชุม</a>
 </template>
 <script setup>
