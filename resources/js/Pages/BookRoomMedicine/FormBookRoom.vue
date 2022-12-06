@@ -1,7 +1,11 @@
 <template>
-    {{ props.message }}
-    <button type="button" @click="$inertia.delete(route('loginDestroy'))">logout</button>
+
     <div class="m-3">
+        {{ props.message }}
+        <ButtonComponent type="button"
+                         class="bg-rose-500 hover:bg-rose-600 text-white"
+                         @click="$inertia.delete(route('loginDestroy'))"
+                         buttonText="logout"/> <br>
         ระบบจองห้องประชุม
         <section id="condition" class="flex flex-col">
             กรอกข้อมูลการขอใช้งานห้องประชุม

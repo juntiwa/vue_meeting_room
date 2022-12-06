@@ -31,7 +31,7 @@ import InputTextComponent from "../../Components/InputTextComponent";
 import ButtonComponent from "../../Components/ButtonComponent";
 import {useForm} from '@inertiajs/inertia-vue3';
 const props = defineProps(['sirirajUser']);
-console.log(props.sirirajUser.org_id);
+
 const form = useForm({
     sap_id: props.sirirajUser.org_id,
     login: props.sirirajUser.login,
