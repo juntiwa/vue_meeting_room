@@ -1,5 +1,5 @@
 <template>
-   Welcome ยินดีต้อนรับ <br>
+   Welcome ยินดีต้อนรับ {{$page.props.auth.user.full_name}} <br>
     <ButtonComponent type="button"
                      class="bg-rose-500 hover:bg-rose-600 text-white"
                      @click="$inertia.delete(route('loginDestroy'))"
