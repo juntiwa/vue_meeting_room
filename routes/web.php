@@ -20,14 +20,11 @@ use function Termwind\render;
 |
 */
 //Auth::logout();
-Route::get('/', function () {
-   //  return view('welcome');
+Route::get('/', function (\Illuminate\Http\Request $request) {
     $message = session('message');
-//    $message = 'false';
     if (!$message){
         return Inertia::render('Dashboard');
     }
-    logger($message);
     return Inertia::render('Dashboard',['message' => $message]);
 })->name('dashboard')->middleware(['auth']);
 

@@ -26,15 +26,17 @@ class RegisterController extends Controller
             'sap_id' => 'required',
             'login' => 'required',
             'full_name' => 'required',
-            'unit_id' => 'required',
-            'tel' => 'required',
-            'phone' => 'required'
+            'unit_id' => 'nullable|numeric',
+            'tel' => 'nullable|numeric',
+            'phone' => 'nullable|numeric'
         ]);
 
         $user = User::query()->create($validated);
         $addPermission = AddPermissionAuto::query()->where('sap_id', $validated['sap_id'])->first();
         if ($addPermission) {
             $user->assignRole($addPermission['role']);
+        }elseif ($validated['unit_id']){
+            $user->assignRole('user_med');
         } else {
             $user->assignRole('user');
         }

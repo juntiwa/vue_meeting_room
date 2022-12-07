@@ -18,9 +18,9 @@ return new class extends Migration
             $table->unsignedInteger('sap_id');
             $table->string('login')->unique();
             $table->string('full_name');
-            $table->string('unit_id');
-            $table->string('tel');
-            $table->string('phone');
+            $table->unsignedSmallInteger('unit_id')->nullable();
+            $table->string('tel')->nullable();
+            $table->string('phone')->nullable();
             $table->timestamps();
         });
 
