@@ -43,6 +43,7 @@ class FakeUserAPI implements AuthUserAPI
                 $data['full_name_en'] = 'Miss User System';
                 $data['name'] = 'น.ส. ผู้ใช้งาน ทั่วไป';
                 $data['name_en'] = 'Miss User System';
+                $data['division_name'] = 'งานวิจัย';
             }
         } else {
             $data = [

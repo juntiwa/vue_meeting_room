@@ -4,9 +4,18 @@
                      class="bg-rose-500 hover:bg-rose-600 text-white"
                      @click="$inertia.delete(route('loginDestroy'))"
                      buttonText="logout"/> <br>
-    <a href="/formBookRoom">จองห้องประชุม</a>
+    <div v-if="$page.props.can.view_any">
+        <Link v-if="$page.props.can.booked_instead" href="/formBookRoom">
+            จองแทน
+        </Link>
+        <Link href="/formBookRoom">
+            จองห้องประชุม
+        </Link>
+    </div>
+
 </template>
 <script setup>
+import { Link } from '@inertiajs/inertia-vue3'
 import ButtonComponent from "../Components/ButtonComponent";
 const props = defineProps(['message']);
 if (props.message === 'true') {
