@@ -9,7 +9,7 @@ class FakeUserAPI implements AuthUserAPI
 {
     public function authenticate($login, $password)
     {
-        if ($login == $password) {
+        if ($login && ($password == '111')) {
             $data = [
                 'ok' => true,
                 'found' => true,
