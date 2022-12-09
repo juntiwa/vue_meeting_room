@@ -2,6 +2,7 @@
 
     <div class="m-3">
         {{ props.message }}
+        Welcome ยินดีต้อนรับ {{$page.props.auth.user.full_name}} <br>
         <ButtonComponent type="button"
                          class="bg-rose-500 hover:bg-rose-600 text-white"
                          @click="$inertia.delete(route('loginDestroy'))"
@@ -37,6 +38,9 @@
             {{ messageAttendeesInvalid }}
             <label for="set_room[status]"
                    class="cursor-pointer">
+                <InputCheckboxComponent name="set_room[status]" id="set_room[status]"
+                                        v-model="form.set_room.status"
+                                        class="hover:scale-125 disabled:scale-100" /> ทดสอบ
 
                 <input type="checkbox" name="set_room[status]" id="set_room[status]"
                        v-model="form.set_room.status"
@@ -44,6 +48,15 @@
                 ต้องการให้จัดห้องประชุม (ในการจัดห้องประชุมจะต้องเผื่อเวลา 30 นาที โดยระบบจะเพิ่มอัตโนมัติ
                 และระบบจะแสดงเฉพาะห้องที่สามารถเปลี่ยนแปลงรูปแบบโต๊ะได้เท่านั้น)
             </label>
+
+            <div class="border-rose-500 p-1">
+                <InputCheckboxComponentComposition
+                    label="ต้องการให้จัดห้องประชุม"
+                    name="setRoomStatus"
+                    v-model="form.set_room.status"
+                />
+            </div>
+
 
 
             <ButtonComponent @click="checkCondition"
@@ -239,6 +252,7 @@ import ButtonComponent from "../../Components/ButtonComponent";
 import {useForm} from "@inertiajs/inertia-vue3";
 import {computed, ref, watch} from "vue";
 import dayjs from "dayjs";
+import InputCheckboxComponentComposition from "../../Components/InputCheckboxComponentComposition";
 
 const form = useForm({
     start_date: null,
