@@ -1,9 +1,10 @@
 <template>
-   Welcome ยินดีต้อนรับ {{$page.props.auth.user.full_name}} <br>
+    Welcome ยินดีต้อนรับ {{ $page.props.auth.user.full_name }} <br>
     <ButtonComponent type="button"
                      class="bg-rose-500 hover:bg-rose-600 text-white"
                      @click="$inertia.delete(route('loginDestroy'))"
-                     buttonText="logout"/> <br>
+                     buttonText="logout"/>
+    <br>
     <Link v-if="can.booked_room_instead_case" href="/formBookRoomInstead">
         จองแทน
     </Link>
@@ -16,16 +17,21 @@
         v-for="(booking, key) in bookings"
         :key="key"
     >
-        <p>{{ booking.duration_text }}</p>
-        <p>
-            {{ booking.set_room_text }}
-        </p>
+        <p>{{ booking.medicineroom_text }} {{ booking.duration_text }} </p>
+        <p>{{ booking.attendee_text }} {{ booking.purpose_text }}</p>
+        <p>{{ booking.set_room_text }}</p>
+        <p>{{ booking.topic_text }} </p>
+        <p>{{ booking.description_text }} </p>
+        <p> </p>
+        <p>{{ booking.equipment_text }} </p>
+        <p>{{ booking.food_text }} </p>
 
     </div>
 </template>
 <script setup>
-import { Link } from '@inertiajs/inertia-vue3'
+import {Link} from '@inertiajs/inertia-vue3'
 import ButtonComponent from "../Components/ButtonComponent";
+
 const props = defineProps(['message', 'can', 'bookings']);
 if (props.message === 'true') {
     const Toast = swal.mixin({

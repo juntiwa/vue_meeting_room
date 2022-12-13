@@ -54,10 +54,74 @@ class DepartmentBookRoom extends Model
             ->where('end_date', '>=', $start);
     }
 
+    public function durationText(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                return 'เมื่อ ' . $this->start_date->thaidate('j F Y เวลา H:i') . ' ถึง ' . $this->end_date->format('H:i');
+            }
+        );
+    }
+
+    public function medicineroom()
+    {
+        return $this->belongsTo(DepartmentRoom::class, 'meeting_room_id');
+    }
+
+    public function medicineroomText(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                return 'จองห้อง' . $this->medicineroom->name_th;
+            }
+        );
+    }
+
+    public function attendeeText(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                return 'จำนวนผู้เข้าร่วม ' . $this->attendees . ' คน';
+            }
+        );
+    }
+
+    public function topicText(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                return 'หัวข้อการประชุม ' . $this->topic;
+            }
+        );
+    }
+
+    public function descriptionText(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                return 'รายละเอียดการประชุม ' . $this->description;
+            }
+        );
+    }
+
+    public function purpose()
+    {
+        return $this->belongsTo(DepartmentPurposeBookRoom::class, 'purpose_id');
+    }
+
+    public function purposeText(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                return 'ใช้สำหรับ ' . $this->purpose->name_th;
+            }
+        );
+    }
+
     public function setRoomText(): Attribute
     {
         return Attribute::make(
-            get: function() {
+            get: function () {
                 $setRoom = $this->set_room;
                 if (!$setRoom['status']) {
                     return 'ไม่ต้องจัดห้อง';
@@ -68,12 +132,33 @@ class DepartmentBookRoom extends Model
         );
     }
 
-    public function durationText(): Attribute
+    public function equipmentText(): Attribute
     {
         return Attribute::make(
-            get: function() {
-                return 'จองเมื่อ ' . $this->start_date->thaidate('j F Y เวลา H:i') .' ถึง '. $this->end_date->format('H:i');
+            get: function () {
+                $equipment = $this->equipment;
+                if ($equipment['computer'] === 0) {
+                    return 'ไม่ต้องการ';
+                }
+
+                return 'ต้องการ ' . $equipment['computer'];
             }
         );
     }
+
+    public function foodText(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $food = $this->food;
+                if (!$food['status']) {
+                    return 'ไม่ต้องการอาหาร';
+                }
+
+                return 'ต้องการอาหาร ' . $food['lunch'];
+            }
+        );
+    }
+
+
 }
