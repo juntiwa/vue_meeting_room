@@ -2,61 +2,46 @@
 
     <div class="m-3">
         {{ props.message }}
-        Welcome ยินดีต้อนรับ {{$page.props.auth.user.full_name}} <br>
+        Welcome ยินดีต้อนรับ {{ $page.props.auth.user.full_name }} <br>
         <ButtonComponent type="button"
                          class="bg-rose-500 hover:bg-rose-600 text-white"
                          @click="$inertia.delete(route('loginDestroy'))"
-                         buttonText="logout"/> <br>
+                         buttonText="logout"/>
+        <br>
         ระบบจองห้องประชุม
         <section id="condition" class="flex flex-col">
             กรอกข้อมูลการขอใช้งานห้องประชุม
-            <div id="date_time">
-                <label for="start"> วันเวลาเริ่ม
-                    <InputTextComponent type="datetime-local"
-                                        name="start"
-                                        id="start"
-                                        class="w-fit"
-                                        v-model="form.start_date"/>
-                </label>
+            <div id="date_time" class="flex flex-row gap-2">
+                <InputTextComponent label="วันเวลาเริ่ม"
+                                    type="datetime-local"
+                                    name="start_date"
+                                    class="w-fit"
+                                    v-model="form.start_date"
+                />
 
-                <label for="end"> วันเวลาสิ้นสุด
-                    <InputTextComponent type="datetime-local"
-                                        name="end" id="end"
-                                        class="w-fit"
-                                        v-model="form.end_date"/>
-                </label>
-            </div>
-
-            {{ messageCalculateTime }}
-
-            <label for="attendees"> จำนวนผู้เข้าร่วม
-                <InputTextComponent type="number"
-                                    name="attendees" id="attendees"
-                                    class="w-36"
-                                    v-model="form.attendees"/>
-            </label>
-            {{ messageAttendeesInvalid }}
-            <label for="set_room[status]"
-                   class="cursor-pointer">
-                <InputCheckboxComponent name="set_room[status]" id="set_room[status]"
-                                        v-model="form.set_room.status"
-                                        class="hover:scale-125 disabled:scale-100" /> ทดสอบ
-
-                <input type="checkbox" name="set_room[status]" id="set_room[status]"
-                       v-model="form.set_room.status"
-                       class="hover:scale-125 disabled:scale-100"/>
-                ต้องการให้จัดห้องประชุม (ในการจัดห้องประชุมจะต้องเผื่อเวลา 30 นาที โดยระบบจะเพิ่มอัตโนมัติ
-                และระบบจะแสดงเฉพาะห้องที่สามารถเปลี่ยนแปลงรูปแบบโต๊ะได้เท่านั้น)
-            </label>
-
-            <div class="border-rose-500 p-1">
-                <InputCheckboxComponentComposition
-                    label="ต้องการให้จัดห้องประชุม"
-                    name="setRoomStatus"
-                    v-model="form.set_room.status"
+                <InputTextComponent label="วันเวลาสิ้นสุด"
+                                    type="datetime-local"
+                                    name="end_date"
+                                    class="w-fit"
+                                    v-model="form.end_date"
                 />
             </div>
+            {{ messageCalculateTime }}
 
+            <InputTextComponent label="จำนวนผู้เข้าร่วม"
+                                type="number"
+                                name="attendees"
+                                class="w-fit"
+                                v-model="form.attendees"
+            />
+
+            {{ messageAttendeesInvalid }}
+
+            <InputCheckboxComponent
+                label="ต้องการให้จัดห้องประชุม (ในการจัดห้องประชุมจะต้องเผื่อเวลา 30 นาที โดยระบบจะเพิ่มอัตโนมัติ
+                และระบบจะแสดงเฉพาะห้องที่สามารถเปลี่ยนแปลงรูปแบบโต๊ะได้เท่านั้น)"
+                name="setRoomStatus"
+                v-model="form.set_room.status"/>
 
 
             <ButtonComponent @click="checkCondition"
@@ -83,7 +68,8 @@
             </div>
 
         </section>
-        <section id="detail" v-show="form.meeting_room_id !== null" class="flex flex-col w-1/2">
+        <section id="detail" v-show="form.meeting_room_id !== null"
+                 class="flex flex-col w-1/2">
             กรอกรายละเอียดการขอใช้งานห้องประชุม
             <label for="topic">หัวเรื่อง</label>
             <InputTextComponent name="topic" id="topic" v-model="form.topic"/>
@@ -348,7 +334,7 @@ watch(
             const now = new Date();
             const dateNow = start_date.getTime() - now.getTime()
             let TotalDays = Math.floor(dateNow / (1000 * 3600 * 24));
-            console.log(TotalDays);
+
 
             if (Hours > 0) {
                 messageCalculateTime.value = "เวลาใช้งานจำนวน " + Hours + " ชั่วโมง " + Minute + " นาที";
