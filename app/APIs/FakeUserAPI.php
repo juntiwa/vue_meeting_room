@@ -9,16 +9,10 @@ class FakeUserAPI implements AuthUserAPI
 {
     public function authenticate($login, $password)
     {
-
-
-        if ($login == $password) {
+        if ($login && ($password == '111')) {
             $data = [
                 'ok' => true,
                 'found' => true,
-                'login' => 'admin.sys',
-                'org_id' => '10012345',
-                'full_name' => 'น.ส. ผู้ใช้งาน ทั่วไป',
-                'full_name_en' => 'Miss User System',
                 'position_name' => 'นักวิชาการคอมพิวเตอร์',
                 'division_name' => 'ภ.อายุรศาสตร์',
                 'department_name' => 'ภ.อายุรศาสตร์',
@@ -26,10 +20,31 @@ class FakeUserAPI implements AuthUserAPI
                 'email' => '',
                 'password_expires_in_days' => 46,
                 'remark' => 'สนง.ภาควิชาอายุรศาสตร์ ภ.อายุรศาสตร์',
-                'name' => 'น.ส. ผู้ใช้งาน ทั่วไป',
-                'name_en' => 'Miss User System',
                 'reply_code' => 0,
             ];
+            if ($login === 'admin.sys') {
+                $data['login'] = 'admin.sys';
+                $data['org_id'] = '10012341';
+                $data['full_name'] = 'น.ส. ผู้ดูแล ระบบ';
+                $data['full_name_en'] = 'Miss Admin System';
+                $data['name'] = 'น.ส. ผู้ดูแล ระบบ';
+                $data['name_en'] = 'Miss Admin System';
+            } elseif ($login === 'user.med') {
+                $data['login'] = 'user.med';
+                $data['org_id'] = '10012344';
+                $data['full_name'] = 'น.ส. ผู้ใช้งาน med';
+                $data['full_name_en'] = 'Miss User Med';
+                $data['name'] = 'น.ส. ผู้ใช้งาน med';
+                $data['name_en'] = 'Miss User Med';
+            } else {
+                $data['login'] = 'user.sys';
+                $data['org_id'] = '10012345';
+                $data['full_name'] = 'น.ส. ผู้ใช้งาน ทั่วไป';
+                $data['full_name_en'] = 'Miss User System';
+                $data['name'] = 'น.ส. ผู้ใช้งาน ทั่วไป';
+                $data['name_en'] = 'Miss User System';
+                $data['division_name'] = 'งานวิจัย';
+            }
         } else {
             $data = [
                 'reply_code' => 1,
@@ -40,22 +55,7 @@ class FakeUserAPI implements AuthUserAPI
 
 
         $dataPassExp = [
-            'ok' => true,
-            'found' => true,
-            'login' => 'admin.sys',
-            'org_id' => '10012345',
-            'full_name' => 'น.ส. ผู้ใช้งาน ทั่วไป',
-            'full_name_en' => 'Miss User System',
-            'position_name' => 'นักวิชาการคอมพิวเตอร์',
-            'division_name' => 'ภ.อายุรศาสตร์',
-            'department_name' => 'ภ.อายุรศาสตร์',
-            'office_name' => 'สนง.ภาควิชาอายุรศาสตร์',
-            'email' => '',
-            'password_expires_in_days' => 46,
-            'remark' => 'สนง.ภาควิชาอายุรศาสตร์ ภ.อายุรศาสตร์',
-            'name' => 'น.ส. ผู้ใช้งาน ทั่วไป',
-            'name_en' => 'Miss User System',
-            'reply_code' => 0,
+            'password_expires_in_days' => 46
         ];
 
         if ($dataPassExp['password_expires_in_days'] < 1) {

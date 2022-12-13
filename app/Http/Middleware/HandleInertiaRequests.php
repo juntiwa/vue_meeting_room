@@ -41,6 +41,17 @@ class HandleInertiaRequests extends Middleware
                 'sirirajUser' => fn () => $request->session()->get('sirirajUser'),
                 'replyCode' => fn () => $request->session()->get('replyCode'),
             ],
+            'auth.user' => fn () => $request->user()
+                ? $request->user()->only('full_name')
+                : null,
+            /*'can' => [
+                'view_any' => fn () => $request->user()
+                    ? $request->user()->abilities->contains('view_any_cases')
+                    : null,
+                'booked_instead' => fn () => $request->user()
+                    ? $request->user()->abilities->contains('booked_room_instead_case')
+                    : null,
+            ]*/
         ]);
     }
 }

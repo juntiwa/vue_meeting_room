@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\AddPermissionAuto;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,10 +14,10 @@ class RegisterController extends Controller
     public function create(Request $request)
     {
         $sirirajUser = session('sirirajUser');
-        if (!$sirirajUser){
+        if (!$sirirajUser) {
             return redirect()->route('login');
         }
-        return Inertia::render('Auth/Register',['sirirajUser'=>$sirirajUser]);
+        return Inertia::render('Auth/Register', ['sirirajUser' => $sirirajUser]);
     }
 
     public function store(Request $request)
@@ -25,13 +26,20 @@ class RegisterController extends Controller
             'sap_id' => 'required',
             'login' => 'required',
             'full_name' => 'required',
-            'unit_id' => 'required',
-            'tel' => 'required',
-            'phone' => 'required'
+            'unit_id' => 'nullable|numeric',
+            'tel' => 'nullable|numeric',
+            'phone' => 'nullable|numeric'
         ]);
-        $validated['role'] = 0;
 
         $user = User::query()->create($validated);
+        $addPermission = AddPermissionAuto::query()->where('sap_id', $validated['sap_id'])->first();
+        if ($addPermission) {
+            $user->assignRole($addPermission['role']);
+        }elseif ($validated['unit_id']){
+            $user->assignRole('user_med');
+        } else {
+            $user->assignRole('user');
+        }
 
         session()->forget('sirirajUser');
 

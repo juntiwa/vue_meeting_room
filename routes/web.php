@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BookRoomMedicine\FormBookRoomController;
+use App\Models\DepartmentBookRoom;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -20,15 +21,40 @@ use function Termwind\render;
 |
 */
 //Auth::logout();
-Route::get('/', function () {
-   //  return view('welcome');
+Route::get('/', function (\Illuminate\Http\Request $request) {
     $message = session('message');
-//    $message = 'false';
-    if (!$message){
+    /*if (!$message){
         return Inertia::render('Dashboard');
-    }
-    logger($message);
-    return Inertia::render('Dashboard',['message' => $message]);
+    }*/
+    $user = $request->user();
+    $bookings = DepartmentBookRoom::query()
+//        ->where('requester_id',$request->user()->id)
+        ->get()
+        /*->transform(fn ($booking) => [
+            'start_date' => $booking->start_date->format('M j Y - H:i'),
+            'end_date' => $booking->end_date->format('M j Y - H:i'),
+            'can_cancel' => $request->user()->can('cancel', $booking),
+        ]);*/
+        ->transform(function ($booking) use ($request) {
+            return [
+                'start_date' => $booking->start_date->format('M j Y - H:i'),
+                'end_date' => $booking->end_date->format('M j Y - H:i'),
+//                'can_cancel' => auth()->user()->can('cancel', $booking),
+                'can_cancel' => $request->user()->can('cancel', $booking),
+                'user_id' => $booking->requester_id,
+                'set_room' => $booking->set_room,
+                'set_room_text' => $booking->set_room_text,
+                'duration_text' => $booking->duration_text,
+            ];
+        });
+    return Inertia::render('Dashboard', [
+        'message' => $message,
+        'can' => [
+            "booked_room_instead_case" => $request->user()->can('booked_room_instead_case'),
+            "booked_room_case" => $request->user()->can('booked_room_case'),
+        ],
+        'bookings' => $bookings
+    ]);
 })->name('dashboard')->middleware(['auth']);
 
 Route::controller(LoginController::class)->group(function(){

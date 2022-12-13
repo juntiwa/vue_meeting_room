@@ -53,4 +53,27 @@ class DepartmentBookRoom extends Model
         $query->where('start_date', '<=', $end)
             ->where('end_date', '>=', $start);
     }
+
+    public function setRoomText(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                $setRoom = $this->set_room;
+                if (!$setRoom['status']) {
+                    return 'ไม่ต้องจัดห้อง';
+                }
+
+                return 'มีการขอให้จัดห้องแบบ ' . $setRoom['type_table'];
+            }
+        );
+    }
+
+    public function durationText(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                return $this->start_date->format('M j Y @ H:i') .' ถึง '. $this->end_date->format('H:i');
+            }
+        );
+    }
 }

@@ -25,9 +25,9 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             DepartmentRoomSeeder::class,
 //            UnitInnerSeeder::class,
+            AbilityRoleSeeder::class,
 //            UserSeeder::class,
-//            AbilityRoleSeeder::class
-
+            AddPermissionAutoSeeder::class
         ]);
     }
 }
