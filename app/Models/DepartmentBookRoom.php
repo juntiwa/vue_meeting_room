@@ -72,7 +72,7 @@ class DepartmentBookRoom extends Model
     {
         return Attribute::make(
             get: function() {
-                return $this->start_date->format('M j Y @ H:i') .' ถึง '. $this->end_date->format('H:i');
+                return 'จองเมื่อ ' . $this->start_date->thaidate('j F Y เวลา H:i') .' ถึง '. $this->end_date->format('H:i');
             }
         );
     }
