@@ -4,14 +4,12 @@
                      class="bg-rose-500 hover:bg-rose-600 text-white"
                      @click="$inertia.delete(route('loginDestroy'))"
                      buttonText="logout"/> <br>
-<!--    <div v-if="$page.props.can.view_any">-->
-    <Link v-if="can.booked_room_instead_case" href="/formBookRoom">
+    <Link v-if="can.booked_room_instead_case" href="/formBookRoomInstead">
         จองแทน
     </Link>
     <Link v-if="can.booked_room_case" href="/formBookRoom">
         จองห้องประชุม
     </Link>
-<!--    </div>&lt;!&ndash;&ndash;&gt;-->
 
     <div
         class="p-2 border"

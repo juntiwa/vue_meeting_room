@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\BookRoomMedicine;
+namespace App\Http\Controllers\BookedRoomMedicine;
 
 use App\Casts\BookingStatus;
 use App\Http\Controllers\Controller;
@@ -11,21 +11,17 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class FormBookRoomController extends Controller
+class FormBookedRoomController extends Controller
 {
     public function create()
     {
-        $message = session('message');
-        if (!$message){
-            return Inertia::render('BookRoomMedicine/FormBookRoom');
-        }
-        logger($message);
-        return Inertia::render('BookRoomMedicine/FormBookRoom',['message' => $message]);
+        session()->forget('message');
+        return Inertia::render('BookedRoomMedicine/FormBookedRoom');
     }
 
     public function checkCondition(Request $request)
     {
-        session()->forget('message');
+
         $validated = $request->validate([
             'start_date' => 'required|date',
             'end_date' => 'required|date',
@@ -194,7 +190,7 @@ class FormBookRoomController extends Controller
             logger($message);
 
             session()->put('message',$message);
-            return redirect()->route('formBookRoom');
+            return redirect()->route('formBookedRoom');
         }
 
         $validated['requester_id'] = $request->user()->id;
