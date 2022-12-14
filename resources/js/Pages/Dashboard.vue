@@ -1,32 +1,26 @@
 <template>
-   Welcome ยินดีต้อนรับ {{$page.props.auth.user.full_name}} <br>
+    Welcome ยินดีต้อนรับ {{ $page.props.auth.user.full_name }} <br>
     <ButtonComponent type="button"
                      class="bg-rose-500 hover:bg-rose-600 text-white"
                      @click="$inertia.delete(route('loginDestroy'))"
-                     buttonText="logout"/> <br>
+                     buttonText="logout"/>
+    <br>
     <Link v-if="can.booked_room_instead_case" href="/formBookRoomInstead">
         จองแทน
     </Link>
     <Link v-if="can.booked_room_case" href="/formBookRoom">
         จองห้องประชุม
     </Link>
+    <ListBookedRoom :bookings="bookings" :rooms="rooms"/>
 
-    <div
-        class="p-2 border"
-        v-for="(booking, key) in bookings"
-        :key="key"
-    >
-        <p>{{ booking.duration_text }}</p>
-        <p>
-            {{ booking.set_room_text }}
-        </p>
 
-    </div>
 </template>
 <script setup>
-import { Link } from '@inertiajs/inertia-vue3'
+import {Link} from '@inertiajs/inertia-vue3'
 import ButtonComponent from "../Components/ButtonComponent";
-const props = defineProps(['message', 'can', 'bookings']);
+import ListBookedRoom from "./BookedRoomMedicine/ListBookedRoom";
+
+const props = defineProps(['message', 'can', 'bookings','rooms']);
 if (props.message === 'true') {
     const Toast = swal.mixin({
         toast: true,

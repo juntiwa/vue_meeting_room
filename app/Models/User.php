@@ -64,4 +64,9 @@ class User extends Authenticatable
     {
         return $this->roles->map->abilities->flatten()->pluck('name')->unique()->flatten();
     }
+
+    public function unit()
+    {
+        return $this->belongsTo(UnitInner::class, 'unit_id', 'id');
+    }
 }

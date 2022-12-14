@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             DepartmentSeeder::class,
             DepartmentRoomSeeder::class,
-//            UnitInnerSeeder::class,
+            UnitInnerSeeder::class,
             AbilityRoleSeeder::class,
 //            UserSeeder::class,
             AddPermissionAutoSeeder::class
