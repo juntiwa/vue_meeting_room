@@ -11,28 +11,16 @@
     <Link v-if="can.booked_room_case" href="/formBookRoom">
         จองห้องประชุม
     </Link>
+    <ListBookedRoom :bookings="bookings" :rooms="rooms"/>
 
-    <div
-        class="p-2 border"
-        v-for="(booking, key) in bookings"
-        :key="key"
-    >
-        <p>{{ booking.medicineroom_text }} {{ booking.duration_text }} </p>
-        <p>{{ booking.attendee_text }} {{ booking.purpose_text }}</p>
-        <p>{{ booking.set_room_text }}</p>
-        <p>{{ booking.topic_text }} </p>
-        <p>{{ booking.description_text }} </p>
-        <p> </p>
-        <p>{{ booking.equipment_text }} </p>
-        <p>{{ booking.food_text }} </p>
 
-    </div>
 </template>
 <script setup>
 import {Link} from '@inertiajs/inertia-vue3'
 import ButtonComponent from "../Components/ButtonComponent";
+import ListBookedRoom from "./BookedRoomMedicine/ListBookedRoom";
 
-const props = defineProps(['message', 'can', 'bookings']);
+const props = defineProps(['message', 'can', 'bookings','rooms']);
 if (props.message === 'true') {
     const Toast = swal.mixin({
         toast: true,

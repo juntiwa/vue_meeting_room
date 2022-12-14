@@ -4,17 +4,18 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BookedRoomMedicine\FormBookedRoomController;
 use App\Http\Controllers\BookedRoomMedicine\FormBookedRoomInsteadController;
+use App\Http\Controllers\BookRoomMedicine\ListBookedRoomController;
 use App\Http\Controllers\DashboardController;
 use App\Models\DepartmentBookRoom;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-use function Termwind\render;
+//Auth::logout();
 
-Route::controller(DashboardController::class)->group(function(){
+Route::controller(DashboardController::class)->middleware(['auth'])->group(function(){
     Route::get('/','index')->name('dashboard');
-})->middleware(['auth']);
+});
 
 Route::controller(LoginController::class)->group(function(){
     Route::get('/login', 'create')->name('login')->middleware(['guest']);
@@ -35,4 +36,8 @@ Route::controller(FormBookedRoomController::class)->group(function(){
 
 Route::controller(FormBookedRoomInsteadController::class)->group(function(){
    Route::get('/formBookRoomInstead', 'create')->name('formBookRoomInstead');
+})->middleware(['auth']);
+
+Route::controller(ListBookedRoomController::class)->group(function(){
+   Route::get('/listBookedRoom', 'index')->name('listBooked');
 })->middleware(['auth']);

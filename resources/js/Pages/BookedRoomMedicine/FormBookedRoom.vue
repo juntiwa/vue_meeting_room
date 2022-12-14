@@ -277,7 +277,7 @@ const checkCondition = () => {
     result.value = [];
     form.meeting_room_id = null;
     window.axios
-        .post(window.route("formBookRoomCheckCondition"), form)
+        .post(window.route("formBookedRoomCheckCondition"), form)
         .then((res) => {
             // console.log(res.data);
             result.value = [...res.data.result];
@@ -286,7 +286,7 @@ const checkCondition = () => {
         .catch((err) => console.log(err));
 }
 const save = () => {
-    form.post(window.route("formBookRoomStore"));
+    form.post(window.route("formBookedRoomStore"));
 }
 
 watch(

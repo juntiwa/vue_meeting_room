@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\BookingStatus;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -40,13 +41,6 @@ class DepartmentBookRoom extends Model
         'food' => AsArrayObject::class,
     ];
 
-    protected function statusLocale(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => (new BookingStatus)->getStatusLocale($this->attributes['status']),
-        );
-    }
-
     public function scopeOverlap($query, $start, $end)
     {
         $start = $start->addMinute();
@@ -54,12 +48,18 @@ class DepartmentBookRoom extends Model
             ->where('end_date', '>=', $start);
     }
 
+    public function creatAt(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->updated_at->thaidate('j F Y'),
+        );
+
+    }
+
     public function durationText(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                return 'เมื่อ ' . $this->start_date->thaidate('j F Y เวลา H:i') . ' ถึง ' . $this->end_date->format('H:i');
-            }
+            get: fn() => 'เมื่อ ' . $this->start_date->thaidate('j F Y เวลา H:i') . ' ถึง ' . $this->end_date->format('H:i'),
         );
     }
 
@@ -71,36 +71,30 @@ class DepartmentBookRoom extends Model
     public function medicineroomText(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                return 'จองห้อง' . $this->medicineroom->name_th;
-            }
+            get: fn() => 'จองห้อง' . $this->medicineroom->name_th,
         );
     }
 
     public function attendeeText(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                return 'จำนวนผู้เข้าร่วม ' . $this->attendees . ' คน';
-            }
+            get: fn() => 'จำนวนผู้เข้าร่วม ' . $this->attendees . ' คน',
         );
     }
 
     public function topicText(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                return 'หัวข้อการประชุม ' . $this->topic;
-            }
+            get: fn() => 'หัวข้อการประชุม ' . $this->topic,
+
         );
     }
 
     public function descriptionText(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                return 'รายละเอียดการประชุม ' . $this->description;
-            }
+            get: fn() => 'รายละเอียดการประชุม ' . $this->description,
+
         );
     }
 
@@ -112,9 +106,7 @@ class DepartmentBookRoom extends Model
     public function purposeText(): Attribute
     {
         return Attribute::make(
-            get: function () {
-                return 'ใช้สำหรับ ' . $this->purpose->name_th;
-            }
+            get: fn() => 'ใช้สำหรับ ' . $this->purpose->name_th,
         );
     }
 
@@ -159,6 +151,26 @@ class DepartmentBookRoom extends Model
             }
         );
     }
+
+    public function statusLocale(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => (new BookingStatus)->getStatusLocale($this->attributes['status']),
+        );
+    }
+
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'requester_id');
+    }
+
+    public function userData(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->users,
+        );
+    }
+
 
 
 }
