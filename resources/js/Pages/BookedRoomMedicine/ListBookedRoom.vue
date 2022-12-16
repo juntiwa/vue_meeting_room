@@ -8,94 +8,43 @@
                 <table class="w-full">
                     <thead class="bg-gray-100 border-b-2 border-gray-200">
                     <tr>
-                        <th class="w-20 p-3 font-semibold tracking-wide text-left text-center">ลำดับ</th>
-                        <th class="w-20 p-3 font-semibold tracking-wide text-left text-center">วัน เวลา ที่จอง
-                        </th>
+                        <th class="w-5 p-3 font-semibold tracking-wide text-center">ลำดับ</th>
+                        <th class="w-24 p-3 font-semibold tracking-wide text-center">วัน เดือน ปี ที่จอง</th>
+                        <th class="w-24 p-3 font-semibold tracking-wide text-center">เวลา ที่จอง</th>
                         <th class="w-40 p-3 font-semibold tracking-wide text-left">หัวข้อการประชุม</th>
-                        <th class="w-20 p-3 font-semibold tracking-wide text-left">ผู้เข้าร่วม (คน)</th>
+                        <th class="w-20 p-3 font-semibold tracking-wide text-center">ผู้เข้าร่วม</th>
+                        <th class="w-24 p-3 font-semibold tracking-wide text-left">หน่วยงาน</th>
+                        <th class="w-24 p-3 font-semibold tracking-wide text-center">เบอร์ติดต่อ</th>
+                        <th class="w-24 p-3 font-semibold tracking-wide text-center">สถานะ</th>
                         <th class="w-20 p-3 font-semibold tracking-wide text-left">อุปกรณ์</th>
                         <th class="w-20 p-3 font-semibold tracking-wide text-left">อาหาร</th>
-                        <th class="w-24 p-3 font-semibold tracking-wide text-left text-center">ผู้จอง</th>
-                        <th class="w-24 p-3 font-semibold tracking-wide text-left text-center">เบอร์ติดต่อ</th>
-                        <th class="w-24 p-3 font-semibold tracking-wide text-left">หน่วยงาน</th>
-                        <th class="w-32 p-3 font-semibold tracking-wide text-left">วันที่บันทึก</th>
+                        <th class="w-20 p-3 font-semibold tracking-wide text-left">แบบสอบถาม</th>
+                        <th class="w-24 p-3 font-semibold tracking-wide text-center">จัดการ</th>
                     </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100" v-for="(booking, key) in bookings" :key="key">
                     <tr v-if="booking.meeting_room_id === room.id"
                         :class="{
                             'bg-white' : booking.status_locale === 'รออนุมัติ',
-                            'bg-teal-100' : booking.status_locale === 'อนุมัติแล้ว',
+                            'bg-teal-100' : booking.status_locale === 'อนุมัติ',
                             'text-green-600' : booking.status_locale === 'ถูกแก้ไข',
                             'text-green-600' : booking.status_locale === 'ถูกยกเลิก',
                             'text-green-600' : booking.status_locale === 'ไม่อนุมัติ'
                         }"
                     >
-                        <td class="p-3 text-center whitespace-nowrap">
-                            {{ ++key }}
-                        </td>
-                        <td class="p-3 text-center">
-                            {{ booking.duration_text }}
-                        </td>
-                        <td class="p-3 ">
-                            {{ booking.topic_text }}
-                        </td>
-                        <td class="p-3 ">
-                            {{ booking.attendee_text }}
-                        </td>
-                        <td class="p-3 ">
-                            {{ booking.equipment_text }}
-                        </td>
-                        <td class="p-3 ">
-                            {{ booking.food_text }}
-                        </td>
-                        <td class="p-3 text-center whitespace-nowrap">
-                            {{ booking.user_full_name }}
-                        </td>
-                        <td class="p-3 text-center whitespace-nowrap">
-                            {{ booking.user_tel }}
-                        </td>
-                        <td class="p-3 whitespace-nowrap">
-                            {{ booking.unit_name }}
-                        </td>
-                        <td class="p-3 whitespace-nowrap">
-                            {{ booking.creat_at }}
-                        </td>
-
-                    </tr>
-                    </tbody>
-
-                    <tbody class="divide-y divide-gray-100" v-for="(booking, key) in bookings" :key="key">
-                    <tr class="bg-white" v-if="booking.meeting_room_id === room.id && booking.status === 2">
-                        <td class="p-3 text-center whitespace-nowrap">
-                            {{ ++key }}
-                        </td>
-                        <td class="p-3 text-center">
-                            {{ booking.duration_text }}
-                        </td>
-                        <td class="p-3 ">
-                            {{ booking.topic_text }}
-                        </td>
-                        <td class="p-3 ">
-                            {{ booking.attendee_text }}
-                        </td>
-                        <td class="p-3 ">
-                            {{ booking.equipment_text }}
-                        </td>
-                        <td class="p-3 ">
-                            {{ booking.food_text }}
-                        </td>
-                        <td class="p-3 text-center whitespace-nowrap">
-                            {{ booking.user_full_name }}
-                        </td>
-                        <td class="p-3 text-center whitespace-nowrap">
-                            {{ booking.user_tel }}
-                        </td>
-                        <td class="p-3 whitespace-nowrap">
-                            {{ booking.unit_name }}
-                        </td>
-                        <td class="p-3 whitespace-nowrap">
-                            {{ booking.creat_at }}
+                        <td class="p-3 text-center align-text-top"> {{ ++key }} </td>
+                        <td class="p-3 text-center align-text-top whitespace-nowrap"> {{ booking.date_booked_text }} </td>
+                        <td class="p-3 text-center align-text-top whitespace-nowrap">{{ booking.time_booked_text }}</td>
+                        <td class="p-3 align-text-top">{{ booking.topic_text }}</td>
+                        <td class="p-3 text-center align-text-top">{{ booking.attendee_text }}</td>
+                        <td class="p-3 align-text-top">ภายใน {{ booking.unit_name }}</td>
+                        <td class="p-3 text-center align-text-top whitespace-nowrap">{{ booking.user_tel }}</td>
+                        <td class="p-3 align-text-top whitespace-nowrap">{{ booking.status_locale }}</td>
+                        <td class="p-3 align-text-top">{{ booking.equipment_text }}</td>
+                        <td class="p-3 align-text-top">{{ booking.food_text }}</td>
+                        <td class="p-3 align-text-top">รอบันทึก</td>
+                        <td class="p-3 align-text-top whitespace-nowrap">
+                            <ButtonComponent buttonText="ทดสอบ" class="bg-rose-500 text-white"/>
                         </td>
 
                     </tr>
@@ -170,6 +119,7 @@
 
 <script setup>
 import Layout from "../../Layouts/Layout";
+import ButtonComponent from "../../Components/ButtonComponent";
 
 defineProps(['message', 'can', 'bookings', 'rooms']);
 </script>
