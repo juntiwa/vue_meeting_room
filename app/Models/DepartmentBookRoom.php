@@ -48,7 +48,8 @@ class DepartmentBookRoom extends Model
             ->where('end_date', '>=', $start);
     }
 
-    public function creatAt(): Attribute
+
+    public function createAt(): Attribute
     {
         return Attribute::make(
             get: fn() => $this->updated_at->thaidate('j F Y'),
@@ -59,7 +60,7 @@ class DepartmentBookRoom extends Model
     public function durationText(): Attribute
     {
         return Attribute::make(
-            get: fn() => 'เมื่อ ' . $this->start_date->thaidate('j F Y เวลา H:i') . ' ถึง ' . $this->end_date->format('H:i'),
+            get: fn() => $this->start_date->thaidate('j F Y เวลา H:i') . ' ถึง ' . $this->end_date->format('H:i'),
         );
     }
 

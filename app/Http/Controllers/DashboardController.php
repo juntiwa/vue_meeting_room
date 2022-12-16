@@ -16,14 +16,15 @@ class DashboardController extends Controller
         /*if (!$message){
             return Inertia::render('Dashboard');
         }*/
-        $user = request()->user();
-        $rooms = DepartmentRoom::query()->get();
+
         $bookings = DepartmentBookRoom::query()
 //        ->where('requester_id',$request->user()->id)
+            ->where('status',1)
+            ->orderBy('created_at', 'desc')
             ->get()
             ->transform(function ($booking) use ($request) {
                 return [
-                    'creat_at' => $booking->creat_at,
+                    'creat_at' => $booking->create_at,
 //                'can_cancel' => auth()->user()->can('cancel', $booking),
                     'can_cancel' => $request->user()->can('cancel', $booking),
                     'user_id' => $booking->requester_id,
@@ -44,6 +45,10 @@ class DashboardController extends Controller
                     'unit_name' => $booking->user_data->unit->name_th,
                 ];
             });
+
+        $rooms = DepartmentRoom::query()
+            ->whereIn('id', $bookings->pluck('meeting_room_id'))
+            ->get();
         return Inertia::render('Dashboard', [
             'message' => $message,
             'can' => [
