@@ -48,7 +48,8 @@ class DepartmentBookRoom extends Model
             ->where('end_date', '>=', $start);
     }
 
-    public function creatAt(): Attribute
+
+    public function updateAt(): Attribute
     {
         return Attribute::make(
             get: fn() => $this->updated_at->thaidate('j F Y'),
@@ -56,10 +57,17 @@ class DepartmentBookRoom extends Model
 
     }
 
-    public function durationText(): Attribute
+    public function dateBookedText(): Attribute
     {
         return Attribute::make(
-            get: fn() => 'เมื่อ ' . $this->start_date->thaidate('j F Y เวลา H:i') . ' ถึง ' . $this->end_date->format('H:i'),
+            get: fn() => $this->start_date->thaidate('j F Y'),
+        );
+    }
+
+    public function timeBookedText(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->start_date->format('H:i') . ' ถึง ' . $this->end_date->format('H:i'),
         );
     }
 
@@ -78,14 +86,14 @@ class DepartmentBookRoom extends Model
     public function attendeeText(): Attribute
     {
         return Attribute::make(
-            get: fn() => 'จำนวนผู้เข้าร่วม ' . $this->attendees . ' คน',
+            get: fn() => $this->attendees,
         );
     }
 
     public function topicText(): Attribute
     {
         return Attribute::make(
-            get: fn() => 'หัวข้อการประชุม ' . $this->topic,
+            get: fn() => $this->topic,
 
         );
     }

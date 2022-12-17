@@ -4,10 +4,10 @@ namespace App\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 
-class BookingStatus implements CastsAttributes
+class QuestionnaireStatus implements CastsAttributes
 {
-    protected $statuses = ['', 'booked', 'approved', 'corrected', 'canceled', 'disapproved'];
-    protected $statusesThai = ['', 'รออนุมัติ', 'อนุมัติ', 'ถูกแก้ไข', 'ถูกยกเลิก', 'ไม่อนุมัติ'];
+    protected $statuses = ['', 'wait for record', 'recorded', 'corrected'];
+    protected $statusesThai = ['', 'รอบันทึก', 'บันทึก', 'ถูกแก้ไข'];
     protected $occupiedRawStatuses = [1, 2]; // 'booked', 'approved'
 
     /**

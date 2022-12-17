@@ -23,21 +23,21 @@ Route::controller(LoginController::class)->group(function(){
     Route::delete('/login', 'destroy')->name('loginDestroy')->middleware(['auth']);
 });
 
-Route::controller(RegisterController::class)->group(function(){
+Route::controller(RegisterController::class)->middleware(['guest'])->group(function(){
     Route::get('/register', 'create')->name('register');
     Route::post('/register', 'store')->name('registerStore');
-})->middleware(['guest']);
+});
 
-Route::controller(FormBookedRoomController::class)->group(function(){
+Route::controller(FormBookedRoomController::class)->middleware(['auth'])->group(function(){
     Route::get('/formBookRoom','create')->name('formBookedRoom');
     Route::post('/checkCondition','checkCondition')->name('formBookedRoomCheckCondition');
     Route::post('/formBookRoom','store')->name('formBookedRoomStore');
-})->middleware(['auth']);
+});
 
-Route::controller(FormBookedRoomInsteadController::class)->group(function(){
+Route::controller(FormBookedRoomInsteadController::class)->middleware(['auth'])->group(function(){
    Route::get('/formBookRoomInstead', 'create')->name('formBookRoomInstead');
-})->middleware(['auth']);
+});
 
-Route::controller(ListBookedRoomController::class)->group(function(){
+Route::controller(ListBookedRoomController::class)->middleware(['auth'])->group(function(){
    Route::get('/listBookedRoom', 'index')->name('listBooked');
-})->middleware(['auth']);
+});

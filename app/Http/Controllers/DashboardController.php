@@ -16,14 +16,15 @@ class DashboardController extends Controller
         /*if (!$message){
             return Inertia::render('Dashboard');
         }*/
-        $user = request()->user();
-        $rooms = DepartmentRoom::query()->get();
+
         $bookings = DepartmentBookRoom::query()
 //        ->where('requester_id',$request->user()->id)
+            ->where('status',1)
+            ->orderBy('created_at', 'desc')
             ->get()
             ->transform(function ($booking) use ($request) {
                 return [
-                    'creat_at' => $booking->creat_at,
+                    'update_at' => $booking->update_at,
 //                'can_cancel' => auth()->user()->can('cancel', $booking),
                     'can_cancel' => $request->user()->can('cancel', $booking),
                     'user_id' => $booking->requester_id,
@@ -31,7 +32,8 @@ class DashboardController extends Controller
                     'set_room_text' => $booking->set_room_text,
                     'medicineroom_text' => $booking->medicineroom_text,
                     'meeting_room_id' => $booking->meeting_room_id,
-                    'duration_text' => $booking->duration_text,
+                    'date_booked_text' => $booking->date_booked_text,
+                    'time_booked_text' => $booking->time_booked_text,
                     'attendee_text' => $booking->attendee_text,
                     'topic_text' => $booking->topic_text,
                     'description_text' => $booking->description_text,
@@ -44,6 +46,10 @@ class DashboardController extends Controller
                     'unit_name' => $booking->user_data->unit->name_th,
                 ];
             });
+
+        $rooms = DepartmentRoom::query()
+            ->whereIn('id', $bookings->pluck('meeting_room_id'))
+            ->get();
         return Inertia::render('Dashboard', [
             'message' => $message,
             'can' => [
