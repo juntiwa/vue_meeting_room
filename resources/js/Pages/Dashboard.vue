@@ -25,6 +25,8 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100" v-for="(booking, key) in bookings" :key="key">
                 <tr v-if="booking.meeting_room_id === room.id"
+                    @click="modalData(booking)"
+                    class="cursor-pointer hover:bg-slate-100"
                     :class="{
                             'bg-white' : booking.status_locale === 'รออนุมัติ',
                             'bg-teal-100' : booking.status_locale === 'อนุมัติ',
@@ -33,8 +35,8 @@
                             'text-green-600' : booking.status_locale === 'ไม่อนุมัติ'
                         }"
                 >
-                    <td class="p-3 text-center align-text-top"> {{ ++key }} </td>
-                    <td class="p-3 text-center align-text-top whitespace-nowrap"> {{ booking.date_booked_text }} </td>
+                    <td class="p-3 text-center align-text-top"> {{ ++key }}</td>
+                    <td class="p-3 text-center align-text-top whitespace-nowrap"> {{ booking.date_booked_text }}</td>
                     <td class="p-3 text-center align-text-top whitespace-nowrap">{{ booking.time_booked_text }}</td>
                     <td class="p-3 align-text-top">{{ booking.topic_text }}</td>
                     <td class="p-3 text-center align-text-top">{{ booking.attendee_text }}</td>
@@ -45,21 +47,13 @@
                     <td class="p-3 align-text-top">{{ booking.food_text }}</td>
                     <td class="p-3 align-text-top whitespace-nowrap">{{ booking.update_at }}</td>
                     <td class="p-3 align-text-top whitespace-nowrap flex flex-col">
-                        <ButtonComponent buttonText="อนุมัติ"
-                                         @click="approveStatusUpdate"
-                                         v-model="form.status"
+                        <ButtonComponent buttonText="อนุมัติ" @click="approveStatusUpdate" v-model="form.status"
                                          class="bg-teal-600 text-white"/>
-                        <ButtonComponent buttonText="แก้ไข"
-                                         @click="correctStatusUpdate"
-                                         v-model="form.status"
+                        <ButtonComponent buttonText="แก้ไข" @click="correctStatusUpdate" v-model="form.status"
                                          class="bg-amber-500 text-white"/>
-                        <ButtonComponent buttonText="ไม่อนุมัติ"
-                                         @click="cancelStatusUpdate"
-                                         v-model="form.status"
+                        <ButtonComponent buttonText="ไม่อนุมัติ" @click="cancelStatusUpdate" v-model="form.status"
                                          class="bg-red-500 text-white"/>
-                        <ButtonComponent buttonText="ยกเลิก"
-                                         @click="disapproveStatusUpdate"
-                                         v-model="form.status"
+                        <ButtonComponent buttonText="ยกเลิก" @click="disapproveStatusUpdate" v-model="form.status"
                                          class="bg-orange-500 text-white"/>
                     </td>
                 </tr>
@@ -155,6 +149,50 @@ if (props.message === 'true') {
     })
 }
 
+function modalData(booking) {
+    console.log(booking)
+    swal.fire({
+        title: 'ข้อมูลการจอง เพิ่มเติม',
+        icon: 'info',
+        html:
+            '<div class="text-left">' +
+            'บันทึกข้อมูลเมื่อ : ' + booking.update_at +
+            '<br/> วันเดือนปีที่จอง : ' + booking.date_booked_text + 'เวลา' + booking.time_booked_text +
+            '<br/> บันทึกข้อมูลเมื่อ : ' + booking.update_at +
+            '<br/> and other HTML tags'+ booking.update_at +
+            'You can use <b>bold text</b>, ' +
+            '<a href="//sweetalert2.github.io">links</a> ' +
+            'and other HTML tags'+ booking.update_at +
+            'You can use <b>bold text</b>, ' +
+            '<a href="//sweetalert2.github.io">links</a> ' +
+            'and other HTML tags'+ booking.update_at +
+            '</div>',
+        showConfirmButton: true,
+        showDenyButton: true,
+        showCancelButton: true,
+        showCloseButton: true,
+        confirmButtonText: 'อนุมัติ',
+        cancelButtonText: 'ยกเลิกการจอง',
+        denyButtonText: 'ไม่อนุมัติ',
+        confirmButtonColor: '#0d9488',
+        cancelButtonColor: '#f59e06',
+        denyButtonColor: '#ef4444',
+        customClass: 'swal-wide',
+
+    }).then((result) => {
+        if (result.isConfirmed) {
+            swal.fire({
+                    title: 'Deleted!',
+                    text: "You won't be able to revert this!",
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500
+                }
+            )
+        }
+    })
+}
+
 const form = useForm({
     status: null
 })
@@ -168,6 +206,7 @@ const correctStatusUpdate = () => {
         title: 'Are you sure?',
         text: "You won't be able to revert this!",
         icon: 'warning',
+
         showCancelButton: true,
         confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
