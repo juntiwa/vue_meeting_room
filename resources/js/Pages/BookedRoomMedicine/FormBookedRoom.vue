@@ -1,12 +1,7 @@
 <template>
 
     <div class="m-3">
-        {{ props.message }}
-        Welcome ยินดีต้อนรับ {{ $page.props.auth.user.full_name }} <br>
-        <ButtonComponent type="button"
-                         class="bg-rose-500 hover:bg-rose-600 text-white"
-                         @click="$inertia.delete(route('loginDestroy'))"
-                         buttonText="logout"/>
+        <Layout :can="can"/>
         <br>
         ระบบจองห้องประชุม
         <section id="condition" class="flex flex-col">
@@ -239,7 +234,9 @@ import {useForm} from "@inertiajs/inertia-vue3";
 import {computed, ref, watch} from "vue";
 import dayjs from "dayjs";
 import InputCheckboxComponentComposition from "../../Components/InputCheckboxComponentComposition";
+import Layout from "../../Layouts/Layout";
 
+const props = defineProps(['message', 'can']);
 const form = useForm({
     start_date: null,
     end_date: null,
@@ -272,7 +269,6 @@ const form = useForm({
 })
 const result = ref([]);
 const purposes = ref([]);
-const props = defineProps(['message']);
 const checkCondition = () => {
     result.value = [];
     form.meeting_room_id = null;
