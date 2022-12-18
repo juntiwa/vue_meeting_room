@@ -64,10 +64,6 @@ class DashboardController extends Controller
             ->get();
         return Inertia::render('Dashboard', [
             'message' => $message,
-            'can' => [
-                "booked_room_instead_case" => $request->user()->can('booked_room_instead_case'),
-                "booked_room_case" => $request->user()->can('booked_room_case'),
-            ],
             'bookings' => $bookings,
             'rooms' => $rooms
         ]);

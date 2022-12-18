@@ -1,7 +1,6 @@
 <template>
-    <Layout :can="can"/>
-
     <div class="m-3">
+        <Layout :can="can"/>
         <div v-for="(room, keyroom) in rooms" :key="keyroom">
             <h1 class="font-medium text-center text-xl mt-7 mb-5">{{ room.name_th }}</h1>
             <div class="overflow-auto rounded-lg shadow hidden md:block">
@@ -32,8 +31,11 @@
                             'text-green-600' : booking.status_locale === 'ไม่อนุมัติ'
                         }"
                     >
-                        <td class="p-3 text-center align-text-top"> {{ ++key }} </td>
-                        <td class="p-3 text-center align-text-top whitespace-nowrap"> {{ booking.date_booked_text }} </td>
+                        <td class="p-3 text-center align-text-top"> {{ ++key }}</td>
+                        <td class="p-3 text-center align-text-top whitespace-nowrap"> {{
+                                booking.date_booked_text
+                            }}
+                        </td>
                         <td class="p-3 text-center align-text-top whitespace-nowrap">{{ booking.time_booked_text }}</td>
                         <td class="p-3 align-text-top">{{ booking.topic_text }}</td>
                         <td class="p-3 text-center align-text-top">{{ booking.attendee_text }}</td>
@@ -112,7 +114,6 @@
             </div>
         </div>
     </div>
-
 
 
 </template>

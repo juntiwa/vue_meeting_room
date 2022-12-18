@@ -44,14 +44,14 @@ class HandleInertiaRequests extends Middleware
             'auth.user' => fn () => $request->user()
                 ? $request->user()->only('full_name')
                 : null,
-            /*'can' => [
-                'view_any' => fn () => $request->user()
-                    ? $request->user()->abilities->contains('view_any_cases')
-                    : null,
-                'booked_instead' => fn () => $request->user()
+            'can' => [
+                'booked_room_instead_case' => fn () => $request->user()
                     ? $request->user()->abilities->contains('booked_room_instead_case')
                     : null,
-            ]*/
+                'booked_room_case' => fn () => $request->user()
+                    ? $request->user()->abilities->contains('booked_room_case')
+                    : null,
+            ]
         ]);
     }
 }
