@@ -48,26 +48,41 @@ class DepartmentBookRoom extends Model
             ->where('end_date', '>=', $start);
     }
 
-
-    public function updateAt(): Attribute
+    //for table
+    public function createAt(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->updated_at->thaidate('j F Y'),
+            get: fn() => $this->created_at->thaidate('j F Y'),
         );
 
     }
 
-    public function dateBookedText(): Attribute
-    {
+    public function date(): Attribute{
         return Attribute::make(
             get: fn() => $this->start_date->thaidate('j F Y'),
         );
     }
 
-    public function timeBookedText(): Attribute
+    public function time(): Attribute
     {
         return Attribute::make(
             get: fn() => $this->start_date->format('H:i') . ' ถึง ' . $this->end_date->format('H:i'),
+        );
+    }
+
+    // for modal
+    public function createAtText(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => 'บันทึกข้อมูลเมื่อ : ' . $this->created_at->thaidate('j F Y'),
+        );
+
+    }
+
+    public function datetimeBookedText(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => 'วันเดือนปีที่จอง : ' . $this->start_date->thaidate('j F Y') . ' เวลา ' . $this->start_date->format('H:i น.') . ' ถึง ' . $this->end_date->format('H:i น.'),
         );
     }
 
@@ -79,21 +94,21 @@ class DepartmentBookRoom extends Model
     public function medicineroomText(): Attribute
     {
         return Attribute::make(
-            get: fn() => 'จองห้อง' . $this->medicineroom->name_th,
+            get: fn() => 'ห้องประชุม : ' . $this->medicineroom->name_th,
         );
     }
 
     public function attendeeText(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->attendees,
+            get: fn() => ' ผู้เข้าร่วมจำนวน : ' . $this->attendees . ' คน',
         );
     }
 
     public function topicText(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->topic,
+            get: fn() => 'หัวข้อการประชุม : ' . $this->topic,
 
         );
     }
@@ -101,7 +116,7 @@ class DepartmentBookRoom extends Model
     public function descriptionText(): Attribute
     {
         return Attribute::make(
-            get: fn() => 'รายละเอียดการประชุม ' . $this->description,
+            get: fn() => 'รายละเอียดการประชุม : ' . $this->description,
 
         );
     }
@@ -114,7 +129,7 @@ class DepartmentBookRoom extends Model
     public function purposeText(): Attribute
     {
         return Attribute::make(
-            get: fn() => 'ใช้สำหรับ ' . $this->purpose->name_th,
+            get: fn() => 'วัตถุประสงค์การใช้งาน : ' . $this->purpose->name_th,
         );
     }
 
@@ -127,7 +142,7 @@ class DepartmentBookRoom extends Model
                     return 'ไม่ต้องจัดห้อง';
                 }
 
-                return 'มีการขอให้จัดห้องแบบ ' . $setRoom['type_table'];
+                return ' จัดห้องแบบ : ' . $setRoom['type_table'];
             }
         );
     }
@@ -176,6 +191,13 @@ class DepartmentBookRoom extends Model
     {
         return Attribute::make(
             get: fn() => $this->users,
+        );
+    }
+
+    public function requesterText(): Attribute
+    {
+        return Attribute::make(
+          get: fn() => 'บันทึกข้อมูลโดย ' . $this->users->full_name . ' หน่วยงาน ' . $this->users->unit->name_th,
         );
     }
 
