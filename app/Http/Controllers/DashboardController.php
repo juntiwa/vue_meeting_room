@@ -31,17 +31,11 @@ class DashboardController extends Controller
                     'time' => $booking->time,
                     'unit_name' => $booking->user_data->unit->name_th,
 
-                    //for popup
                     'can_cancel' => $request->user()->can('cancel', $booking),
-                    'create_at_text' => $booking->create_at_text,
-                    'datetime_booked_text' => $booking->datetime_booked_text,
-                    'medicineroom_text' => $booking->medicineroom_text,
-                    'attendee_text' => $booking->attendee_text,
-                    'set_room_text' => $booking->set_room_text,
-                    'topic_text' => $booking->topic_text,
-                    'description_text' => $booking->description_text,
-                    'purpose_text' => $booking->purpose_text,
-                    'requester_text' => $booking->requester_text,
+
+                    //for popup
+                    'data_popup' => $booking->data_popup,
+
 
                     //for secound
                     'equipment_text' => $booking->equipment_text,

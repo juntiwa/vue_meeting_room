@@ -149,18 +149,7 @@ if (props.message === 'true') {
 function modalData(booking) {
     swal.fire({
         icon: 'info',
-        html: '<h1 class="text-3xl font-medium"> ข้อมูลเพิ่มเติม </h1>' +
-            '<div class="text-right">' + booking.create_at_text +
-            '<br/>' + '</div> <div class="text-left">' +
-            '<br/>' + booking.datetime_booked_text +
-            '<br/>' + booking.medicineroom_text + booking.set_room_text +
-            '<br/>' + booking.topic_text +
-            '<br/>' + booking.description_text +
-            '<br/>' + booking.purpose_text +
-            '<br/>' + booking.equipment_text +
-            '<br/>' + booking.food_text +
-            '<br/>' + booking.requester_text +
-            '</div>',
+        html: booking.data_popup,
         showConfirmButton: true,
         showDenyButton: true,
         showCancelButton: true,

@@ -57,7 +57,8 @@ class DepartmentBookRoom extends Model
 
     }
 
-    public function date(): Attribute{
+    public function date(): Attribute
+    {
         return Attribute::make(
             get: fn() => $this->start_date->thaidate('j F Y'),
         );
@@ -71,18 +72,22 @@ class DepartmentBookRoom extends Model
     }
 
     // for modal
-    public function createAtText(): Attribute
+    public function users()
     {
-        return Attribute::make(
-            get: fn() => 'บันทึกข้อมูลเมื่อ : ' . $this->created_at->thaidate('j F Y'),
-        );
-
+        return $this->belongsTo(User::class, 'requester_id');
     }
 
-    public function datetimeBookedText(): Attribute
+    public function userData(): Attribute
     {
         return Attribute::make(
-            get: fn() => 'วันเดือนปีที่จอง : ' . $this->start_date->thaidate('j F Y') . ' เวลา ' . $this->start_date->format('H:i น.') . ' ถึง ' . $this->end_date->format('H:i น.'),
+            get: fn() => $this->users,
+        );
+    }
+
+    public function requesterText(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => 'บันทึกข้อมูลโดย ' . $this->users->full_name . '<br/> หน่วยงาน ' . $this->users->unit->name_th,
         );
     }
 
@@ -91,46 +96,9 @@ class DepartmentBookRoom extends Model
         return $this->belongsTo(DepartmentRoom::class, 'meeting_room_id');
     }
 
-    public function medicineroomText(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => 'ห้องประชุม : ' . $this->medicineroom->name_th,
-        );
-    }
-
-    public function attendeeText(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => ' ผู้เข้าร่วมจำนวน : ' . $this->attendees . ' คน',
-        );
-    }
-
-    public function topicText(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => 'หัวข้อการประชุม : ' . $this->topic,
-
-        );
-    }
-
-    public function descriptionText(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => 'รายละเอียดการประชุม : ' . $this->description,
-
-        );
-    }
-
     public function purpose()
     {
         return $this->belongsTo(DepartmentPurposeBookRoom::class, 'purpose_id');
-    }
-
-    public function purposeText(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => 'วัตถุประสงค์การใช้งาน : ' . $this->purpose->name_th,
-        );
     }
 
     public function setRoomText(): Attribute
@@ -167,7 +135,7 @@ class DepartmentBookRoom extends Model
             get: function () {
                 $food = $this->food;
                 if (!$food['status']) {
-                    return 'ไม่ต้องการอาหาร';
+                    return '-';
                 }
 
                 return 'ต้องการอาหาร ' . $food['lunch'];
@@ -182,25 +150,24 @@ class DepartmentBookRoom extends Model
         );
     }
 
-    public function users()
-    {
-        return $this->belongsTo(User::class, 'requester_id');
-    }
-
-    public function userData(): Attribute
+    public function dataPopup(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->users,
+            get: fn() => '<h1 class="text-3xl font-medium"> ข้อมูลเพิ่มเติม </h1>'
+                . '<div class="text-right"> บันทึกข้อมูลเมื่อ ' . $this->created_at->thaidate('j F Y')
+                . '<br/><br/> โดย ' . $this->users->full_name
+                . '<br/>' . $this->users->unit->name_th . '</div>'
+                . '<div class="text-left p-3 line-height">' . 'สถานะ : ' . $this->status_locale
+                . '<br/> หัวข้อการประชุม : ' . $this->topic
+                . '<br/> วันเดือนปี : ' . $this->start_date->thaidate('วันl ที่ j F Y') . ' เวลา ' . $this->start_date->format('H:i น.') . ' ถึง ' . $this->end_date->format('H:i น.')
+                . '<br/> ห้องประชุม : ' . $this->medicineroom->name_th . ' ผู้เข้าร่วมจำนวน : ' . $this->attendees . ' คน ' . $this->set_room_text
+                . '<br/> รายละเอียดการประชุม : ' . $this->description
+                . '<br/> วัตถุประสงค์การใช้งาน : ' . $this->purpose->name_th . '</div>'
+                . '<div class="text-left p-3 line-height"> อื่น ๆ '
+                . '<br/> อุปกรณ์ : ' . $this->equipment_text
+                . '<br/> อาหาร, เครื่องดื่ม : ' . $this->food_text . '</div>'
+
         );
     }
-
-    public function requesterText(): Attribute
-    {
-        return Attribute::make(
-          get: fn() => 'บันทึกข้อมูลโดย ' . $this->users->full_name . ' หน่วยงาน ' . $this->users->unit->name_th,
-        );
-    }
-
-
 
 }
