@@ -205,4 +205,14 @@ class FormBookedRoomController extends Controller
         session()->put('message',$message);
         return redirect()->route('dashboard');
     }
+
+    public function update(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:department_book_rooms,id',
+            'status' => 'required',
+            'reason' => 'nullable'
+        ]);
+        return $validated;
+    }
 }

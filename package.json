@@ -21,6 +21,7 @@
         "@inertiajs/progress": "^0.2.7",
         "@vitejs/plugin-vue": "^3.2.0",
         "dayjs": "^1.11.6",
+        "jquery": "^3.6.2",
         "sweetalert2": "^11.6.14"
     }
 }

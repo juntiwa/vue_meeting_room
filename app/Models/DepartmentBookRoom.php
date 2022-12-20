@@ -52,14 +52,16 @@ class DepartmentBookRoom extends Model
     public function createAt(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->created_at->thaidate('j F Y'),
+            get: fn() => $this->created_at->thaidate('d/m/y'),
         );
 
     }
 
-    public function date(): Attribute{
+    public function date(): Attribute
+    {
         return Attribute::make(
-            get: fn() => $this->start_date->thaidate('j F Y'),
+//            get: fn() => $this->start_date->thaidate('j F Y'),
+            get: fn() => $this->start_date->thaidate('d/m/y'),
         );
     }
 
@@ -71,18 +73,20 @@ class DepartmentBookRoom extends Model
     }
 
     // for modal
-    public function createAtText(): Attribute
+    public function users()
     {
-        return Attribute::make(
-            get: fn() => 'บันทึกข้อมูลเมื่อ : ' . $this->created_at->thaidate('j F Y'),
-        );
-
+        return $this->belongsTo(User::class, 'requester_id');
     }
 
-    public function datetimeBookedText(): Attribute
+    public function unit()
+    {
+        return $this->belongsTo(UnitInner::class, 'unit_id', 'id');
+    }
+
+    public function userData(): Attribute
     {
         return Attribute::make(
-            get: fn() => 'วันเดือนปีที่จอง : ' . $this->start_date->thaidate('j F Y') . ' เวลา ' . $this->start_date->format('H:i น.') . ' ถึง ' . $this->end_date->format('H:i น.'),
+            get: fn() => $this->users,
         );
     }
 
@@ -91,46 +95,9 @@ class DepartmentBookRoom extends Model
         return $this->belongsTo(DepartmentRoom::class, 'meeting_room_id');
     }
 
-    public function medicineroomText(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => 'ห้องประชุม : ' . $this->medicineroom->name_th,
-        );
-    }
-
-    public function attendeeText(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => ' ผู้เข้าร่วมจำนวน : ' . $this->attendees . ' คน',
-        );
-    }
-
-    public function topicText(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => 'หัวข้อการประชุม : ' . $this->topic,
-
-        );
-    }
-
-    public function descriptionText(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => 'รายละเอียดการประชุม : ' . $this->description,
-
-        );
-    }
-
     public function purpose()
     {
         return $this->belongsTo(DepartmentPurposeBookRoom::class, 'purpose_id');
-    }
-
-    public function purposeText(): Attribute
-    {
-        return Attribute::make(
-            get: fn() => 'วัตถุประสงค์การใช้งาน : ' . $this->purpose->name_th,
-        );
     }
 
     public function setRoomText(): Attribute
@@ -152,11 +119,50 @@ class DepartmentBookRoom extends Model
         return Attribute::make(
             get: function () {
                 $equipment = $this->equipment;
-                if ($equipment['computer'] === 0) {
-                    return 'ไม่ต้องการ';
-                }
+                if ($equipment['sound'] === "0" && $equipment['computer'] === "0" && !$equipment['notebook']
+                    && $equipment['visualizer'] === "0" && $equipment['lcdprojector'] === "0" && !$equipment['other']) {
+                    return $data = false;
+                } else {
+                    $data = null;
+                    if ($equipment['sound'] !== "0") {
+                        if ($data != null){
+                            $data = $data . ', ';
+                        }
+                        $data ='ระบบเสียง ' . $equipment['sound']. "\n";
+                    }
+                    if ($equipment['computer'] !== "0") {
+                        if ($data != null){
+                            $data = $data . ', ';
+                        }
+                        $data = $data.',' . 'คอมพิวเตอร์ ' . $equipment['computer']. "\n";
+                    }
+                    if ($equipment['notebook']) {
+                        if ($data != null){
+                            $data = $data . ', ';
+                        }
+                        $data = $data . 'นำ notebook มาเอง'. "\n";
+                    }
+                    if ($equipment['visualizer'] !== "0") {
+                        if ($data != null){
+                            $data = $data . ', ';
+                        }
+                        $data = $data . 'visualizer ' . $equipment['visualizer']. "\n";
+                    }
+                    if ($equipment['lcdprojector'] !== "0") {
+                        if ($data != null){
+                            $data = $data . ', ';
+                        }
+                        $data = $data . 'projector ' . $equipment['lcdprojector']. "\n";
+                    }
+                    if ($equipment['other'] !== null) {
+                        if ($data != null){
+                            $data = $data . ', ';
+                        }
+                        $data = $data . 'อื่น ๆ ' . $equipment['other']. "\n";
+                    }
 
-                return 'ต้องการ ' . $equipment['computer'];
+                }
+                return $data;
             }
         );
     }
@@ -167,7 +173,7 @@ class DepartmentBookRoom extends Model
             get: function () {
                 $food = $this->food;
                 if (!$food['status']) {
-                    return 'ไม่ต้องการอาหาร';
+                    return $food['status'];
                 }
 
                 return 'ต้องการอาหาร ' . $food['lunch'];
@@ -182,25 +188,41 @@ class DepartmentBookRoom extends Model
         );
     }
 
-    public function users()
-    {
-        return $this->belongsTo(User::class, 'requester_id');
-    }
-
-    public function userData(): Attribute
+    public function descriptionText(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->users,
+            get: function () {
+                $description = $this->description;
+                if (!$description) {
+                    return ' ';
+                }
+
+                return '<br/>  รายละเอียดการประชุม : ' . $description;
+            }
         );
     }
 
-    public function requesterText(): Attribute
+    public function dataPopup(): Attribute
     {
         return Attribute::make(
-          get: fn() => 'บันทึกข้อมูลโดย ' . $this->users->full_name . ' หน่วยงาน ' . $this->users->unit->name_th,
+            get: fn() => '<h1 class="text-3xl font-medium"> ข้อมูลเพิ่มเติม </h1>'
+                . '<div class="text-right"> บันทึกข้อมูลเมื่อ ' . $this->created_at->thaidate('j F Y')
+                . '<br/><br/> โดย ' . $this->users->full_name
+                . '<br/>' . $this->users->unit->name_th
+                . '</div>'
+                . '<div class="text-left p-3 line-height">' . 'สถานะ : ' . $this->status_locale
+                . '<br/> หัวข้อการประชุม : ' . $this->topic
+                . '<br/> วันเดือนปี : ' . $this->start_date->thaidate('วันl ที่ j F Y') . ' เวลา ' . $this->start_date->format('H:i น.') . ' ถึง ' . $this->end_date->format('H:i น.')
+                . '<br/> ห้องประชุม : ' . $this->medicineroom->name_th . ' ผู้เข้าร่วมจำนวน : ' . $this->attendees . ' คน '
+                . $this->description_text
+                . '<br/> วัตถุประสงค์การใช้งาน : ' . $this->purpose->name_th . '</div>'
+                . '<div class="text-left p-3 line-height"> อื่น ๆ '
+                . $this->set_room_text
+                . '<br/> อุปกรณ์ : ' . $this->equipment_text
+                . '<br/> อาหาร, เครื่องดื่ม : ' . $this->food_text . '</div>'
+
+
         );
     }
-
-
 
 }
