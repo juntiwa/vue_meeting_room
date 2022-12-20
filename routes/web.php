@@ -32,6 +32,7 @@ Route::controller(FormBookedRoomController::class)->middleware(['auth'])->group(
     Route::get('/formBookRoom','create')->name('formBookedRoom');
     Route::post('/checkCondition','checkCondition')->name('formBookedRoomCheckCondition');
     Route::post('/formBookRoom','store')->name('formBookedRoomStore');
+    Route::put('/formBookRoom','update')->name('formBookedRoomUpdate');
 });
 
 Route::controller(FormBookedRoomInsteadController::class)->middleware(['auth'])->group(function(){

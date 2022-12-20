@@ -14,7 +14,7 @@
                         <th class="w-24 p-3 font-semibold tracking-wide text-center">วัน เดือน ปี ที่จอง</th>
                         <th class="w-24 p-3 font-semibold tracking-wide text-center">เวลา ที่จอง</th>
                         <th class="w-40 p-3 font-semibold tracking-wide text-left">หัวข้อการประชุม</th>
-                        <th class="w-20 p-3 font-semibold tracking-wide text-center">ผู้เข้าร่วม</th>
+                        <th class="w-12 p-3 font-semibold tracking-wide text-center">ผู้เข้าร่วม</th>
                         <th class="w-24 p-3 font-semibold tracking-wide text-left">หน่วยงาน</th>
                         <th class="w-24 p-3 font-semibold tracking-wide text-center">เบอร์ติดต่อ</th>
                         <th class="w-20 p-3 font-semibold tracking-wide text-left">สถานะ</th>
@@ -22,11 +22,11 @@
                         <th class="w-20 p-3 font-semibold tracking-wide text-left">จัดห้อง</th>
                         <th class="w-20 p-3 font-semibold tracking-wide text-left">อาหาร</th>
                         <th class="w-20 p-3 font-semibold tracking-wide text-left">วันที่บันทึกข้อมูล</th>
+                        <th class="w-20 p-3 font-semibold tracking-wide text-center">แก้ไข</th>
                     </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100" v-for="(booking, key) in bookings" :key="key">
                     <tr v-if="booking.meeting_room_id === room.id"
-                        @click="modalData(booking)"
                         class="cursor-pointer hover:bg-slate-100"
                         :class="{
                             'bg-white' : booking.status_locale === 'รออนุมัติ',
@@ -36,22 +36,41 @@
                             'text-green-600' : booking.status_locale === 'ไม่อนุมัติ'
                         }"
                     >
-                        <td class="p-3 text-center align-text-top"> {{ ++key }}</td>
-                        <td class="p-3 text-center align-text-top whitespace-nowrap"> {{ booking.date }}</td>
-                        <td class="p-3 text-center align-text-top whitespace-nowrap">{{ booking.time }}</td>
-                        <td class="p-3 align-text-top">{{ booking.data_all.topic }}</td>
-                        <td class="p-3 text-center align-text-top">{{ booking.data_all.attendees }}</td>
-                        <td class="p-3 align-text-top">{{ booking.unit_name }}</td>
-                        <td class="p-3 text-center align-text-top whitespace-nowrap">{{
-                                booking.data_all.users.tel
-                            }}
+                        <td class="p-3 text-center align-text-top" @click="modalData(booking)"> {{ ++key }}</td>
+                        <td class="p-3 text-center align-text-top whitespace-nowrap" @click="modalData(booking)">
+                            {{ booking.date }}
                         </td>
-                        <td class="p-3 align-text-top whitespace-nowrap">{{ booking.status_locale }}</td>
-                        <td class="p-3 align-text-top">{{ booking.equipment_text }}</td>
-                        <td class="p-3 align-text-top">{{ booking.data_all.set_room.type_table }}</td>
-                        <td class="p-3 align-text-top">{{ booking.food_text }}</td>
-                        <td class="p-3 align-text-top whitespace-nowrap">{{ booking.create_at }}</td>
-
+                        <td class="p-3 text-center align-text-top whitespace-nowrap" @click="modalData(booking)">
+                            {{ booking.time }}
+                        </td>
+                        <td class="p-3 align-text-top" @click="modalData(booking)">{{ booking.data_all.topic }}</td>
+                        <td class="p-3 text-center align-text-top" @click="modalData(booking)">
+                            {{ booking.data_all.attendees }}
+                        </td>
+                        <td class="p-3 align-text-top" @click="modalData(booking)">
+                            {{ booking.data_all.users.unit.name_th }}
+                        </td>
+                        <td class="p-3 text-center align-text-top whitespace-nowrap" @click="modalData(booking)">
+                            {{ booking.data_all.users.tel }}
+                        </td>
+                        <td class="p-3 align-text-top whitespace-nowrap" @click="modalData(booking)">
+                            {{ booking.status_locale }}
+                        </td>
+                        <td class="p-3 align-text-top" @click="modalData(booking)">{{ booking.equipment_text }}</td>
+                        <td class="p-3 align-text-top" @click="modalData(booking)">
+                            {{ booking.data_all.set_room.type_table }}
+                        </td>
+                        <td class="p-3 align-text-top" @click="modalData(booking)">{{ booking.food_text }}</td>
+                        <td class="p-3 align-text-top whitespace-nowrap" @click="modalData(booking)">
+                            {{ booking.create_at }}
+                        </td>
+                        <td class="p-3  hover:fill-amber-500" @click="edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 class="block m-auto">
+                                <path
+                                    d="M19.045 7.401c.378-.378.586-.88.586-1.414s-.208-1.036-.586-1.414l-1.586-1.586c-.378-.378-.88-.586-1.414-.586s-1.036.208-1.413.585L4 13.585V18h4.413L19.045 7.401zm-3-3 1.587 1.585-1.59 1.584-1.586-1.585 1.589-1.584zM6 16v-1.585l7.04-7.018 1.586 1.586L7.587 16H6zm-2 4h16v2H4z"></path>
+                            </svg>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -145,8 +164,13 @@ if (props.message === 'true') {
         text: 'จองห้องประชุม เสร็จสิ้น'
     })
 }
-
+import $ from 'jquery'
 function modalData(booking) {
+    const form = useForm({
+        id: booking.data_all.id,
+        status: null,
+        reason: null
+    })
     swal.fire({
         icon: 'info',
         html: booking.data_popup,
@@ -164,54 +188,87 @@ function modalData(booking) {
 
     }).then((result) => {
         if (result.isConfirmed) {
+            form.status = 2
+            console.log(form)
+            form.put(window.route('formBookedRoomUpdate'))
             swal.fire({
-                    title: 'Deleted!',
-                    text: "You won't be able to revert this!",
+                    title: 'สำเร็จ !',
+                    text: "อนุมัติการจองสำเร็จ",
                     icon: 'success',
                     showConfirmButton: false,
                     timer: 1500
                 }
             )
         }
-    })
-}
+        if (result.isDenied) {
+            swal.fire({
+                    title: 'กรอกข้อมูล',
+                    text: "กรอกเหตุผลกรณีไม่อนุมัติการจอง",
+                    icon: 'success',
+                    html: '<input type="text" id="reason" class="bg-white w-full border border-slate-500 rounded py-1.5 px-1 mt-2 mb-3"/>',
+                    preConfirm: () => {
+                        if (document.getElementById('reason').value) {
+                            form.status = 4
+                            form.reason = $('#reason').val()
+                            console.log(form)
+                            form.put(window.route('formBookedRoomUpdate'))
 
-const form = useForm({
-    status: null
-})
+                            swal.fire({
+                                    title: 'สำเร็จ !',
+                                    text: "ไม่อนุมัติการจองสำเร็จ",
+                                    icon: 'success',
+                                    showConfirmButton: false,
+                                    timer: 1500
+                                }
+                            )
+                        } else {
+                            swal.showValidationMessage('กรุณากรอกข้อมูล')
+                        }
+                    },
+                    showConfirmButton: true,
+                    showLoaderOnConfirm: true,
+                    confirmButtonText: 'บันทึก',
+                }
+            )
+        }
+        if (result.dismiss === swal.DismissReason.cancel) {
+            swal.fire({
+                title: 'กรอกข้อมูล',
+                text: "กรอกเหตุผลกรณียกเลิกการจอง",
+                icon: 'success',
+                html: '<input type="text" id="reason" v-model="form.reason" class="bg-white w-full border border-slate-500 rounded py-1.5 px-1 mt-2 mb-3"/>',
+                preConfirm: () => {
+                    if (document.getElementById('reason').value) {
+                        form.status = 5
+                        form.reason = $('#reason').val()
+                        console.log(form)
+                        form.put(window.route('formBookedRoomUpdate'))
 
-const approveStatusUpdate = () => {
-    console.log(form.status = 2)
-    // form.post(window.route('approveStore'))
-}
-
-const correctStatusUpdate = () => {
-    console.log(form.status = 3)
-    swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        icon: 'warning',
-
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            swal.fire(
-                'Deleted!',
-                'Your file has been deleted.',
-                'success'
+                        swal.fire({
+                                title: 'สำเร็จ !',
+                                text: "ยกเลิกการจองสำเร็จ",
+                                icon: 'success',
+                                showConfirmButton: false,
+                                timer: 1500
+                            }
+                        )
+                    } else {
+                        swal.showValidationMessage('กรุณากรอกข้อมูล')
+                    }
+                },
+                showConfirmButton: true,
+                showLoaderOnConfirm: true,
+                confirmButtonText: 'บันทึก',
+                }
             )
         }
     })
 }
 
-const cancelStatusUpdate = () => {
-    console.log(form.status = 4)
+
+const edit = () => {
+    console.log(form.status = 2)
+    // form.post(window.route('approveStore'))
 }
 
-const disapproveStatusUpdate = () => {
-    console.log(form.status = 5)
-}
 </script>
