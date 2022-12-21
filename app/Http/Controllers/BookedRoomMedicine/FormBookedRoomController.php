@@ -213,6 +213,9 @@ class FormBookedRoomController extends Controller
             'status' => 'required',
             'reason' => 'nullable'
         ]);
-        return $validated;
+
+        $validated['approver_id'] = $request->user()->id;
+        DepartmentBookRoom::query()->where('id',$validated['id'])->update($validated);
+        return redirect()->route('dashboard');
     }
 }

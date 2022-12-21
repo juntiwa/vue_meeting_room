@@ -106,10 +106,13 @@ class DepartmentBookRoom extends Model
             get: function () {
                 $setRoom = $this->set_room;
                 if (!$setRoom['status']) {
-                    return 'ไม่ต้องจัดห้อง';
+                    return $setRoom['status'];
+                }else{
+                    if($setRoom['type_table'] === 'groups'){
+                        return $setRoom['type_table'] . ' จำนวน ' . $setRoom['number_group']. ' กลุ่ม กลุ่มละ ' . $setRoom['number_group'];
+                    }
+                    return $setRoom['type_table'];
                 }
-
-                return ' จัดห้องแบบ : ' . $setRoom['type_table'];
             }
         );
     }
@@ -121,7 +124,7 @@ class DepartmentBookRoom extends Model
                 $equipment = $this->equipment;
                 if ($equipment['sound'] === "0" && $equipment['computer'] === "0" && !$equipment['notebook']
                     && $equipment['visualizer'] === "0" && $equipment['lcdprojector'] === "0" && !$equipment['other']) {
-                    return $data = false;
+                     $data = false;
                 } else {
                     $data = null;
                     if ($equipment['sound'] !== "0") {
@@ -134,7 +137,7 @@ class DepartmentBookRoom extends Model
                         if ($data != null){
                             $data = $data . ', ';
                         }
-                        $data = $data.',' . 'คอมพิวเตอร์ ' . $equipment['computer']. "\n";
+                        $data = $data. 'คอมพิวเตอร์ ' . $equipment['computer']. "\n";
                     }
                     if ($equipment['notebook']) {
                         if ($data != null){
@@ -174,9 +177,34 @@ class DepartmentBookRoom extends Model
                 $food = $this->food;
                 if (!$food['status']) {
                     return $food['status'];
+                }else{
+                    $data = null;
+                    if ($food['lunch'] !== "0") {
+                        if ($data != null){
+                            $data = $data . ', ';
+                        }
+                        $data ='อาหารกลางวัน ' . $food['lunch']. "\n";
+                    }
+                    if ($food['snack'] !== "0") {
+                        if ($data != null){
+                            $data = $data . ', ';
+                        }
+                        $data = $data. 'อาหารว่าง ' . $food['snack']. "\n";
+                    }
+                    if ($food['drink'] !== "0") {
+                        if ($data != null){
+                            $data = $data . ', ';
+                        }
+                        $data = $data . 'เครื่องดื่ม ' . $food['drink']. "\n";
+                    }
+                    if ($food['note'] !== null) {
+                        if ($data != null){
+                            $data = $data . ', ';
+                        }
+                        $data = $data . 'หมายเหตุ : ' . $food['note']. "\n";
+                    }
+                    return $data;
                 }
-
-                return 'ต้องการอาหาร ' . $food['lunch'];
             }
         );
     }
@@ -205,7 +233,8 @@ class DepartmentBookRoom extends Model
     public function dataPopup(): Attribute
     {
         return Attribute::make(
-            get: fn() => '<h1 class="text-3xl font-medium"> ข้อมูลเพิ่มเติม </h1>'
+            get: function () {
+                $data = '<h1 class="text-3xl font-medium"> ข้อมูลเพิ่มเติม </h1>'
                 . '<div class="text-right"> บันทึกข้อมูลเมื่อ ' . $this->created_at->thaidate('j F Y')
                 . '<br/><br/> โดย ' . $this->users->full_name
                 . '<br/>' . $this->users->unit->name_th
@@ -216,12 +245,22 @@ class DepartmentBookRoom extends Model
                 . '<br/> ห้องประชุม : ' . $this->medicineroom->name_th . ' ผู้เข้าร่วมจำนวน : ' . $this->attendees . ' คน '
                 . $this->description_text
                 . '<br/> วัตถุประสงค์การใช้งาน : ' . $this->purpose->name_th . '</div>'
-                . '<div class="text-left p-3 line-height"> อื่น ๆ '
-                . $this->set_room_text
-                . '<br/> อุปกรณ์ : ' . $this->equipment_text
-                . '<br/> อาหาร, เครื่องดื่ม : ' . $this->food_text . '</div>'
+                . '<div class="text-left p-3 line-height"> อื่น ๆ ';
 
+                if ($this->set_room_text){
+                    $data = $data . '<br/> จัดห้องแบบ : ' . $this->set_room_text;
+                }
 
+                if ($this->equipment_text){
+                    $data = $data . '<br/> อุปกรณ์ : ' . $this->equipment_text;
+                }
+
+                if ($this->food_text){
+                    $data = $data .'<br/> อาหาร, เครื่องดื่ม : ' . $this->food_text . '</div>';
+                }
+
+                return $data;
+            }
         );
     }
 
