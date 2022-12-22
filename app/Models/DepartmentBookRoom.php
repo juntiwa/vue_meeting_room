@@ -100,6 +100,18 @@ class DepartmentBookRoom extends Model
         return $this->belongsTo(DepartmentPurposeBookRoom::class, 'purpose_id');
     }
 
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approver_id');
+    }
+
+    public function approverName(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => $this->approver?->full_name
+        );
+    }
+
     public function setRoomText(): Attribute
     {
         return Attribute::make(
@@ -107,9 +119,9 @@ class DepartmentBookRoom extends Model
                 $setRoom = $this->set_room;
                 if (!$setRoom['status']) {
                     return $setRoom['status'];
-                }else{
-                    if($setRoom['type_table'] === 'groups'){
-                        return $setRoom['type_table'] . ' จำนวน ' . $setRoom['number_group']. ' กลุ่ม กลุ่มละ ' . $setRoom['number_group'];
+                } else {
+                    if ($setRoom['type_table'] === 'groups') {
+                        return $setRoom['type_table'] . ' จำนวน ' . $setRoom['number_group'] . ' กลุ่ม กลุ่มละ ' . $setRoom['number_group'];
                     }
                     return $setRoom['type_table'];
                 }
@@ -124,44 +136,44 @@ class DepartmentBookRoom extends Model
                 $equipment = $this->equipment;
                 if ($equipment['sound'] === "0" && $equipment['computer'] === "0" && !$equipment['notebook']
                     && $equipment['visualizer'] === "0" && $equipment['lcdprojector'] === "0" && !$equipment['other']) {
-                     $data = false;
+                    $data = false;
                 } else {
                     $data = null;
                     if ($equipment['sound'] !== "0") {
-                        if ($data != null){
+                        if ($data != null) {
                             $data = $data . ', ';
                         }
-                        $data ='ระบบเสียง ' . $equipment['sound']. "\n";
+                        $data = 'ระบบเสียง ' . $equipment['sound'] . "\n";
                     }
                     if ($equipment['computer'] !== "0") {
-                        if ($data != null){
+                        if ($data != null) {
                             $data = $data . ', ';
                         }
-                        $data = $data. 'คอมพิวเตอร์ ' . $equipment['computer']. "\n";
+                        $data = $data . 'คอมพิวเตอร์ ' . $equipment['computer'] . "\n";
                     }
                     if ($equipment['notebook']) {
-                        if ($data != null){
+                        if ($data != null) {
                             $data = $data . ', ';
                         }
-                        $data = $data . 'นำ notebook มาเอง'. "\n";
+                        $data = $data . 'นำ notebook มาเอง' . "\n";
                     }
                     if ($equipment['visualizer'] !== "0") {
-                        if ($data != null){
+                        if ($data != null) {
                             $data = $data . ', ';
                         }
-                        $data = $data . 'visualizer ' . $equipment['visualizer']. "\n";
+                        $data = $data . 'visualizer ' . $equipment['visualizer'] . "\n";
                     }
                     if ($equipment['lcdprojector'] !== "0") {
-                        if ($data != null){
+                        if ($data != null) {
                             $data = $data . ', ';
                         }
-                        $data = $data . 'projector ' . $equipment['lcdprojector']. "\n";
+                        $data = $data . 'projector ' . $equipment['lcdprojector'] . "\n";
                     }
                     if ($equipment['other'] !== null) {
-                        if ($data != null){
+                        if ($data != null) {
                             $data = $data . ', ';
                         }
-                        $data = $data . 'อื่น ๆ ' . $equipment['other']. "\n";
+                        $data = $data . 'อื่น ๆ ' . $equipment['other'] . "\n";
                     }
 
                 }
@@ -177,31 +189,31 @@ class DepartmentBookRoom extends Model
                 $food = $this->food;
                 if (!$food['status']) {
                     return $food['status'];
-                }else{
+                } else {
                     $data = null;
                     if ($food['lunch'] !== "0") {
-                        if ($data != null){
+                        if ($data != null) {
                             $data = $data . ', ';
                         }
-                        $data ='อาหารกลางวัน ' . $food['lunch']. "\n";
+                        $data = 'อาหารกลางวัน ' . $food['lunch'] . "\n";
                     }
                     if ($food['snack'] !== "0") {
-                        if ($data != null){
+                        if ($data != null) {
                             $data = $data . ', ';
                         }
-                        $data = $data. 'อาหารว่าง ' . $food['snack']. "\n";
+                        $data = $data . 'อาหารว่าง ' . $food['snack'] . "\n";
                     }
                     if ($food['drink'] !== "0") {
-                        if ($data != null){
+                        if ($data != null) {
                             $data = $data . ', ';
                         }
-                        $data = $data . 'เครื่องดื่ม ' . $food['drink']. "\n";
+                        $data = $data . 'เครื่องดื่ม ' . $food['drink'] . "\n";
                     }
                     if ($food['note'] !== null) {
-                        if ($data != null){
+                        if ($data != null) {
                             $data = $data . ', ';
                         }
-                        $data = $data . 'หมายเหตุ : ' . $food['note']. "\n";
+                        $data = $data . 'หมายเหตุ : ' . $food['note'] . "\n";
                     }
                     return $data;
                 }
@@ -209,10 +221,29 @@ class DepartmentBookRoom extends Model
         );
     }
 
+
     public function statusLocale(): Attribute
     {
         return Attribute::make(
             get: fn() => (new BookingStatus)->getStatusLocale($this->attributes['status']),
+        );
+    }
+
+    public function statusText(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $status = (new BookingStatus)->getStatusLocale($this->attributes['status']);
+                if ($status === 'รออนุมัติ') {
+                    return '';
+                } else {
+                    $data = ' โดย ' . $this->approverName;
+                    if ($this->reason !== null){
+                        $data = $data . ' เพราะ ' . $this->reason;
+                    }
+                    return $data;
+                }
+            },
         );
     }
 
@@ -235,28 +266,42 @@ class DepartmentBookRoom extends Model
         return Attribute::make(
             get: function () {
                 $data = '<h1 class="text-3xl font-medium"> ข้อมูลเพิ่มเติม </h1>'
-                . '<div class="text-right"> บันทึกข้อมูลเมื่อ ' . $this->created_at->thaidate('j F Y')
-                . '<br/><br/> โดย ' . $this->users->full_name
-                . '<br/>' . $this->users->unit->name_th
-                . '</div>'
-                . '<div class="text-left p-3 line-height">' . 'สถานะ : ' . $this->status_locale
-                . '<br/> หัวข้อการประชุม : ' . $this->topic
-                . '<br/> วันเดือนปี : ' . $this->start_date->thaidate('วันl ที่ j F Y') . ' เวลา ' . $this->start_date->format('H:i น.') . ' ถึง ' . $this->end_date->format('H:i น.')
-                . '<br/> ห้องประชุม : ' . $this->medicineroom->name_th . ' ผู้เข้าร่วมจำนวน : ' . $this->attendees . ' คน '
-                . $this->description_text
-                . '<br/> วัตถุประสงค์การใช้งาน : ' . $this->purpose->name_th . '</div>'
-                . '<div class="text-left p-3 line-height"> อื่น ๆ ';
+                    . '<div class="text-right"> บันทึกข้อมูลเมื่อ ' . $this->created_at->thaidate('j F Y')
+                    . '<br/><br/> โดย ' . $this->users->full_name
+                    . '<br/>' . $this->users->unit->name_th
+                    . '</div>'
+                    . '<div class="text-left p-3 line-height"> <div class="flex gap-2">';
 
-                if ($this->set_room_text){
+                if ($this->status_locale === 'รออนุมัติ') {
+                    $data = $data . ' <p class="text-amber-500"> ' . $this->status_locale . '</p>';
+                }
+                if ($this->status_locale === 'อนุมัติ') {
+                    $data = $data . ' <p class="text-teal-600"> ' . $this->status_locale  . '</p>' . $this->status_text;
+                }
+                if ($this->status_locale === 'ถูกแก้ไข') {
+                    $data = $data . ' <p class="text-amber-500"> ' . $this->status_locale  . '</p>' . $this->status_text;
+                }
+                if ($this->status_locale === 'ถูกยกเลิก' || $this->status_locale === 'ไม่อนุมัติ') {
+                    $data = $data . ' <p class="text-red-600"> ' . $this->status_locale  . '</p>' . $this->status_text;
+                }
+
+                $data = $data . '</div> <br/> หัวข้อการประชุม : ' . $this->topic
+                    . '<br/> วันเดือนปี : ' . $this->start_date->thaidate('วันl ที่ j F Y') . ' เวลา ' . $this->start_date->format('H:i น.') . ' ถึง ' . $this->end_date->format('H:i น.')
+                    . '<br/> ห้องประชุม : ' . $this->medicineroom->name_th . ' ผู้เข้าร่วมจำนวน : ' . $this->attendees . ' คน '
+                    . $this->description_text
+                    . '<br/> วัตถุประสงค์การใช้งาน : ' . $this->purpose->name_th . '</div>'
+                    . '<div class="text-left p-3 line-height"> อื่น ๆ ';
+
+                if ($this->set_room_text) {
                     $data = $data . '<br/> จัดห้องแบบ : ' . $this->set_room_text;
                 }
 
-                if ($this->equipment_text){
+                if ($this->equipment_text) {
                     $data = $data . '<br/> อุปกรณ์ : ' . $this->equipment_text;
                 }
 
-                if ($this->food_text){
-                    $data = $data .'<br/> อาหาร, เครื่องดื่ม : ' . $this->food_text . '</div>';
+                if ($this->food_text) {
+                    $data = $data . '<br/> อาหาร, เครื่องดื่ม : ' . $this->food_text . '</div>';
                 }
 
                 return $data;

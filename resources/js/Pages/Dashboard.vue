@@ -164,8 +164,8 @@
 </template>
 <script setup>
 import Layout from "../Layouts/Layout";
-import ButtonComponent from "../Components/ButtonComponent";
 import {useForm} from "@inertiajs/inertia-vue3";
+import $ from 'jquery';
 
 const props = defineProps(['message', 'can', 'bookings', 'rooms']);
 if (props.message === 'true') {
@@ -187,7 +187,6 @@ if (props.message === 'true') {
         text: 'จองห้องประชุม เสร็จสิ้น'
     })
 }
-import $ from 'jquery'
 function modalData(booking) {
     const form = useForm({
         id: booking.data_all.id,
@@ -287,7 +286,6 @@ function modalData(booking) {
         }
     })
 }
-
 
 const edit = () => {
     console.log('test edit')
