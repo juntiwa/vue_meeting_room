@@ -34,7 +34,7 @@ class DashboardController extends Controller
                     'can_cancel' => $request->user()->can('cancel', $booking),
                     'equipment_text' => $booking->equipment_text,
                     'food_text' => $booking->food_text,
-                    'set_room' => $booking->set_room,
+                    'set_room_text' => $booking->set_room_text,
 
                     'status_locale' => $booking->status_locale,
 
