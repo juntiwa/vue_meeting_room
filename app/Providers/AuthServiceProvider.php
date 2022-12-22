@@ -4,8 +4,10 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 //use App\Models\DepartmentBookRoom;
+use App\Models\DepartmentRoom;
 use App\Models\User;
 //use App\Policies\DepartmentBookRoomPolicy;
+use App\Policies\DepartmentRoomPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 
@@ -18,8 +20,9 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         // 'App\Models\Model' => 'App\Policies\ModelPolicy',
-//        DepartmentBookRoom::class => DepartmentBookRoomPolicy::class
-        'App\Models\DepartmentBookRoom' => 'App\Policies\DepartmentBookRoomPolicy',
+//        'App\Models\DepartmentBookRoom' => 'App\Policies\DepartmentBookRoomPolicy',
+        DepartmentBookRoom::class => DepartmentBookRoomPolicy::class,
+        DepartmentRoom::class => DepartmentRoomPolicy::class
     ];
 
     /**

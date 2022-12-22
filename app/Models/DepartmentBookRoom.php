@@ -60,7 +60,7 @@ class DepartmentBookRoom extends Model
     public function date(): Attribute
     {
         return Attribute::make(
-//            get: fn() => $this->start_date->thaidate('j F Y'),
+        //  get: fn() => $this->start_date->thaidate('j F Y'),
             get: fn() => $this->start_date->thaidate('d/m/y'),
         );
     }
@@ -221,11 +221,17 @@ class DepartmentBookRoom extends Model
         );
     }
 
-
     public function statusLocale(): Attribute
     {
         return Attribute::make(
             get: fn() => (new BookingStatus)->getStatusLocale($this->attributes['status']),
+        );
+    }
+
+    public function occupiedRawStatuses(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => collect(['booked', 'corrected']),
         );
     }
 
@@ -238,7 +244,7 @@ class DepartmentBookRoom extends Model
                     return '';
                 } else {
                     $data = ' โดย ' . $this->approverName;
-                    if ($this->reason !== null){
+                    if ($this->reason !== null) {
                         $data = $data . ' เพราะ ' . $this->reason;
                     }
                     return $data;
@@ -276,13 +282,13 @@ class DepartmentBookRoom extends Model
                     $data = $data . ' <p class="text-amber-500"> ' . $this->status_locale . '</p>';
                 }
                 if ($this->status_locale === 'อนุมัติ') {
-                    $data = $data . ' <p class="text-teal-600"> ' . $this->status_locale  . '</p>' . $this->status_text;
+                    $data = $data . ' <p class="text-teal-600"> ' . $this->status_locale . '</p>' . $this->status_text;
                 }
                 if ($this->status_locale === 'ถูกแก้ไข') {
-                    $data = $data . ' <p class="text-amber-500"> ' . $this->status_locale  . '</p>' . $this->status_text;
+                    $data = $data . ' <p class="text-amber-500"> ' . $this->status_locale . '</p>' . $this->status_text;
                 }
-                if ($this->status_locale === 'ถูกยกเลิก' || $this->status_locale === 'ไม่อนุมัติ') {
-                    $data = $data . ' <p class="text-red-600"> ' . $this->status_locale  . '</p>' . $this->status_text;
+                if ($this->status_locale === 'ถูกยกเลิก') {
+                    $data = $data . ' <p class="text-rose-600"> ' . $this->status_locale . '</p>' . $this->status_text;
                 }
 
                 $data = $data . '</div> <br/> หัวข้อการประชุม : ' . $this->topic
