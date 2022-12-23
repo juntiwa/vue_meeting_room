@@ -235,6 +235,20 @@ class DepartmentBookRoom extends Model
         );
     }
 
+    public function occupiedRawStatusesCancel(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => collect(['booked', 'corrected', 'approved']),
+        );
+    }
+
+    public function occupiedRawStatusesEdit(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => collect(['booked', 'approved', 'corrected', 'canceled', 'disapproved']),
+        );
+    }
+
     public function statusText(): Attribute
     {
         return Attribute::make(
@@ -296,7 +310,11 @@ class DepartmentBookRoom extends Model
                     . '<br/> ห้องประชุม : ' . $this->medicineroom->name_th . ' ผู้เข้าร่วมจำนวน : ' . $this->attendees . ' คน '
                     . $this->description_text
                     . '<br/> วัตถุประสงค์การใช้งาน : ' . $this->purpose->name_th . '</div>'
-                    . '<div class="text-left p-3 line-height"> อื่น ๆ ';
+                    . '<div class="text-left p-3 line-height"> ';
+
+                if ($this->set_room_text || $this->equipment_text || $this->food_text) {
+                    $data = $data . ' อื่น ๆ ';
+                }
 
                 if ($this->set_room_text) {
                     $data = $data . '<br/> จัดห้องแบบ : ' . $this->set_room_text;
@@ -307,9 +325,9 @@ class DepartmentBookRoom extends Model
                 }
 
                 if ($this->food_text) {
-                    $data = $data . '<br/> อาหาร, เครื่องดื่ม : ' . $this->food_text . '</div>';
+                    $data = $data . '<br/> อาหาร, เครื่องดื่ม : ' . $this->food_text ;
                 }
-
+                $data = $data . '</div>';
                 return $data;
             }
         );

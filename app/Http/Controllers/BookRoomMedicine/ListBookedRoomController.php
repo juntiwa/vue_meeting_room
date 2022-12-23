@@ -21,7 +21,9 @@ class ListBookedRoomController extends Controller
                     //for table
                     'can_cancel' => $request->user()->can('cancel', $booking),
                     'can_edit' => $request->user()->can('edit', $booking),
-                    'can_appropved' => $request->user()->can('appropved', $booking),
+                    'can_approved' => $request->user()->can('approved', $booking),
+                    'can_disapproved' => $request->user()->can('disapproved', $booking),
+                    'can_canceled' => $request->user()->can('canceled', $booking),
 
                     'meeting_room_id' => $booking->meeting_room_id,
                     'create_at' => $booking->create_at,

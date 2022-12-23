@@ -96,12 +96,12 @@
                                     <path class="fill-red-500"
                                           d="M13.41,12l4.3-4.29a1,1,0,1,0-1.42-1.42L12,10.59,7.71,6.29A1,1,0,0,0,6.29,7.71L10.59,12l-4.3,4.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0L12,13.41l4.29,4.3a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42Z"/>
                                 </svg>
-                                <p v-if="booking.food_text">{{ booking.set_room_text }}</p>
+                                <p v-if="booking.food_text">{{ booking.food_text }}</p>
                             </td>
 
                             <td class="p-3 hover:fill-amber-500" @click="edit">
 
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                <svg v-if="booking.can_edit" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                                      class="block m-auto">
                                     <path
                                         d="M19.045 7.401c.378-.378.586-.88.586-1.414s-.208-1.036-.586-1.414l-1.586-1.586c-.378-.378-.88-.586-1.414-.586s-1.036.208-1.413.585L4 13.585V18h4.413L19.045 7.401zm-3-3 1.587 1.585-1.59 1.584-1.586-1.585 1.589-1.584zM6 16v-1.585l7.04-7.018 1.586 1.586L7.587 16H6zm-2 4h16v2H4z"></path>
@@ -180,11 +180,9 @@ import Layout from "../../Layouts/Layout";
 import {useForm} from "@inertiajs/inertia-vue3";
 import $ from "jquery";
 
-
 const props = defineProps(['message', 'can', 'bookings', 'rooms']);
 
 function modalData(booking, room) {
-    console.log(booking.can_appropved)
 
     const form = useForm({
         id: booking.data_all.id,
@@ -194,9 +192,9 @@ function modalData(booking, room) {
     swal.fire({
         icon: 'info',
         html: booking.data_popup,
-        showConfirmButton: booking.can_appropved ? true : false,
-        showDenyButton: true,
-        showCancelButton: true,
+        showConfirmButton: booking.can_approved ? true : false,
+        showDenyButton: booking.can_disapproved ? true : false,
+        showCancelButton: booking.can_canceled ? true : false,
         showCloseButton: true,
         confirmButtonText: 'อนุมัติ',
         cancelButtonText: 'ยกเลิกการจอง',
@@ -209,7 +207,6 @@ function modalData(booking, room) {
     }).then((result) => {
         if (result.isConfirmed) {
             form.status = 2
-            console.log(form)
             form.put(window.route('formBookedRoomUpdate'))
             swal.fire({
                     title: 'สำเร็จ !',
@@ -228,7 +225,7 @@ function modalData(booking, room) {
                     html: '<input type="text" id="reason" class="bg-white w-full border border-slate-500 rounded py-1.5 px-1 mt-2 mb-3"/>',
                     preConfirm: () => {
                         if (document.getElementById('reason').value) {
-                            form.status = 4
+                            form.status = 5
                             form.reason = $('#reason').val()
                             console.log(form)
                             form.put(window.route('formBookedRoomUpdate'))
@@ -259,7 +256,7 @@ function modalData(booking, room) {
                     html: '<input type="text" id="reason" v-model="form.reason" class="bg-white w-full border border-slate-500 rounded py-1.5 px-1 mt-2 mb-3"/>',
                     preConfirm: () => {
                         if (document.getElementById('reason').value) {
-                            form.status = 5
+                            form.status = 4
                             form.reason = $('#reason').val()
                             console.log(form)
                             form.put(window.route('formBookedRoomUpdate'))

@@ -22,19 +22,48 @@ class DepartmentBookRoomPolicy
 
     }
 
-    public  function edit(User $user, DepartmentBookRoom $booking)
+    public function edit(User $user, DepartmentBookRoom $booking)
     {
-        return  $booking->requester_id === $user->id
-            || $user->role_id->contains(1);
+        if ($user->role_id->contains(1)) {
+            return $booking->occupied_raw_statuses_edit->contains($booking->status)
+                && $user->role_id->contains(1)
+                && $booking->start_date > Carbon::now();
+        }
+
+        return $booking->occupied_raw_statuses_edit->contains($booking->status)
+            && $booking->requester_id === $user->id
+            && $booking->start_date > Carbon::now()->addWeekdays(2);
     }
 
-    public function cancel(User $user, DepartmentBookRoom $booking)
+    public function approved(User $user, DepartmentBookRoom $booking)
     {
-        return $booking->requester_id === $user->id;
+        return $booking->occupied_raw_statuses->contains($booking->status)
+            && $booking->start_date > Carbon::now()
+            && $booking->approver_id === null
+            && $user->role_id->contains(1);
     }
 
-    public function  appropved(User $user, DepartmentBookRoom $booking)
+    public function disapproved(User $user, DepartmentBookRoom $booking)
     {
-        return $booking->occupied_raw_statuses->contains($booking->status);
+        return $booking->occupied_raw_statuses_cancel->contains($booking->status)
+            && $booking->start_date > Carbon::now()
+            && $booking->approver_id === null
+            && $user->role_id->contains(1);
+    }
+
+    public function canceled(User $user, DepartmentBookRoom $booking)
+    {
+        if ($user->role_id->contains(1)) {
+            return $booking->occupied_raw_statuses_cancel->contains($booking->status)
+                && $booking->start_date > Carbon::now()
+                && $booking->approver_id === null
+                && $user->role_id->contains(1);
+        }
+
+        return $booking->occupied_raw_statuses_cancel->contains($booking->status)
+            && $booking->start_date > Carbon::now()->addWeekdays(3) //add 3 because not counting today
+            && $booking->approver_id === null
+            && $booking->requester_id === $user->id;
+
     }
 }
