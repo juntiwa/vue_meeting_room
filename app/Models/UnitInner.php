@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\CSVLoadable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class UnitInner extends Model
 {
-    use HasFactory;
+    use HasFactory,CSVLoadable;
 
     protected $fillable = [
         'unit_id',

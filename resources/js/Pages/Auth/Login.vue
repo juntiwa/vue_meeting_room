@@ -1,15 +1,20 @@
 <template>
-    <div class="container flex flex-col m-3">
+    <div class="container flex flex-col m-3 w-1/2">
         เข้าสู่ระบบ
         <p v-if="$page.props.flash.sirirajUser">
             {{ $page.props.flash.sirirajUser }}
         </p>
 
-        <label for="login">ชื่อผู้ใช้งาน</label>
-        <InputTextComponent name="login" id="login" v-model="form.login"/>
+        <InputTextComponent label="ชื่อผู้ใช้งาน"
+                            type="text"
+                            name="login"
+                            v-model="form.login"/>
 
-        <label for="password">รหัสผ่าน</label>
-        <InputTextComponent type="password" name="password" id="password" v-model="form.password"/>
+        <InputTextComponent label="รหัสผ่าน"
+                            type="password"
+                            name="password"
+                            v-model="form.password"/>
+
         <a :href="forgetPassword" target="_blank" class="text-right text-blue-600 hover:text-rose-600 cursor-pointer">ลืมรหัสผ่าน
             ?</a>
 

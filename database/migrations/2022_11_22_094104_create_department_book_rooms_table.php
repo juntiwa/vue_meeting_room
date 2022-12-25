@@ -35,6 +35,9 @@ return new class extends Migration
             $table->string('reason')->nullable();
             $table->foreignId('approver_id')->nullable();
             $table->foreign('approver_id')->references('id')->on('users');
+            $table->unsignedTinyInteger('questionnaire')->default(1); // wait for record, recorded, corrected
+            $table->foreignId('recorder_id')->nullable();
+            $table->foreign('recorder_id')->references('id')->on('users');
             $table->timestamps();
         });
     }

@@ -1,7 +1,6 @@
 <template>
     <div class="m-3">
         <Layout :can="can"/>
-
         <div v-for="(room, keyroom) in rooms" :key="keyroom">
             <div v-if="room.can_view_list_booked_room">
                 <h1 class="font-medium text-center text-xl mt-7 mb-5">{{ room.room_name }}</h1>
@@ -57,6 +56,7 @@
                                 :class="{
                                     'text-amber-500' : booking.status_locale === 'รออนุมัติ',
                                     'text-violet-600' : booking.status_locale === 'ถูกแก้ไข',
+                                    'text-teal-600' : booking.status_locale === 'อนุมัติ',
                                     'text-rose-600' : booking.status_locale === 'ถูกยกเลิก' || booking.status_locale === 'ไม่อนุมัติ',
                                     }"
                                 @click="modalData(booking,room)">
@@ -186,31 +186,13 @@
 
 
 </template>
+
 <script setup>
-import Layout from "../Layouts/Layout";
+import Layout from "../../Layouts/Layout";
 import {useForm} from "@inertiajs/inertia-vue3";
-import $ from 'jquery';
+import $ from "jquery";
 
 const props = defineProps(['message', 'can', 'bookings', 'rooms']);
-if (props.message === 'true') {
-    const Toast = swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', swal.stopTimer)
-            toast.addEventListener('mouseleave', swal.resumeTimer)
-        }
-    })
-
-    Toast.fire({
-        icon: 'success',
-        title: 'สำเร็จ',
-        text: 'จองห้องประชุม เสร็จสิ้น'
-    })
-}
 
 function modalData(booking, room) {
 
@@ -311,4 +293,6 @@ function modalData(booking, room) {
         }
     })
 }
+
 </script>
+

@@ -8,7 +8,7 @@
     @vite(['resources/css/app.css', 'resources/scss/app.scss', 'resources/js/app.js'])
     @inertiaHead
   </head>
-  <body class="font-kanit font-light">
+  <body class="font-kanit font-light text-black text-lg">
     @inertia
   </body>
 </html>
