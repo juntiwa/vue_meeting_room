@@ -56,10 +56,6 @@ class ListBookedRoomController extends Controller
             });
 
         return Inertia::render('BookedRoomMedicine/ListBookedRoom', [
-            'can' => [
-                "booked_room_instead_case" => $request->user()->can('booked_room_instead_case'),
-                "booked_room_case" => $request->user()->can('booked_room_case'),
-            ],
             'bookings' => $bookings,
             'rooms' => $rooms
         ]);

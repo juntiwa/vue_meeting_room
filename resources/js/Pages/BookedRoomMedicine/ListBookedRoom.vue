@@ -54,10 +54,11 @@
                             </td>
                             <td class="p-3 align-text-top whitespace-nowrap"
                                 :class="{
-                            'text-amber-500' : booking.status_locale === 'รออนุมัติ' || booking.status_locale === 'ถูกแก้ไข',
-                            'text-teal-600' : booking.status_locale === 'อนุมัติ',
-                            'text-rose-600' : booking.status_locale === 'ถูกยกเลิก' || booking.status_locale === 'ไม่อนุมัติ',
-                            }"
+                                    'text-amber-500' : booking.status_locale === 'รออนุมัติ',
+                                    'text-violet-600' : booking.status_locale === 'ถูกแก้ไข',
+                                    'text-teal-600' : booking.status_locale === 'อนุมัติ',
+                                    'text-rose-600' : booking.status_locale === 'ถูกยกเลิก' || booking.status_locale === 'ไม่อนุมัติ',
+                                    }"
                                 @click="modalData(booking,room)">
                                 {{ booking.status_locale }}
                             </td>

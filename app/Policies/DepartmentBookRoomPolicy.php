@@ -30,6 +30,12 @@ class DepartmentBookRoomPolicy
                 && $booking->start_date > Carbon::now();
         }
 
+        if ($booking->status === 'booked') {
+            return $booking->occupied_raw_statuses_edit->contains($booking->status)
+                && $booking->requester_id === $user->id
+                && $booking->start_date > Carbon::now();
+        }
+
         return $booking->occupied_raw_statuses_edit->contains($booking->status)
             && $booking->requester_id === $user->id
             && $booking->start_date > Carbon::now()->addWeekdays(4); //add 4 because not counting today and start_date
@@ -39,7 +45,6 @@ class DepartmentBookRoomPolicy
     {
         return $booking->occupied_raw_statuses->contains($booking->status)
             && $booking->start_date > Carbon::now()
-            && $booking->approver_id === null
             && $user->role_id->contains(1);
     }
 
@@ -47,7 +52,6 @@ class DepartmentBookRoomPolicy
     {
         return $booking->occupied_raw_statuses_cancel->contains($booking->status)
             && $booking->start_date > Carbon::now()
-            && $booking->approver_id === null
             && $user->role_id->contains(1);
     }
 
@@ -56,13 +60,11 @@ class DepartmentBookRoomPolicy
         if ($user->role_id->contains(1)) {
             return $booking->occupied_raw_statuses_cancel->contains($booking->status)
                 && $booking->start_date > Carbon::now()
-                && $booking->approver_id === null
                 && $user->role_id->contains(1);
         }
 
         return $booking->occupied_raw_statuses_cancel->contains($booking->status)
             && $booking->start_date > Carbon::now()->addWeekdays(4) //add 4 because not counting today and start_date
-            && $booking->approver_id === null
             && $booking->requester_id === $user->id;
 
     }

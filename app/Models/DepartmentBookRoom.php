@@ -245,7 +245,7 @@ class DepartmentBookRoom extends Model
     public function occupiedRawStatusesEdit(): Attribute
     {
         return Attribute::make(
-            get: fn() => collect(['booked', 'approved', 'corrected', 'canceled', 'disapproved']),
+            get: fn() => collect(['booked', 'approved', 'corrected']),
         );
     }
 
@@ -299,7 +299,7 @@ class DepartmentBookRoom extends Model
                     $data = $data . ' <p class="text-teal-600"> ' . $this->status_locale . '</p>' . $this->status_text;
                 }
                 if ($this->status_locale === 'ถูกแก้ไข') {
-                    $data = $data . ' <p class="text-amber-500"> ' . $this->status_locale . '</p>' . $this->status_text;
+                    $data = $data . ' <p class="text-violet-600"> ' . $this->status_locale . '</p>' . $this->status_text;
                 }
                 if ($this->status_locale === 'ถูกยกเลิก') {
                     $data = $data . ' <p class="text-rose-600"> ' . $this->status_locale . '</p>' . $this->status_text;
