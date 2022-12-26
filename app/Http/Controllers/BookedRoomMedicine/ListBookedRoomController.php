@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\BookRoomMedicine;
+namespace App\Http\Controllers\BookedRoomMedicine;
 
 use App\Http\Controllers\Controller;
 use App\Models\DepartmentBookRoom;

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex justify-between sticky top-0">
+    <div class="flex items-center justify-between px-3 sticky top-0 bg-slate-100 w-full h-fit">
         <div>
             Welcome ยินดีต้อนรับ
             <Link href="/" class="text-violet-600 hover:text-teal-600">
@@ -25,8 +25,6 @@
                              @click="$inertia.delete(route('loginDestroy'))"
                              buttonText="logout"/>
         </div>
-
-
     </div>
 </template>
 

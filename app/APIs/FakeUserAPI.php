@@ -31,19 +31,26 @@ class FakeUserAPI implements AuthUserAPI
                 $data['name_en'] = 'Miss Admin System';
             } elseif ($login === 'user.med') {
                 $data['login'] = 'user.med';
-                $data['org_id'] = '10012344';
-                $data['full_name'] = 'น.ส. ผู้ใช้งาน med';
+                $data['org_id'] = '10012342';
+                $data['full_name'] = 'น.ส. ผู้ใช้งาน อายุรศาสตร์';
                 $data['full_name_en'] = 'Miss User Med';
-                $data['name'] = 'น.ส. ผู้ใช้งาน med';
+                $data['name'] = 'น.ส. ผู้ใช้งาน อายุรศาสตร์';
                 $data['name_en'] = 'Miss User Med';
+            }elseif ($login === 'user.uni') {
+                $data['login'] = 'user.uni';
+                $data['org_id'] = '10012343';
+                $data['full_name'] = 'น.ส. ผู้ใช้งาน สาขา';
+                $data['full_name_en'] = 'Miss User Uni';
+                $data['name'] = 'น.ส. ผู้ใช้งาน สาขา';
+                $data['name_en'] = 'Miss User Uni';
             } else {
                 $data['login'] = 'user.sys';
-                $data['org_id'] = '10012345';
+                $data['org_id'] = '10012346';
                 $data['full_name'] = 'น.ส. ผู้ใช้งาน ทั่วไป';
                 $data['full_name_en'] = 'Miss User System';
                 $data['name'] = 'น.ส. ผู้ใช้งาน ทั่วไป';
                 $data['name_en'] = 'Miss User System';
-                $data['division_name'] = 'งานวิจัย';
+                $data['division_name'] = 'งานวิจัย'; //สำหรับนอก med
             }
         } else {
             $data = [

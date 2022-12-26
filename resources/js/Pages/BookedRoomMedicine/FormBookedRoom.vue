@@ -1,8 +1,6 @@
 <template>
-
-    <div class="m-3">
         <Layout :can="can"/>
-        <br>
+    <div class="m-3">
         ระบบจองห้องประชุม
         <section id="condition" class="flex flex-col">
             กรอกข้อมูลการขอใช้งานห้องประชุม
