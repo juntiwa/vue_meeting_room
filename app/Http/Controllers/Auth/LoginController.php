@@ -38,8 +38,8 @@ class LoginController extends Controller
 
     public function destroy()
     {
+        session()->forget('message');
         Auth::logout();
-
         return redirect()->route('login');
     }
 }

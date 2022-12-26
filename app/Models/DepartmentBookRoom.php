@@ -14,8 +14,9 @@ class DepartmentBookRoom extends Model
     use HasFactory;
 
     protected $fillable = [
-        'start_date',
-        'end_date',
+        'date',
+        'start_time',
+        'end_time',
         'attendees',
         'set_room',
         'meeting_room_id',
@@ -44,8 +45,8 @@ class DepartmentBookRoom extends Model
     public function scopeOverlap($query, $start, $end)
     {
         $start = $start->addMinute();
-        $query->where('start_date', '<=', $end)
-            ->where('end_date', '>=', $start);
+        $query->where('start_time', '<=', $end)
+            ->where('end_time', '>=', $start);
     }
 
     //for table
@@ -57,18 +58,18 @@ class DepartmentBookRoom extends Model
 
     }
 
-    public function date(): Attribute
+    public function dateFormat(): Attribute
     {
         return Attribute::make(
         //  get: fn() => $this->start_date->thaidate('j F Y'),
-            get: fn() => $this->start_date->thaidate('d/m/y'),
+            get: fn() => Carbon::create($this->date)->thaidate('d / m / Y'),
         );
     }
 
     public function time(): Attribute
     {
         return Attribute::make(
-            get: fn() => $this->start_date->format('H:i') . ' ถึง ' . $this->end_date->format('H:i'),
+            get: fn() => Carbon::create($this->start_time)->format('H:i') . ' ถึง ' . Carbon::create($this->end_time)->format('H:i'),
         );
     }
 
@@ -289,6 +290,7 @@ class DepartmentBookRoom extends Model
                     . '<div class="text-right"> บันทึกข้อมูลเมื่อ ' . $this->created_at->thaidate('j F Y')
                     . '<br/><br/> โดย ' . $this->users->full_name
                     . '<br/>' . $this->users->unit->name_th
+                    . '<br/> ติดต่อโทร ' . $this->users->tel
                     . '</div>'
                     . '<div class="text-left p-3 line-height"> <div class="flex gap-2">';
 
@@ -306,7 +308,8 @@ class DepartmentBookRoom extends Model
                 }
 
                 $data = $data . '</div> <br/> หัวข้อการประชุม : ' . $this->topic
-                    . '<br/> วันเดือนปี : ' . $this->start_date->thaidate('วันl ที่ j F Y') . ' เวลา ' . $this->start_date->format('H:i น.') . ' ถึง ' . $this->end_date->format('H:i น.')
+                    . '<br/> วันเดือนปี : ' . Carbon::create($this->date)->thaidate('วันl ที่ j F Y '). ' เวลา '
+                    . Carbon::create($this->start_time)->format('H:i') . ' ถึง ' . Carbon::create($this->end_time)->format('H:i น.')
                     . '<br/> ห้องประชุม : ' . $this->medicineroom->name_th . ' ผู้เข้าร่วมจำนวน : ' . $this->attendees . ' คน '
                     . $this->description_text
                     . '<br/> วัตถุประสงค์การใช้งาน : ' . $this->purpose->name_th . '</div>'

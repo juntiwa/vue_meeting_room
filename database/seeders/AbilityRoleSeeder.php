@@ -17,9 +17,9 @@ class AbilityRoleSeeder extends Seeder
     public function run()
     {
         $abilities = [
-            'view_any_cases',
             'booked_room_instead_case',
-            'booked_room_case'
+            'booked_room_case',
+            'view_list_booked_rooms_case',
         ];
 
         foreach ($abilities as $ability) {
@@ -41,14 +41,17 @@ class AbilityRoleSeeder extends Seeder
         $admin->allowTo('view_any_cases');
         $admin->allowTo('booked_room_instead_case');
         $admin->allowTo('booked_room_case');
+        $admin->allowTo('view_list_booked_rooms_case');
 
         $attendant_room = Role::whereName('attendant_room')->first();
         $attendant_room->allowTo('view_any_cases');
         $attendant_room->allowTo('booked_room_case');
+        $attendant_room->allowTo('view_list_booked_rooms_case');
 
         $user_med = Role::whereName('user_med')->first();
         $user_med->allowTo('view_any_cases');
         $user_med->allowTo('booked_room_case');
+        $user_med->allowTo('view_list_booked_rooms_case');
 
     }
 }

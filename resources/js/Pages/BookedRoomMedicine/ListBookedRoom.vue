@@ -1,6 +1,7 @@
 <template>
+    <Layout :can="can"/>
     <div class="m-3">
-        <Layout :can="can"/>
+
         <div v-for="(room, keyroom) in rooms" :key="keyroom">
             <div v-if="room.can_view_list_booked_room">
                 <h1 class="font-medium text-center text-xl mt-7 mb-5">{{ room.room_name }}</h1>
@@ -32,7 +33,7 @@
                             </td>
                             <td class="p-3 text-center align-text-top whitespace-nowrap"
                                 @click="modalData(booking,room)">
-                                {{ booking.date }}
+                                {{ booking.date_format }}
                             </td>
                             <td class="p-3 text-center align-text-top whitespace-nowrap"
                                 @click="modalData(booking,room)">

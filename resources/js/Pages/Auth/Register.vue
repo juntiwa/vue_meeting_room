@@ -17,7 +17,7 @@
                     v-model="form.unit_id"
                     class="bg-white border border-slate-500 rounded py-1.5 px-1 mt-2 mb-3 w-full">
                 <option value="" selected>-- เลือกหน่วยงานที่คุณสังกัด --</option>
-                <option value="1">ทดสอบเลือกหน่วยงาน</option>
+                <option v-for="unit in units" :value="unit.id">{{ unit.name_th }}</option>
             </select>
 
             <label for="tel">เบอร์โต๊ะทำงาน</label>
@@ -37,7 +37,7 @@ import InputTextComponent from "../../Components/InputTextComponent";
 import ButtonComponent from "../../Components/ButtonComponent";
 import {useForm} from '@inertiajs/inertia-vue3';
 
-const props = defineProps(['sirirajUser']);
+const props = defineProps(['sirirajUser','units']);
 
 const form = useForm({
     sap_id: props.sirirajUser.org_id,

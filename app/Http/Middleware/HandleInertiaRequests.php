@@ -51,6 +51,9 @@ class HandleInertiaRequests extends Middleware
                 'booked_room_case' => fn () => $request->user()
                     ? $request->user()->abilities->contains('booked_room_case')
                     : null,
+                'view_list_booked_rooms_case' => fn () => $request->user()
+                    ? $request->user()->abilities->contains('view_list_booked_rooms_case')
+                    : null,
             ]
         ]);
     }

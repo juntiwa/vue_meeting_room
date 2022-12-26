@@ -13,12 +13,13 @@
         <InputTextComponent label="รหัสผ่าน"
                             type="password"
                             name="password"
+                            @keyup.enter="login"
                             v-model="form.password"/>
 
         <a :href="forgetPassword" target="_blank" class="text-right text-blue-600 hover:text-rose-600 cursor-pointer">ลืมรหัสผ่าน
             ?</a>
 
-        <ButtonComponent @click="login" buttonText="เข้าสู่ระบบ" class="bg-blue-400 hover:bg-blue-500 text-white"/>
+        <ButtonComponent  @click="login" buttonText="เข้าสู่ระบบ" class="bg-blue-400 hover:bg-blue-500 text-white"/>
     </div>
 
 </template>
