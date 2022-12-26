@@ -58,9 +58,6 @@ class DashboardController extends Controller
             });
 
         return Inertia::render('Dashboard', [
-            'can' => [
-                "view_list_approve" => $request->user()->role_id->contains(1),
-            ],
             'message' => $message,
             'bookings' => $bookings,
             'rooms' => $rooms

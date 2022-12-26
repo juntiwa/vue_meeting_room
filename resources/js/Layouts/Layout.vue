@@ -1,36 +1,41 @@
 <template>
-    <div>
-        Welcome ยินดีต้อนรับ {{ $page.props.auth.user.full_name }} <br>
-        <ButtonComponent type="button"
-                         class="bg-rose-500 hover:bg-rose-600 text-white"
-                         @click="$inertia.delete(route('loginDestroy'))"
-                         buttonText="logout"/>
-        <br>
-        <Link href="/">
-            หน้าหลัก
-        </Link>
+    <div class="flex justify-between sticky top-0">
+        <div>
+            Welcome ยินดีต้อนรับ
+            <Link href="/" class="text-violet-600 hover:text-teal-600">
+                หน้าหลัก
+            </Link>
 
-        <Link v-if="can.booked_room_instead_case" href="/formBookRoomInstead">
-            จองแทน
-        </Link>
+            <Link v-if="$page.props.can.booked_room_instead_case" href="/formBookRoomInstead" class="text-violet-600 hover:text-teal-600">
+                จองแทน
+            </Link>
 
-        <Link v-if="can.booked_room_case" href="/formBookRoom">
-            จองห้องประชุม
-        </Link>
+            <Link v-if="$page.props.can.booked_room_case" href="/formBookRoom" class="text-violet-600 hover:text-teal-600">
+                จองห้องประชุม
+            </Link>
 
-        <Link href="/listBookedRoom">
-            รายการจองห้องประชุมทั้งหมด
-        </Link>
+            <Link v-if="$page.props.can.view_list_booked_rooms_case" href="/listBookedRoom" class="text-violet-600 hover:text-teal-600">
+                รายการจองห้องประชุมทั้งหมด
+            </Link>
+        </div>
+        <div>
+            {{ user }}
+            <ButtonComponent type="button"
+                             class="bg-rose-500 hover:bg-rose-600 text-white"
+                             @click="$inertia.delete(route('loginDestroy'))"
+                             buttonText="logout"/>
+        </div>
 
-        <br>
+
     </div>
 </template>
 
 <script setup>
-import {Link} from '@inertiajs/inertia-vue3'
+import {Link, usePage} from '@inertiajs/inertia-vue3'
 import ButtonComponent from "../Components/ButtonComponent";
+import {computed} from "vue";
 
-const props = defineProps(['can']);
+const user = computed(() => usePage().props.value.auth.user.full_name)
 </script>
 
 <style scoped>
