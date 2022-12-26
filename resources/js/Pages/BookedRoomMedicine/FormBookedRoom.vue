@@ -5,18 +5,24 @@
         <section id="condition" class="flex flex-col">
             กรอกข้อมูลการขอใช้งานห้องประชุม
             <div id="date_time" class="flex flex-row gap-2">
-                <InputTextComponent label="วันเวลาเริ่ม"
-                                    type="datetime-local"
+                <InputTextComponent label="วัน"
+                                    type="date"
                                     name="start_date"
                                     class="w-fit"
-                                    v-model="form.start_date"
+                                    v-model="form.date"
                 />
 
-                <InputTextComponent label="วันเวลาสิ้นสุด"
-                                    type="datetime-local"
-                                    name="end_date"
+                <InputTextComponent label="เวลาเริ่มต้น"
+                                    type="time"
+                                    name="start_time"
                                     class="w-fit"
-                                    v-model="form.end_date"
+                                    v-model="form.start_time"
+                />
+                <InputTextComponent label="เวลาสิ้นสุด"
+                                    type="time"
+                                    name="end_time"
+                                    class="w-fit"
+                                    v-model="form.end_time"
                 />
             </div>
             {{ messageCalculateTime }}
@@ -179,7 +185,7 @@
                 </label>
             </div>
 
-            <div id="food" class="flex flex-col">
+            <div v-if="unitType === 1" id="food" class="flex flex-col">
                 <label for="food[status]">
                     <input type="checkbox"
                            name="food[status]" id="food[status]"
@@ -236,8 +242,9 @@ import Layout from "../../Layouts/Layout";
 
 const props = defineProps(['message', 'can']);
 const form = useForm({
-    start_date: null,
-    end_date: null,
+    date: null,
+    start_time: null,
+    end_time: null,
     attendees: null,
     set_room: {
         status: false,
@@ -267,15 +274,17 @@ const form = useForm({
 })
 const result = ref([]);
 const purposes = ref([]);
+const unitType = ref(null);
 const checkCondition = () => {
     result.value = [];
     form.meeting_room_id = null;
     window.axios
         .post(window.route("formBookedRoomCheckCondition"), form)
         .then((res) => {
-            // console.log(res.data);
+            console.log(res.data);
             result.value = [...res.data.result];
             purposes.value = [...res.data.purposes];
+            unitType.value = res.data.unitType;
         })
         .catch((err) => console.log(err));
 }
@@ -316,19 +325,14 @@ watch(
 
 const messageCalculateTime = ref(null);
 watch(
-    () => [form.start_date, form.end_date],
+    () => [form.start_time, form.end_time],
     (val) => {
         if (val) {
-            const end = dayjs(form.end_date);
-            const diffTime = end.diff(form.start_date, "minute", true);
+            const end = dayjs((form.date + form.end_time));
+            const diffTime = end.diff((form.date + form.start_time), "minute", true);
+            console.log(diffTime)
             const Hours = Math.floor(diffTime / 60);
             const Minute = diffTime % 60;
-
-            const start_date = new Date(form.start_date)
-            const now = new Date();
-            const dateNow = start_date.getTime() - now.getTime()
-            let TotalDays = Math.floor(dateNow / (1000 * 3600 * 24));
-
 
             if (Hours > 0) {
                 messageCalculateTime.value = "เวลาใช้งานจำนวน " + Hours + " ชั่วโมง " + Minute + " นาที";
@@ -354,7 +358,7 @@ watch(
 )
 
 watch(
-    () => [form.start_date, form.end_date, form.attendees, form.set_room.status, !form.set_room.status],
+    () => [form.date, form.start_time, form.end_time, form.attendees, form.set_room.status, !form.set_room.status],
     (val) => {
         if (val) {
             result.value = [];
@@ -396,7 +400,7 @@ watch(
     }
 )
 const conditionIncompleted = computed(() => {
-    return !form.start_date || !form.end_date || !form.attendees || !(form.attendees >= 3)
+    return !form.date || !form.start_time || !form.end_time || !form.attendees || !(form.attendees >= 3)
 })
 
 const detailIncomplete = computed(() => {

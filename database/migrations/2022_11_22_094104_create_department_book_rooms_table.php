@@ -15,8 +15,9 @@ return new class extends Migration
     {
         Schema::create('department_book_rooms', function (Blueprint $table) {
             $table->id();
-            $table->dateTime('start_date');
-            $table->dateTime('end_date');
+            $table->date('date');
+            $table->time('start_time');
+            $table->time('end_time');
             $table->foreignId('meeting_room_id');
             $table->foreign('meeting_room_id')->references('id')->on('department_rooms');
             $table->unsignedInteger('attendees');

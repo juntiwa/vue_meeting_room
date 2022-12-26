@@ -33,7 +33,7 @@
                             </td>
                             <td class="p-3 text-center align-text-top whitespace-nowrap"
                                 @click="modalData(booking,room)">
-                                {{ booking.date }}
+                                {{ booking.date_format }}
                             </td>
                             <td class="p-3 text-center align-text-top whitespace-nowrap"
                                 @click="modalData(booking,room)">

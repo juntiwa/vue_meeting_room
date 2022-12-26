@@ -31,7 +31,7 @@ class DashboardController extends Controller
                     'meeting_room_id' => $booking->meeting_room_id,
                     'create_at' => $booking->create_at,
                     'data_all' => $booking,
-                    'date' => $booking->date,
+                    'date_format' => $booking->date_format,
                     'time' => $booking->time,
                     'unit_name' => $booking->unit->name_th,
                     'equipment_text' => $booking->equipment_text,
