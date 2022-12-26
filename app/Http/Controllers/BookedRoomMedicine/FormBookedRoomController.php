@@ -21,39 +21,38 @@ class FormBookedRoomController extends Controller
 
     public function checkCondition(Request $request)
     {
-        logger($request->all());
         $validated = $request->validate([
-            'date' => 'required',
-            'start_time' => 'required',
-            'end_time' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
             'attendees' => 'required|integer|min:3|max:200',
             'set_room.status' => 'required|boolean'
         ]);
         $attendees = $validated['attendees'];
 
         if ($validated['set_room']['status'] === true) {
-            $start_date = Carbon::create($validated['date'] . $validated['start_time'])->subMinute(30);
+            $start_date = Carbon::create($validated['start_date'])->subMinute(30);
             $roomsThoseMeetAttendeeRequirement = DepartmentRoom::query()
                 ->where('minimum_attendees', '<=', $attendees)
                 ->where('maximum_attendees', '>=', $attendees)
                 ->where('can_set_table', 1) //เฉพาะห้องที่สามารถเปลี่ยนแปลงรูปแบบโต๊ะได้เท่านั้น
                 ->get();
         } else {
-            $start_date = Carbon::create($validated['date'] . $validated['start_time']);
+            $start_date = Carbon::create($validated['start_date']);
             $roomsThoseMeetAttendeeRequirement = DepartmentRoom::query()
                 ->where('minimum_attendees', '<=', $attendees)
                 ->where('maximum_attendees', '>=', $attendees)
                 ->get();
         }
 
-        $end_date = Carbon::create($validated['date'] . $validated['end_time']);
-        logger($end_date);
+        $end_date = Carbon::create($validated['end_date']);
+
         $unavailableRooms = DepartmentBookRoom::query()
             ->overlap($start_date, $end_date)
             ->whereIn('meeting_room_id', $roomsThoseMeetAttendeeRequirement->pluck('id'))
             ->whereIn('status', (new BookingStatus())->getOccupiedRawStatuses())
             ->get();
 
+//        return $roomsThoseMeetAttendeeRequirement;
         //query เพิ่มเติมกรณีห้องประชุมรวม ไม่สามารถจองได้
         $meetingRooms = DepartmentRoom::query()->get();
         $unavailableSharedRooms = DepartmentBookRoom::query()
@@ -61,6 +60,7 @@ class FormBookedRoomController extends Controller
             ->whereIn('meeting_room_id', $meetingRooms->pluck('id'))
             ->whereIn('status', (new BookingStatus())->getOccupiedRawStatuses())
             ->get();
+
 
         $result = [];
         foreach ($roomsThoseMeetAttendeeRequirement as $room) {
@@ -145,9 +145,8 @@ class FormBookedRoomController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'date' => 'required',
-            'start_time' => 'required',
-            'end_time' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
             'attendees' => 'required|integer|min:3|max:200',
             'set_room.status' => 'required|boolean',
             'set_room.type_table' => 'nullable|string', //exits
@@ -171,12 +170,12 @@ class FormBookedRoomController extends Controller
         ]);
 
         if ($validated['set_room']['status'] === true) {
-            $start_date = Carbon::create($validated['date'] . $validated['start_time'])->subMinute(30);
+            $start_date = Carbon::create($validated['start_date'])->subMinute(30);
         } else {
-            $start_date = Carbon::create($validated['date'] . $validated['start_time']);
+            $start_date = Carbon::create($validated['start_date']);
         }
         $validated['start_time'] = $start_date;
-        $end_date = Carbon::create($validated['date'] . $validated['end_time']);
+        $end_date = Carbon::create($validated['end_date']);
 
         $overlap = DepartmentBookRoom::query()
             ->overlap($start_date, $end_date)
@@ -185,22 +184,23 @@ class FormBookedRoomController extends Controller
             ->count();
 
         if ($overlap) {
-            $message = 'ไม่สามารถจองได้ กรุณาเลือกเวลาใหม่';
+            return 'no';
+            $message = 'false';
             $params = [
                 'start_date' => $validated['start_time'],
                 'end_date' => $validated['end_time'],
                 'attendees' => $validated['attendees'],
             ];
-            logger($message);
 
             session()->put('message', $message);
             return redirect()->route('formBookedRoom');
         }
+        return 'ok';
 
         $validated['requester_id'] = $request->user()->id;
         $validated['unit_level'] = 0;
         $validated['unit_id'] = $request->user()->unit_id;
-        //return $validated;
+//        return $validated;
 
         DepartmentBookRoom::query()->create($validated);
 

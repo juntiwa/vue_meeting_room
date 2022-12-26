@@ -8,7 +8,7 @@ class BookingStatus implements CastsAttributes
 {
     protected $statuses = ['', 'booked', 'approved', 'corrected', 'canceled', 'disapproved'];
     protected $statusesThai = ['', 'รออนุมัติ', 'อนุมัติ', 'ถูกแก้ไข', 'ถูกยกเลิก', 'ไม่อนุมัติ'];
-    protected $occupiedRawStatuses = ['booked', 'approved']; // 'booked', 'approved'
+    protected $occupiedRawStatuses = [1, 2]; // 'booked', 'approved'
 
     /**
      * Cast the given value.

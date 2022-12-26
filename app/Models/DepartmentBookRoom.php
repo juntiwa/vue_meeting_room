@@ -14,9 +14,8 @@ class DepartmentBookRoom extends Model
     use HasFactory;
 
     protected $fillable = [
-        'date',
-        'start_time',
-        'end_time',
+        'start_date',
+        'end_date',
         'attendees',
         'set_room',
         'meeting_room_id',
@@ -44,9 +43,10 @@ class DepartmentBookRoom extends Model
 
     public function scopeOverlap($query, $start, $end)
     {
+        logger($start);
         $start = $start->addMinute();
-        $query->where('start_time', '<=', $end)
-            ->where('end_time', '>=', $start);
+        $query->where('start_date', '<=', $end)
+            ->where('end_date', '>=', $start);
     }
 
     //for table
@@ -62,14 +62,14 @@ class DepartmentBookRoom extends Model
     {
         return Attribute::make(
         //  get: fn() => $this->start_date->thaidate('j F Y'),
-            get: fn() => Carbon::create($this->date)->thaidate('d / m / Y'),
+            get: fn() => $this->start_date->thaidate('d/m/Y'),
         );
     }
 
     public function time(): Attribute
     {
         return Attribute::make(
-            get: fn() => Carbon::create($this->start_time)->format('H:i') . ' ถึง ' . Carbon::create($this->end_time)->format('H:i'),
+            get: fn() => $this->start_date->format('H:i') . ' ถึง ' . $this->end_date->format('H:i'),
         );
     }
 
@@ -308,8 +308,7 @@ class DepartmentBookRoom extends Model
                 }
 
                 $data = $data . '</div> <br/> หัวข้อการประชุม : ' . $this->topic
-                    . '<br/> วันเดือนปี : ' . Carbon::create($this->date)->thaidate('วันl ที่ j F Y '). ' เวลา '
-                    . Carbon::create($this->start_time)->format('H:i') . ' ถึง ' . Carbon::create($this->end_time)->format('H:i น.')
+                    . '<br/> วันเดือนปี : ' . $this->start_date->thaidate('วันl ที่ j F Y') . ' เวลา ' . $this->start_date->format('H:i น.') . ' ถึง ' . $this->end_date->format('H:i น.')
                     . '<br/> ห้องประชุม : ' . $this->medicineroom->name_th . ' ผู้เข้าร่วมจำนวน : ' . $this->attendees . ' คน '
                     . $this->description_text
                     . '<br/> วัตถุประสงค์การใช้งาน : ' . $this->purpose->name_th . '</div>'
