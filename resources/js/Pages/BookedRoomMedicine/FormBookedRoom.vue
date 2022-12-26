@@ -1,5 +1,5 @@
 <template>
-        <Layout :can="can"/>
+    <Layout :can="can"/>
     <div class="m-3">
         ระบบจองห้องประชุม
         <section id="condition" class="flex flex-col">
@@ -245,6 +245,8 @@ const form = useForm({
     date: null,
     start_time: null,
     end_time: null,
+    start_date: null,
+    end_date: null,
     attendees: null,
     set_room: {
         status: false,
@@ -363,6 +365,17 @@ watch(
         if (val) {
             result.value = [];
             form.meeting_room_id = null;
+        }
+    }
+)
+
+watch(
+    () => [form.date, form.start_time, form.end_time],
+    (val) => {
+        if (val) {
+            form.start_date = form.date + 'T' + form.start_time;
+            form.end_date = form.date + 'T' + form.end_time;
+            console.log(form.end_date)
         }
     }
 )
