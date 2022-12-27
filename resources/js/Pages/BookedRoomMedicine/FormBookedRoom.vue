@@ -5,12 +5,28 @@
         <section id="condition" class="flex flex-col">
             กรอกข้อมูลการขอใช้งานห้องประชุม
             <div id="date_time" class="flex flex-row gap-2">
-                <InputTextComponent label="วัน"
-                                    type="date"
-                                    name="start_date"
-                                    class="w-fit"
-                                    v-model="form.date"
-                />
+                <label for="date" class="flex flex-col">
+                    วัน
+                    <input type="date"
+                           name="date"
+                           id="date"
+                           v-model="form.date"
+                           class="w-fit bg-white border border-slate-500 rounded py-1.5 px-1 mt-2 mb-3"
+                           :min="dateNow"
+                    />
+                </label>
+
+                <label for="start_time" class="flex flex-col">
+                    วัน
+                    <input type="time"
+                           name="start_time"
+                           id="start_time"
+                           v-model="form.start_time"
+                           class="w-fit bg-white border border-slate-500 rounded py-1.5 px-1 mt-2 mb-3"
+                           :disabled="isBeforeToday"
+
+                    />
+                </label>
 
                 <InputTextComponent label="เวลาเริ่มต้น"
                                     type="time"
@@ -277,6 +293,15 @@ const form = useForm({
 const result = ref([]);
 const purposes = ref([]);
 const unitType = ref(null);
+const messageCalculateTime = ref(null);
+const messageAttendeesInvalid = ref(null)
+
+const dateNow = new Date().toISOString().split("T")[0];
+const isBeforeToday = computed(() => {
+    var current = dateNow;
+    return !!current && dayjs(current) < dayjs().startOf('day');
+})
+
 const checkCondition = () => {
     result.value = [];
     form.meeting_room_id = null;
@@ -293,26 +318,31 @@ const checkCondition = () => {
 const save = () => {
     form.post(window.route("formBookedRoomStore"));
 }
-if (props.messageError === 'true') {
-    const Toast = swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', swal.stopTimer)
-            toast.addEventListener('mouseleave', swal.resumeTimer)
-        }
-    })
 
-    Toast.fire({
-        icon: 'error',
-        title: 'ไม่สำเร็จ',
-        text: 'กรุณาเลือกเวลาจองใหม่อีกครั้ง เนื่องจากมีเวลาที่เลือกถูกเลือกเเล้ว'
-    })
-}
-console.log(props.messageError)
+const conditionIncompleted = computed(() => {
+    return !form.date || !form.start_time || !form.end_time || !form.attendees || !(form.attendees >= 3)
+})
+
+const detailIncomplete = computed(() => {
+    /**
+     * ตรวจสอบเงื่อนไข ถ้าสถานะจัดห้อง = true
+     * ตรวจสอบ type_table = groups หรือไม่ ถ้าใช่ ห้ามเว้นว่าง หัวเรื่อง วัตถุประสงค์ รูปแบบห้อง จำนวนกลุ่ม และจำนวนคนต่อกลุ่ม
+     * ถ้าไม่ใช่ ห้ามเว้นว่าง หัวเรื่อง วัตถุประสงค์ และรูปแบบห้อง
+     *
+     * สถานะการจัดห้อง != true
+     * ห้ามเว้นว่าง หัวเรื่อง และ วัตถุประสงค์
+     */
+    if (form.set_room.status === true) {
+        if (form.set_room.type_table === 'groups') {
+            return !form.topic || !form.purpose_id || !form.set_room.type_table || !(form.set_room.each_group > 0) || !(form.set_room.number_group > 0)
+        } else {
+            return !form.topic || !form.purpose_id || !form.set_room.type_table
+        }
+    } else {
+        return !form.topic || !form.purpose_id
+    }
+
+})
 
 watch(
     () => props.messageError,
@@ -340,7 +370,6 @@ watch(
     }
 )
 
-const messageCalculateTime = ref(null);
 watch(
     () => [form.start_time, form.end_time],
     (val) => {
@@ -362,7 +391,6 @@ watch(
     }
 )
 
-const messageAttendeesInvalid = ref(null)
 watch(
     () => form.attendees,
     (val) => {
@@ -427,30 +455,5 @@ watch(
         }
     }
 )
-const conditionIncompleted = computed(() => {
-    return !form.date || !form.start_time || !form.end_time || !form.attendees || !(form.attendees >= 3)
-})
-
-const detailIncomplete = computed(() => {
-    /**
-     * ตรวจสอบเงื่อนไข ถ้าสถานะจัดห้อง = true
-     * ตรวจสอบ type_table = groups หรือไม่ ถ้าใช่ ห้ามเว้นว่าง หัวเรื่อง วัตถุประสงค์ รูปแบบห้อง จำนวนกลุ่ม และจำนวนคนต่อกลุ่ม
-     * ถ้าไม่ใช่ ห้ามเว้นว่าง หัวเรื่อง วัตถุประสงค์ และรูปแบบห้อง
-     *
-     * สถานะการจัดห้อง != true
-     * ห้ามเว้นว่าง หัวเรื่อง และ วัตถุประสงค์
-     */
-    if (form.set_room.status === true) {
-        if (form.set_room.type_table === 'groups') {
-            return !form.topic || !form.purpose_id || !form.set_room.type_table || !(form.set_room.each_group > 0) || !(form.set_room.number_group > 0)
-        } else {
-            return !form.topic || !form.purpose_id || !form.set_room.type_table
-        }
-    } else {
-        return !form.topic || !form.purpose_id
-    }
-
-})
-
 
 </script>
