@@ -237,10 +237,10 @@ import ButtonComponent from "../../Components/ButtonComponent";
 import {useForm} from "@inertiajs/inertia-vue3";
 import {computed, ref, watch} from "vue";
 import dayjs from "dayjs";
-import InputCheckboxComponentComposition from "../../Components/InputCheckboxComponentComposition";
 import Layout from "../../Layouts/Layout";
 
-const props = defineProps(['message', 'can']);
+const props = defineProps(['messageError', 'can', 'params']);
+
 const form = useForm({
     date: null,
     start_time: null,
@@ -283,7 +283,7 @@ const checkCondition = () => {
     window.axios
         .post(window.route("formBookedRoomCheckCondition"), form)
         .then((res) => {
-            console.log(res.data);
+            // console.log(res.data);
             result.value = [...res.data.result];
             purposes.value = [...res.data.purposes];
             unitType.value = res.data.unitType;
@@ -293,11 +293,32 @@ const checkCondition = () => {
 const save = () => {
     form.post(window.route("formBookedRoomStore"));
 }
+if (props.messageError === 'true') {
+    const Toast = swal.mixin({
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.addEventListener('mouseenter', swal.stopTimer)
+            toast.addEventListener('mouseleave', swal.resumeTimer)
+        }
+    })
+
+    Toast.fire({
+        icon: 'error',
+        title: 'ไม่สำเร็จ',
+        text: 'กรุณาเลือกเวลาจองใหม่อีกครั้ง เนื่องจากมีเวลาที่เลือกถูกเลือกเเล้ว'
+    })
+}
+console.log(props.messageError)
 
 watch(
-    () => props.message,
+    () => props.messageError,
     (val) => {
-        if (val === 'true') {
+        console.log(props.messageError)
+        if (props.messageError === 'true') {
             const Toast = swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -311,15 +332,9 @@ watch(
             })
 
             Toast.fire({
-                icon: 'success',
-                title: 'Signed in successfully',
-                text: 'test'
-            })
-        } else {
-            swal.fire({
                 icon: 'error',
-                title: 'Oops...',
-                text: 'ไม่สามารถจองได้ เนื่องจากมีการบันทึกข้อมูลก่อนแล้ว กรุณากรอกเวลาใหม่',
+                title: 'ไม่สำเร็จ',
+                text: 'กรุณาเลือกเวลาจองใหม่อีกครั้ง เนื่องจากมีเวลาที่เลือกถูกเลือกเเล้ว'
             })
         }
     }
@@ -332,7 +347,7 @@ watch(
         if (val) {
             const end = dayjs((form.date + form.end_time));
             const diffTime = end.diff((form.date + form.start_time), "minute", true);
-            console.log(diffTime)
+            // console.log(diffTime)
             const Hours = Math.floor(diffTime / 60);
             const Minute = diffTime % 60;
 
@@ -375,7 +390,7 @@ watch(
         if (val) {
             form.start_date = form.date + 'T' + form.start_time;
             form.end_date = form.date + 'T' + form.end_time;
-            console.log(form.end_date)
+            // console.log(form.end_date)
         }
     }
 )
@@ -436,4 +451,6 @@ const detailIncomplete = computed(() => {
     }
 
 })
+
+
 </script>

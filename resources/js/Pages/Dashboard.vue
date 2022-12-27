@@ -192,7 +192,7 @@ import {useForm} from "@inertiajs/inertia-vue3";
 import $ from 'jquery';
 
 const props = defineProps(['message', 'can', 'bookings', 'rooms']);
-if (props.message !== null) {
+if (props.message === true) {
     const Toast = swal.mixin({
         toast: true,
         position: 'top-end',

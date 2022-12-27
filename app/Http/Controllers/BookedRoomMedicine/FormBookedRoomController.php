@@ -16,11 +16,13 @@ class FormBookedRoomController extends Controller
     public function create()
     {
         session()->forget('message');
+
         return Inertia::render('BookedRoomMedicine/FormBookedRoom');
     }
 
     public function checkCondition(Request $request)
     {
+        session()->forget('messageError');
         $validated = $request->validate([
             'start_date' => 'required',
             'end_date' => 'required',
@@ -184,26 +186,23 @@ class FormBookedRoomController extends Controller
             ->count();
 
         if ($overlap) {
-            return 'no';
-            $message = 'false';
             $params = [
-                'start_date' => $validated['start_time'],
-                'end_date' => $validated['end_time'],
+                'start_date' => $validated['start_date'],
+                'end_date' => $validated['end_date'],
                 'attendees' => $validated['attendees'],
             ];
+            $messageError = 'true';
 
-            session()->put('message', $message);
-            return redirect()->route('formBookedRoom');
+            return Inertia::render('BookedRoomMedicine/FormBookedRoom', [
+                'messageError' => $messageError,
+            ]);
         }
-        return 'ok';
 
         $validated['requester_id'] = $request->user()->id;
         $validated['unit_level'] = 0;
         $validated['unit_id'] = $request->user()->unit_id;
-//        return $validated;
 
         DepartmentBookRoom::query()->create($validated);
-
 
         $message = 'true';
         session()->put('message', $message);
