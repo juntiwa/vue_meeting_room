@@ -3,11 +3,9 @@
     <div class="m-3">
         ระบบจองห้องประชุม
 
-
         <section id="condition" class="flex flex-col">
             กรอกข้อมูลการขอใช้งานห้องประชุม
-            <div id="date_time" class="flex flex-row gap-2">
-
+            <div id="date_time" class="flex flex-row gap-2 mb-3">
                 <label for="date" class="flex flex-col">
                     วัน
                     <a-date-picker class="date"
@@ -18,7 +16,6 @@
                                    :disabled-date="disabledDate"
                     />
                 </label>
-
                 <label for="start_time" class="flex flex-col">
                     เวลาเริ่ม
                     <a-time-picker name="start_time"
@@ -27,7 +24,6 @@
                                    :disabledHours="disabledHours"
                                    class="time"
                                    format="HH:mm"/>
-
                 </label>
                 <label for="end_time" class="flex flex-col">
                     เวลาสิ้นสุด
@@ -37,11 +33,13 @@
                                    :disabledHours="disabledHours"
                                    class="time"
                                    format="HH:mm"/>
-
                 </label>
-
             </div>
-            {{ messageCalculateTime }}
+            <p :class="{
+                'text-teal-600': statusMessageCalculateTime,
+                'text-rose-600': !statusMessageCalculateTime,
+            }">{{ messageCalculateTime }}</p>
+
 
             <InputTextComponent label="จำนวนผู้เข้าร่วม"
                                 type="number"
@@ -293,6 +291,7 @@ const form = useForm({
 const result = ref([]);
 const purposes = ref([]);
 const unitType = ref(null);
+const statusMessageCalculateTime = ref(null);
 const messageCalculateTime = ref(null);
 const messageAttendeesInvalid = ref(null)
 
@@ -322,8 +321,6 @@ const disabledHours = () => {
         }
         return hours;
     }
-
-
 };
 
 const checkCondition = () => {
@@ -403,10 +400,13 @@ watch(
             const Minute = (diffTimeMinute % 60) + 1;
 
             if (Hours > 0) {
+                statusMessageCalculateTime.value = true
                 messageCalculateTime.value = "เวลาใช้งานจำนวน " + Hours + " ชั่วโมง " + Minute + " นาที";
             } else if (Hours === 0) {
+                statusMessageCalculateTime.value = true
                 messageCalculateTime.value = "เวลาใช้งานจำนวน " + Minute + " นาที";
             } else {
+                statusMessageCalculateTime.value = false
                 if (form.end_time === null) {
                     messageCalculateTime.value = "กรุณาระบุเวลาสิ้นสุด";
                 } else {
@@ -431,7 +431,6 @@ watch(
 watch(
     () => [form.date, form.start_time, form.end_time, form.attendees, form.set_room.status, !form.set_room.status],
     (val) => {
-        // console.log(form.date)
         if (val) {
             result.value = [];
             form.meeting_room_id = null;
@@ -443,8 +442,8 @@ watch(
     () => [form.date, form.start_time, form.end_time],
     (val) => {
         if (val) {
-            form.start_date = form.date + 'T' + form.start_time;
-            form.end_date = form.date + 'T' + form.end_time;
+            form.start_date = dayjs(form.date).format('YYYY-MM-DD') + 'T' + dayjs(form.start_time).format('HH:mm');
+            form.end_date = dayjs(form.date).format('YYYY-MM-DD') + 'T' + dayjs(form.end_time).format('HH:mm');
             // console.log(form.end_date)
         }
     }
