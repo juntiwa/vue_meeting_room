@@ -14,6 +14,7 @@
                                    v-model:value="form.date"
                                    format="DD/MM/YYYY"
                                    :disabled-date="disabledDate"
+                                   placeholder="เลือกวันที่ต้องการ"
                     />
                 </label>
                 <label for="start_time" class="flex flex-col">
@@ -22,7 +23,11 @@
                                    id="start_time"
                                    v-model:value="form.start_time"
                                    :disabledHours="disabledHours"
+                                   :disabledMinutes="disabledMinutes"
+                                   :hideDisabledOptions="true"
+                                   :disabled="form.date === null"
                                    class="time"
+                                   placeholder="เลือกเวลาที่ต้องการ"
                                    format="HH:mm"/>
                 </label>
                 <label for="end_time" class="flex flex-col">
@@ -31,7 +36,11 @@
                                    id="end_time"
                                    v-model:value="form.end_time"
                                    :disabledHours="disabledHours"
+                                   :disabledMinutes="disabledMinutes"
+                                   :hideDisabledOptions="true"
+                                   :disabled="form.date === null"
                                    class="time"
+                                   placeholder="เลือกเวลาที่ต้องการ"
                                    format="HH:mm"/>
                 </label>
             </div>
@@ -322,6 +331,18 @@ const disabledHours = () => {
         return hours;
     }
 };
+const disabledMinutes = () => {
+    let minutes = [];
+    let date = dayjs(form.date).format('DD/MM/YYYY')
+    let now = dayjs().format('DD/MM/YYYY')
+    if (date === now) {
+        const currentMinute = dayjs().minute();
+        for (let i = currentMinute - 1; i >= 0; i--) {
+            minutes.push(i);
+        }
+        return minutes;
+    }
+}
 
 const checkCondition = () => {
     result.value = [];
@@ -394,17 +415,31 @@ watch(
     () => [form.start_time, form.end_time],
     (val) => {
         if (val) {
-            const end = dayjs(form.end_time);
-            const diffTimeMinute = end.diff(form.start_time, "minute", false);
-            const Hours = end.diff(form.start_time, "hour", false);
-            const Minute = (diffTimeMinute % 60) + 1;
+            let end = dayjs(form.end_time);
+            let diffTimeMinute = end.diff(form.start_time, "minute", true);
+            let Hours = end.diff(form.start_time, "hour", false);
+            let Minute = Math.round(diffTimeMinute % 60);
+
+            console.log(diffTimeMinute % 60)
+            console.log(Minute)
 
             if (Hours > 0) {
                 statusMessageCalculateTime.value = true
                 messageCalculateTime.value = "เวลาใช้งานจำนวน " + Hours + " ชั่วโมง " + Minute + " นาที";
+                if (Minute === 0) {
+                    messageCalculateTime.value = "เวลาใช้งานจำนวน " + Hours + " ชั่วโมง ";
+                }
+
+                if (Minute === 60) {
+                    messageCalculateTime.value = "เวลาใช้งานจำนวน " + (Hours + 1) + " ชั่วโมง ";
+                }
             } else if (Hours === 0) {
                 statusMessageCalculateTime.value = true
-                messageCalculateTime.value = "เวลาใช้งานจำนวน " + Minute + " นาที";
+                if (Minute === 60) {
+                    messageCalculateTime.value = "เวลาใช้งานจำนวน " + (Hours + 1) + " ชั่วโมง ";
+                } else {
+                    messageCalculateTime.value = "เวลาใช้งานจำนวน " + Minute + " นาที";
+                }
             } else {
                 statusMessageCalculateTime.value = false
                 if (form.end_time === null) {
@@ -500,6 +535,9 @@ watch(
 }
 
 #date, #start_time, #end_time {
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.75rem; /* 28px */
+    width: 200px;
     padding: 5px 3px;
 }
 </style>
