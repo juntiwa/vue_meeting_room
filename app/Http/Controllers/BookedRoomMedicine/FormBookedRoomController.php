@@ -22,6 +22,7 @@ class FormBookedRoomController extends Controller
 
     public function checkCondition(Request $request)
     {
+//        logger($request->all());
         session()->forget('messageError');
         $validated = $request->validate([
             'start_date' => 'required',

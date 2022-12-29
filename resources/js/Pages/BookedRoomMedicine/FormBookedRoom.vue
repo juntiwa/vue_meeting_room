@@ -2,30 +2,53 @@
     <Layout :can="can"/>
     <div class="m-3">
         ระบบจองห้องประชุม
+
         <section id="condition" class="flex flex-col">
             กรอกข้อมูลการขอใช้งานห้องประชุม
-            <div id="date_time" class="flex flex-row gap-2">
-                <InputTextComponent label="วัน"
-                                    type="date"
-                                    name="start_date"
-                                    class="w-fit"
-                                    v-model="form.date"
-                />
-
-                <InputTextComponent label="เวลาเริ่มต้น"
-                                    type="time"
-                                    name="start_time"
-                                    class="w-fit"
-                                    v-model="form.start_time"
-                />
-                <InputTextComponent label="เวลาสิ้นสุด"
-                                    type="time"
-                                    name="end_time"
-                                    class="w-fit"
-                                    v-model="form.end_time"
-                />
+            <div id="date_time" class="flex flex-row gap-2 mb-3">
+                <label for="date" class="flex flex-col">
+                    วัน
+                    <a-date-picker class="date"
+                                   name="date"
+                                   id="date"
+                                   v-model:value="form.date"
+                                   format="DD/MM/YYYY"
+                                   :disabled-date="disabledDate"
+                                   placeholder="เลือกวันที่ต้องการ"
+                    />
+                </label>
+                <label for="start_time" class="flex flex-col">
+                    เวลาเริ่ม
+                    <a-time-picker name="start_time"
+                                   id="start_time"
+                                   v-model:value="form.start_time"
+                                   :disabledHours="disabledHours"
+                                   :disabledMinutes="disabledMinutes"
+                                   :hideDisabledOptions="true"
+                                   :disabled="form.date === null"
+                                   class="time"
+                                   placeholder="เลือกเวลาที่ต้องการ"
+                                   format="HH:mm"/>
+                </label>
+                <label for="end_time" class="flex flex-col">
+                    เวลาสิ้นสุด
+                    <a-time-picker name="end_time"
+                                   id="end_time"
+                                   v-model:value="form.end_time"
+                                   :disabledHours="disabledHours"
+                                   :disabledMinutes="disabledMinutes"
+                                   :hideDisabledOptions="true"
+                                   :disabled="form.date === null"
+                                   class="time"
+                                   placeholder="เลือกเวลาที่ต้องการ"
+                                   format="HH:mm"/>
+                </label>
             </div>
-            {{ messageCalculateTime }}
+            <p :class="{
+                'text-teal-600': statusMessageCalculateTime,
+                'text-rose-600': !statusMessageCalculateTime,
+            }">{{ messageCalculateTime }}</p>
+
 
             <InputTextComponent label="จำนวนผู้เข้าร่วม"
                                 type="number"
@@ -236,7 +259,7 @@ import TextareaComponent from "../../Components/TextareaComponent";
 import ButtonComponent from "../../Components/ButtonComponent";
 import {useForm} from "@inertiajs/inertia-vue3";
 import {computed, ref, watch} from "vue";
-import dayjs from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 import Layout from "../../Layouts/Layout";
 
 const props = defineProps(['messageError', 'can', 'params']);
@@ -277,6 +300,50 @@ const form = useForm({
 const result = ref([]);
 const purposes = ref([]);
 const unitType = ref(null);
+const statusMessageCalculateTime = ref(null);
+const messageCalculateTime = ref(null);
+const messageAttendeesInvalid = ref(null)
+
+const disabledDate = function (current) {
+    // Can not select days before today
+    return current < dayjs().endOf('day').add(-1, 'day');
+};
+const disabledHours = () => {
+    const hours = [];
+    let date = dayjs(form.date).format('DD/MM/YYYY')
+    let now = dayjs().format('DD/MM/YYYY')
+    if (date === now) {
+        const currentHour = dayjs().hour();
+        for (let i = currentHour - 1; i >= 0; i--) {
+            hours.push(i);
+        }
+        for (let i = 18; i <= 24; i++) {
+            hours.push(i);
+        }
+        return hours;
+    } else {
+        for (let i = 0; i <= 5; i++) {
+            hours.push(i);
+        }
+        for (let i = 17; i <= 24; i++) {
+            hours.push(i);
+        }
+        return hours;
+    }
+};
+const disabledMinutes = () => {
+    let minutes = [];
+    let date = dayjs(form.date).format('DD/MM/YYYY')
+    let now = dayjs().format('DD/MM/YYYY')
+    if (date === now) {
+        const currentMinute = dayjs().minute();
+        for (let i = currentMinute - 1; i >= 0; i--) {
+            minutes.push(i);
+        }
+        return minutes;
+    }
+}
+
 const checkCondition = () => {
     result.value = [];
     form.meeting_room_id = null;
@@ -289,35 +356,39 @@ const checkCondition = () => {
             unitType.value = res.data.unitType;
         })
         .catch((err) => console.log(err));
-}
+};
 const save = () => {
     form.post(window.route("formBookedRoomStore"));
-}
-if (props.messageError === 'true') {
-    const Toast = swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.addEventListener('mouseenter', swal.stopTimer)
-            toast.addEventListener('mouseleave', swal.resumeTimer)
-        }
-    })
+};
 
-    Toast.fire({
-        icon: 'error',
-        title: 'ไม่สำเร็จ',
-        text: 'กรุณาเลือกเวลาจองใหม่อีกครั้ง เนื่องจากมีเวลาที่เลือกถูกเลือกเเล้ว'
-    })
-}
-console.log(props.messageError)
+const conditionIncompleted = computed(() => {
+    return !form.date || !form.start_time || !form.end_time || !form.attendees || !(form.attendees >= 3)
+})
+const detailIncomplete = computed(() => {
+    /**
+     * ตรวจสอบเงื่อนไข ถ้าสถานะจัดห้อง = true
+     * ตรวจสอบ type_table = groups หรือไม่ ถ้าใช่ ห้ามเว้นว่าง หัวเรื่อง วัตถุประสงค์ รูปแบบห้อง จำนวนกลุ่ม และจำนวนคนต่อกลุ่ม
+     * ถ้าไม่ใช่ ห้ามเว้นว่าง หัวเรื่อง วัตถุประสงค์ และรูปแบบห้อง
+     *
+     * สถานะการจัดห้อง != true
+     * ห้ามเว้นว่าง หัวเรื่อง และ วัตถุประสงค์
+     */
+    if (form.set_room.status === true) {
+        if (form.set_room.type_table === 'groups') {
+            return !form.topic || !form.purpose_id || !form.set_room.type_table || !(form.set_room.each_group > 0) || !(form.set_room.number_group > 0)
+        } else {
+            return !form.topic || !form.purpose_id || !form.set_room.type_table
+        }
+    } else {
+        return !form.topic || !form.purpose_id
+    }
+
+})
 
 watch(
     () => props.messageError,
     (val) => {
-        console.log(props.messageError)
+        // console.log(props.messageError)
         if (props.messageError === 'true') {
             const Toast = swal.mixin({
                 toast: true,
@@ -340,29 +411,47 @@ watch(
     }
 )
 
-const messageCalculateTime = ref(null);
 watch(
     () => [form.start_time, form.end_time],
     (val) => {
         if (val) {
-            const end = dayjs((form.date + form.end_time));
-            const diffTime = end.diff((form.date + form.start_time), "minute", true);
-            // console.log(diffTime)
-            const Hours = Math.floor(diffTime / 60);
-            const Minute = diffTime % 60;
+            let end = dayjs(form.end_time);
+            let diffTimeMinute = end.diff(form.start_time, "minute", true);
+            let Hours = end.diff(form.start_time, "hour", false);
+            let Minute = Math.round(diffTimeMinute % 60);
+
+            console.log(diffTimeMinute % 60)
+            console.log(Minute)
 
             if (Hours > 0) {
+                statusMessageCalculateTime.value = true
                 messageCalculateTime.value = "เวลาใช้งานจำนวน " + Hours + " ชั่วโมง " + Minute + " นาที";
+                if (Minute === 0) {
+                    messageCalculateTime.value = "เวลาใช้งานจำนวน " + Hours + " ชั่วโมง ";
+                }
+
+                if (Minute === 60) {
+                    messageCalculateTime.value = "เวลาใช้งานจำนวน " + (Hours + 1) + " ชั่วโมง ";
+                }
             } else if (Hours === 0) {
-                messageCalculateTime.value = "เวลาใช้งานจำนวน " + Minute + " นาที";
+                statusMessageCalculateTime.value = true
+                if (Minute === 60) {
+                    messageCalculateTime.value = "เวลาใช้งานจำนวน " + (Hours + 1) + " ชั่วโมง ";
+                } else {
+                    messageCalculateTime.value = "เวลาใช้งานจำนวน " + Minute + " นาที";
+                }
             } else {
-                messageCalculateTime.value = "กรุณาตรวจสอบเวลาอีกครั้ง";
+                statusMessageCalculateTime.value = false
+                if (form.end_time === null) {
+                    messageCalculateTime.value = "กรุณาระบุเวลาสิ้นสุด";
+                } else {
+                    messageCalculateTime.value = "กรุณาตรวจสอบเวลาอีกครั้ง";
+                }
             }
         }
     }
 )
 
-const messageAttendeesInvalid = ref(null)
 watch(
     () => form.attendees,
     (val) => {
@@ -388,8 +477,8 @@ watch(
     () => [form.date, form.start_time, form.end_time],
     (val) => {
         if (val) {
-            form.start_date = form.date + 'T' + form.start_time;
-            form.end_date = form.date + 'T' + form.end_time;
+            form.start_date = dayjs(form.date).format('YYYY-MM-DD') + 'T' + dayjs(form.start_time).format('HH:mm');
+            form.end_date = dayjs(form.date).format('YYYY-MM-DD') + 'T' + dayjs(form.end_time).format('HH:mm');
             // console.log(form.end_date)
         }
     }
@@ -427,30 +516,28 @@ watch(
         }
     }
 )
-const conditionIncompleted = computed(() => {
-    return !form.date || !form.start_time || !form.end_time || !form.attendees || !(form.attendees >= 3)
-})
-
-const detailIncomplete = computed(() => {
-    /**
-     * ตรวจสอบเงื่อนไข ถ้าสถานะจัดห้อง = true
-     * ตรวจสอบ type_table = groups หรือไม่ ถ้าใช่ ห้ามเว้นว่าง หัวเรื่อง วัตถุประสงค์ รูปแบบห้อง จำนวนกลุ่ม และจำนวนคนต่อกลุ่ม
-     * ถ้าไม่ใช่ ห้ามเว้นว่าง หัวเรื่อง วัตถุประสงค์ และรูปแบบห้อง
-     *
-     * สถานะการจัดห้อง != true
-     * ห้ามเว้นว่าง หัวเรื่อง และ วัตถุประสงค์
-     */
-    if (form.set_room.status === true) {
-        if (form.set_room.type_table === 'groups') {
-            return !form.topic || !form.purpose_id || !form.set_room.type_table || !(form.set_room.each_group > 0) || !(form.set_room.number_group > 0)
-        } else {
-            return !form.topic || !form.purpose_id || !form.set_room.type_table
-        }
-    } else {
-        return !form.topic || !form.purpose_id
-    }
-
-})
-
 
 </script>
+
+<style>
+.date {
+    height: auto;
+    border: #64748b solid 1px;
+    border-radius: 0.25rem;
+    margin-top: 9px;
+}
+
+.time {
+    height: auto;
+    border: #64748b solid 1px;
+    border-radius: 0.25rem;
+    margin-top: 9px;
+}
+
+#date, #start_time, #end_time {
+    font-size: 1.125rem; /* 18px */
+    line-height: 1.75rem; /* 28px */
+    width: 200px;
+    padding: 5px 3px;
+}
+</style>
