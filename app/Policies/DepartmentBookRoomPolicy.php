@@ -63,6 +63,12 @@ class DepartmentBookRoomPolicy
                 && $user->role_id->contains(1);
         }
 
+        if ($booking->status === 'booked') {
+            return $booking->occupied_raw_statuses_cancel->contains($booking->status)
+                && $booking->start_date > Carbon::now()
+                && $booking->requester_id === $user->id;
+        }
+
         return $booking->occupied_raw_statuses_cancel->contains($booking->status)
             && $booking->start_date > Carbon::now()->addWeekdays(4) //add 4 because not counting today and start_date
             && $booking->requester_id === $user->id;

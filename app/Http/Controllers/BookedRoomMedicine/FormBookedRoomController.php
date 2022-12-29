@@ -16,15 +16,17 @@ class FormBookedRoomController extends Controller
     public function create()
     {
         session()->forget('message');
+
         return Inertia::render('BookedRoomMedicine/FormBookedRoom');
     }
 
     public function checkCondition(Request $request)
     {
-
+//        logger($request->all());
+        session()->forget('messageError');
         $validated = $request->validate([
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
+            'start_date' => 'required',
+            'end_date' => 'required',
             'attendees' => 'required|integer|min:3|max:200',
             'set_room.status' => 'required|boolean'
         ]);
@@ -53,6 +55,7 @@ class FormBookedRoomController extends Controller
             ->whereIn('status', (new BookingStatus())->getOccupiedRawStatuses())
             ->get();
 
+//        return $roomsThoseMeetAttendeeRequirement;
         //query เพิ่มเติมกรณีห้องประชุมรวม ไม่สามารถจองได้
         $meetingRooms = DepartmentRoom::query()->get();
         $unavailableSharedRooms = DepartmentBookRoom::query()
@@ -60,6 +63,7 @@ class FormBookedRoomController extends Controller
             ->whereIn('meeting_room_id', $meetingRooms->pluck('id'))
             ->whereIn('status', (new BookingStatus())->getOccupiedRawStatuses())
             ->get();
+
 
         $result = [];
         foreach ($roomsThoseMeetAttendeeRequirement as $room) {
@@ -132,18 +136,20 @@ class FormBookedRoomController extends Controller
         $sort = $col->sortBy('available');
         $resultComplete = $sort->values()->all();
         $purposes = DepartmentPurposeBookRoom::query()->get();
+        $unitType = auth()->user()->unit->unit_type;
         return [
             'start_date' => $start_date,
             'result' => $resultComplete,
-            'purposes' => $purposes
+            'purposes' => $purposes,
+            'unitType' => $unitType
         ];
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'start_date' => 'required|date',
-            'end_date' => 'required|date',
+            'start_date' => 'required',
+            'end_date' => 'required',
             'attendees' => 'required|integer|min:3|max:200',
             'set_room.status' => 'required|boolean',
             'set_room.type_table' => 'nullable|string', //exits
@@ -171,7 +177,7 @@ class FormBookedRoomController extends Controller
         } else {
             $start_date = Carbon::create($validated['start_date']);
         }
-        $validated['start_date'] = $start_date;
+        $validated['start_time'] = $start_date;
         $end_date = Carbon::create($validated['end_date']);
 
         $overlap = DepartmentBookRoom::query()
@@ -181,28 +187,26 @@ class FormBookedRoomController extends Controller
             ->count();
 
         if ($overlap) {
-            $message = 'ไม่สามารถจองได้ กรุณาเลือกเวลาใหม่';
             $params = [
                 'start_date' => $validated['start_date'],
                 'end_date' => $validated['end_date'],
                 'attendees' => $validated['attendees'],
             ];
-            logger($message);
+            $messageError = 'true';
 
-            session()->put('message',$message);
-            return redirect()->route('formBookedRoom');
+            return Inertia::render('BookedRoomMedicine/FormBookedRoom', [
+                'messageError' => $messageError,
+            ]);
         }
 
         $validated['requester_id'] = $request->user()->id;
         $validated['unit_level'] = 0;
         $validated['unit_id'] = $request->user()->unit_id;
-        //return $validated;
 
         DepartmentBookRoom::query()->create($validated);
 
-
         $message = 'true';
-        session()->put('message',$message);
+        session()->put('message', $message);
         return redirect()->route('dashboard');
     }
 
@@ -215,7 +219,7 @@ class FormBookedRoomController extends Controller
         ]);
 
         $validated['approver_id'] = $request->user()->id;
-        DepartmentBookRoom::query()->where('id',$validated['id'])->update($validated);
+        DepartmentBookRoom::query()->where('id', $validated['id'])->update($validated);
         return redirect()->route('dashboard');
     }
 }

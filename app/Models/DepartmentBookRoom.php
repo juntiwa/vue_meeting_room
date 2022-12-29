@@ -43,6 +43,7 @@ class DepartmentBookRoom extends Model
 
     public function scopeOverlap($query, $start, $end)
     {
+        logger($start);
         $start = $start->addMinute();
         $query->where('start_date', '<=', $end)
             ->where('end_date', '>=', $start);
@@ -57,11 +58,11 @@ class DepartmentBookRoom extends Model
 
     }
 
-    public function date(): Attribute
+    public function dateFormat(): Attribute
     {
         return Attribute::make(
         //  get: fn() => $this->start_date->thaidate('j F Y'),
-            get: fn() => $this->start_date->thaidate('d/m/y'),
+            get: fn() => $this->start_date->thaidate('d/m/Y'),
         );
     }
 
@@ -289,6 +290,7 @@ class DepartmentBookRoom extends Model
                     . '<div class="text-right"> บันทึกข้อมูลเมื่อ ' . $this->created_at->thaidate('j F Y')
                     . '<br/><br/> โดย ' . $this->users->full_name
                     . '<br/>' . $this->users->unit->name_th
+                    . '<br/> ติดต่อโทร ' . $this->users->tel
                     . '</div>'
                     . '<div class="text-left p-3 line-height"> <div class="flex gap-2">';
 

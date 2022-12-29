@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\AddPermissionAuto;
+use App\Models\UnitInner;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,10 +15,15 @@ class RegisterController extends Controller
     public function create(Request $request)
     {
         $sirirajUser = session('sirirajUser');
+        $units = UnitInner::query()->orderBy('name_th','asc')->get();
         if (!$sirirajUser) {
             return redirect()->route('login');
         }
-        return Inertia::render('Auth/Register', ['sirirajUser' => $sirirajUser]);
+        return Inertia::render('Auth/Register',
+            [
+                'sirirajUser' => $sirirajUser,
+                'units' => $units
+            ]);
     }
 
     public function store(Request $request)
@@ -27,7 +33,7 @@ class RegisterController extends Controller
             'login' => 'required',
             'full_name' => 'required',
             'unit_id' => 'nullable|numeric',
-            'tel' => 'nullable|numeric',
+            'tel' => 'nullable|string',
             'phone' => 'nullable|numeric'
         ]);
 

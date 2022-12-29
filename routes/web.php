@@ -4,12 +4,9 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BookedRoomMedicine\FormBookedRoomController;
 use App\Http\Controllers\BookedRoomMedicine\FormBookedRoomInsteadController;
-use App\Http\Controllers\BookRoomMedicine\ListBookedRoomController;
+use App\Http\Controllers\BookedRoomMedicine\ListBookedRoomController;
 use App\Http\Controllers\DashboardController;
-use App\Models\DepartmentBookRoom;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
 
 //Auth::logout();
 

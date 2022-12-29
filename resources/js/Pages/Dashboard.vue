@@ -1,6 +1,6 @@
 <template>
+    <Layout :can="can"/>
     <div class="m-3">
-        <Layout :can="can"/>
 
         <div v-for="(room, keyroom) in rooms" :key="keyroom">
             <div v-if="room.can_view_list_booked_room">
@@ -33,7 +33,7 @@
                             </td>
                             <td class="p-3 text-center align-text-top whitespace-nowrap"
                                 @click="modalData(booking,room)">
-                                {{ booking.date }}
+                                {{ booking.date_format }}
                             </td>
                             <td class="p-3 text-center align-text-top whitespace-nowrap"
                                 @click="modalData(booking,room)">
@@ -192,7 +192,7 @@ import {useForm} from "@inertiajs/inertia-vue3";
 import $ from 'jquery';
 
 const props = defineProps(['message', 'can', 'bookings', 'rooms']);
-if (props.message === 'true') {
+if (props.message === true) {
     const Toast = swal.mixin({
         toast: true,
         position: 'top-end',
@@ -206,9 +206,9 @@ if (props.message === 'true') {
     })
 
     Toast.fire({
-        icon: 'success',
-        title: 'สำเร็จ',
-        text: 'จองห้องประชุม เสร็จสิ้น'
+        icon: props.message === 'true' ? 'success' : 'error',
+        title: props.message === 'true' ? 'สำเร็จ' : 'ไม่สำเร็จ',
+        text: props.message === 'true' ? 'จองห้องประชุม เสร็จสิ้น' : 'กรุณาเลือกเวลาจองใหม่อีกครั้ง เนื่องจากมีเวลาที่เลือกถูกเลือกเเล้ว'
     })
 }
 

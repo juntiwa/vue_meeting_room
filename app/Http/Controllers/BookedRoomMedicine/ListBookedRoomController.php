@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\BookRoomMedicine;
+namespace App\Http\Controllers\BookedRoomMedicine;
 
 use App\Http\Controllers\Controller;
 use App\Models\DepartmentBookRoom;
@@ -28,7 +28,7 @@ class ListBookedRoomController extends Controller
                     'meeting_room_id' => $booking->meeting_room_id,
                     'create_at' => $booking->create_at,
                     'data_all' => $booking,
-                    'date' => $booking->date,
+                    'date_format' => $booking->date_format,
                     'time' => $booking->time,
                     'unit_name' => $booking->unit->name_th,
                     'equipment_text' => $booking->equipment_text,
@@ -52,7 +52,6 @@ class ListBookedRoomController extends Controller
                    'room_name' => $room->room_name,
                    'can_view_list_booked_room' => $request->user()->can('viewListBookedRoom', $room),
                ];
-
             });
 
         return Inertia::render('BookedRoomMedicine/ListBookedRoom', [
