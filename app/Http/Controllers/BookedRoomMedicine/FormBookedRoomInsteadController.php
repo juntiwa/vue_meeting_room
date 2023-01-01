@@ -10,6 +10,7 @@ class FormBookedRoomInsteadController extends Controller
 {
     public function create()
     {
+        session()->forget('message');
         return Inertia::render('BookedRoomMedicine/FormBookedRoomInstead');
     }
 }
