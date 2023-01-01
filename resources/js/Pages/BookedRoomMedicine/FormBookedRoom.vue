@@ -420,9 +420,6 @@ watch(
             let Hours = end.diff(form.start_time, "hour", false);
             let Minute = Math.round(diffTimeMinute % 60);
 
-            console.log(diffTimeMinute % 60)
-            console.log(Minute)
-
             if (Hours > 0) {
                 statusMessageCalculateTime.value = true
                 messageCalculateTime.value = "เวลาใช้งานจำนวน " + Hours + " ชั่วโมง " + Minute + " นาที";
@@ -437,6 +434,9 @@ watch(
                 statusMessageCalculateTime.value = true
                 if (Minute === 60) {
                     messageCalculateTime.value = "เวลาใช้งานจำนวน " + (Hours + 1) + " ชั่วโมง ";
+                } else if (Minute < 30) {
+                    statusMessageCalculateTime.value = false
+                    messageCalculateTime.value = "กรุณาระบุเวลา มากกว่า 30 นาที";
                 } else {
                     messageCalculateTime.value = "เวลาใช้งานจำนวน " + Minute + " นาที";
                 }
