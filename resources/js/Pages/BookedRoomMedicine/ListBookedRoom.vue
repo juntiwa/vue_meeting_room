@@ -1,7 +1,6 @@
 <template>
     <Layout :can="can"/>
     <div class="m-3">
-
         <div v-for="(room, keyroom) in rooms" :key="keyroom">
             <div v-if="room.can_view_list_booked_room">
                 <h1 class="font-medium text-center text-xl mt-7 mb-5">{{ room.room_name }}</h1>

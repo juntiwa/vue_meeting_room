@@ -177,7 +177,7 @@ class FormBookedRoomController extends Controller
         } else {
             $start_date = Carbon::create($validated['start_date']);
         }
-        $validated['start_time'] = $start_date;
+        $validated['start_date'] = $start_date;
         $end_date = Carbon::create($validated['end_date']);
 
         $overlap = DepartmentBookRoom::query()
@@ -200,7 +200,7 @@ class FormBookedRoomController extends Controller
         }
 
         $validated['requester_id'] = $request->user()->id;
-        $validated['unit_level'] = 0;
+        $validated['unit_level'] = 1;
         $validated['unit_id'] = $request->user()->unit_id;
 
         DepartmentBookRoom::query()->create($validated);

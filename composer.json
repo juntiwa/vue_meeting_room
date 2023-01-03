@@ -11,6 +11,7 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
+        "phattarachai/line-notify": "^2.0",
         "phattarachai/thaidate": "^12.1",
         "tightenco/ziggy": "^1.5"
     },

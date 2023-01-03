@@ -9,6 +9,7 @@ class BookingStatus implements CastsAttributes
     protected $statuses = ['', 'booked', 'approved', 'corrected', 'canceled', 'disapproved'];
     protected $statusesThai = ['', 'รออนุมัติ', 'อนุมัติ', 'ถูกแก้ไข', 'ถูกยกเลิก', 'ไม่อนุมัติ'];
     protected $occupiedRawStatuses = [1, 2]; // 'booked', 'approved'
+    protected $notifyRawStatuses = [1, 3]; // 'booked', 'corrected'
 
     /**
      * Cast the given value.
@@ -60,5 +61,10 @@ class BookingStatus implements CastsAttributes
     public function getOccupiedRawStatuses()
     {
         return $this->occupiedRawStatuses;
+    }
+
+    public function getNotifyRawStatuses()
+    {
+        return $this->notifyRawStatuses;
     }
 }
