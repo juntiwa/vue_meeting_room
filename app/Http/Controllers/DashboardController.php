@@ -35,7 +35,7 @@ class DashboardController extends Controller
                     'data_all' => $booking,
                     'date_format' => $booking->date_format,
                     'time' => $booking->time,
-                    'unit_name' => $booking->unit->name_th,
+                    'unit_name' => $booking->unit_text,
                     'equipment_text' => $booking->equipment_text,
                     'food_text' => $booking->food_text,
                     'set_room_text' => $booking->set_room_text,
@@ -67,12 +67,12 @@ class DashboardController extends Controller
         $bookingsSendNotifies = DepartmentBookRoom::query()
             ->where('start_date', '>', Carbon::now()->format('Y-m-d H:m'))
             ->where('start_date', '<', Carbon::now()->addWeekdays(3)->format('Y-m-d H:m'))
-            ->whereIn('status', (new BookingStatus())->getOccupiedRawStatuses())
+            ->whereIn('status', (new BookingStatus())->getNotifyRawStatuses())
             ->count();
 
 //        return $bookingsSendNotifies;
         if ($bookingsSendNotifies !== 0){
-            Line::send('มีข้อมูลจำนวน ' . $bookingsSendNotifies . ' รายการ รออนุมัติ');
+//            Line::send('มีข้อมูลจำนวน ' . $bookingsSendNotifies . ' รายการ รออนุมัติ');
         }
 
         return Inertia::render('Dashboard', [

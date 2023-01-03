@@ -3,8 +3,6 @@
     <div class="m-3">
         ระบบจองห้องประชุม
 
-        Form Booked Intead
-
         <section id="condition" class="flex flex-col">
             กรอกข้อมูลการขอใช้งานห้องประชุม
             <div id="date_time" class="flex flex-row gap-2 mb-3">
@@ -95,6 +93,28 @@
         <section id="detail" v-show="form.meeting_room_id !== null"
                  class="flex flex-col w-1/2">
             กรอกรายละเอียดการขอใช้งานห้องประชุม
+            <label>ประเภทหน่วยงาน</label>
+            <select v-model="form.unit_level" class="bg-white border border-slate-500 rounded py-1.5 px-1 mt-2 mb-3">
+                <option value="">เลือกประเภทหน่วยงาน</option>
+                <option v-for="level in unitLevel" :value="level.id">
+                    {{ level.name_th }}
+                </option>
+            </select>
+
+            <label>ชื่อหน่วยงาน</label>
+            <select v-model="form.unit_id" class="bg-white border border-slate-500 rounded py-1.5 px-1 mt-2 mb-3">
+                <option value="">เลือกหน่วยงาน</option>
+
+                <option v-if="form.unit_level === 1" v-for="inner in inners" :value="inner.id">
+                    {{ inner.name_th }}
+                </option>
+                <option v-if="form.unit_level === 2" v-for="outter in outters" :value="outter.id">
+                    {{ outter.name_th }}
+                </option>
+                <option v-if="form.unit_level === 3" v-for="company in company" :value="company.id">
+                    {{ company.name_th }}
+                </option>
+            </select>
             <label for="topic">หัวเรื่อง</label>
             <InputTextComponent name="topic" id="topic" v-model="form.topic"/>
 
@@ -210,7 +230,7 @@
                 </label>
             </div>
 
-            <div v-if="unitType === 1" id="food" class="flex flex-col">
+            <div id="food" class="flex flex-col">
                 <label for="food[status]">
                     <input type="checkbox"
                            name="food[status]" id="food[status]"
@@ -261,19 +281,17 @@ import TextareaComponent from "../../Components/TextareaComponent";
 import ButtonComponent from "../../Components/ButtonComponent";
 import {useForm} from "@inertiajs/inertia-vue3";
 import {computed, ref, watch} from "vue";
-import dayjs, {Dayjs} from "dayjs";
+import dayjs from "dayjs";
 import Layout from "../../Layouts/Layout";
-import weekday from 'dayjs/plugin/weekday'
 
 const props = defineProps(['messageError', 'can', 'params']);
-
 const form = useForm({
-    date: null,
+    date: ref(dayjs('2023-01-04')),
     start_time: null,
     end_time: null,
     start_date: null,
     end_date: null,
-    attendees: null,
+    attendees: "24",
     set_room: {
         status: false,
         type_table: null,
@@ -298,19 +316,24 @@ const form = useForm({
         snack: '0',
         drink: '0',
         note: null
-    }
+    },
+
+    unit_level: "",
+    unit_id: ""
 })
 const result = ref([]);
 const purposes = ref([]);
-const unitType = ref(null);
+const unitLevel = ref([]);
+const inners = ref([]);
+const outters = ref([]);
+const company = ref([]);
 const statusMessageCalculateTime = ref(null);
 const messageCalculateTime = ref(null);
 const messageAttendeesInvalid = ref(null)
 
 const disabledDate = function (current) {
     // Can not select days before today
-    const day = (current || new Date()).getDay();
-    return (day !== 0 && day !== 6) && current < dayjs().endOf('day').add(-1, 'day');
+    return current < dayjs().endOf('day').add(-1, 'day');
 };
 const disabledHours = () => {
     const hours = [];
@@ -352,17 +375,20 @@ const checkCondition = () => {
     result.value = [];
     form.meeting_room_id = null;
     window.axios
-        .post(window.route("formBookedRoomCheckCondition"), form)
+        .post(window.route("formBookRoomInsteadCheckCondition"), form)
         .then((res) => {
             // console.log(res.data);
             result.value = [...res.data.result];
             purposes.value = [...res.data.purposes];
-            unitType.value = res.data.unitType;
+            unitLevel.value = [...res.data.unitLevel];
+            inners.value = [...res.data.inners];
+            outters.value = [...res.data.outters];
+            company.value = [...res.data.company];
         })
         .catch((err) => console.log(err));
 };
 const save = () => {
-    form.post(window.route("formBookedRoomStore"));
+    form.post(window.route("formBookRoomInsteadStore"));
 };
 
 const conditionIncompleted = computed(() => {
@@ -423,7 +449,7 @@ watch(
             let diffTimeMinute = end.diff(form.start_time, "minute", true);
             let Hours = end.diff(form.start_time, "hour", false);
             let Minute = Math.round(diffTimeMinute % 60);
-
+            // console.log(Minute)
             if (Hours > 0) {
                 statusMessageCalculateTime.value = true
                 messageCalculateTime.value = "เวลาใช้งานจำนวน " + Hours + " ชั่วโมง " + Minute + " นาที";

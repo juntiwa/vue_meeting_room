@@ -24,10 +24,14 @@ class DatabaseSeeder extends Seeder
         $this->call([
             DepartmentSeeder::class,
             DepartmentRoomSeeder::class,
+            UnitLevelSeeder::class,
             UnitInnerSeeder::class,
+            UnitOutterSeeder::class,
+            CompanySeeder::class,
             AbilityRoleSeeder::class,
+            AddPermissionAutoSeeder::class,
+
 //            UserSeeder::class,
-            AddPermissionAutoSeeder::class
         ]);
     }
 }

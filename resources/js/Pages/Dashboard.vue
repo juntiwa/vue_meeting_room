@@ -47,7 +47,7 @@
                                 {{ booking.data_all.attendees }}
                             </td>
                             <td class="p-3 align-text-top" @click="modalData(booking,room)">
-                                {{ booking.data_all.users.unit.name_th }}
+                                {{ booking.unit_name }}
                             </td>
                             <td class="p-3 text-center align-text-top whitespace-nowrap"
                                 @click="modalData(booking,room)">

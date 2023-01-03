@@ -79,9 +79,36 @@ class DepartmentBookRoom extends Model
         return $this->belongsTo(User::class, 'requester_id');
     }
 
-    public function unit()
+    public function unitInner()
     {
         return $this->belongsTo(UnitInner::class, 'unit_id', 'id');
+    }
+
+    public function unitOutter()
+    {
+        return $this->belongsTo(UnitOutter::class, 'unit_id', 'id');
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'unit_id', 'id');
+    }
+
+    public function unitText(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $unitLevel = $this->unit_level;
+                if ($unitLevel === 1) {
+                    return $this->unitInner->name_th;
+                } elseif ($unitLevel === 2) {
+                    return $this->unitOutter->name_th;
+                } else {
+                    return $this->company->name_th;
+                }
+
+            }
+        );
     }
 
     public function userData(): Attribute
@@ -282,6 +309,28 @@ class DepartmentBookRoom extends Model
         );
     }
 
+    public function unitPopupText(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                $unitIdUser = $this->users->unit_id;
+                if ($this->unit_level !== 1) {
+                    if ($this->unit_level === 2) {
+                        return '<br/>ใช้งานโดยหน่วยงาน : ' . $this->unitOutter->name_th;
+                    } else {
+                        return '<br/>ใช้งานโดยหน่วยงาน : ' . $this->company->name_th;
+                    }
+                } else {
+                    if ($this->unit_id === $unitIdUser) {
+                        return ' ';
+                    } else {
+                        return '<br/>ใช้งานโดยหน่วยงาน : ' . $this->unitInner->name_th;
+                    }
+                }
+            }
+        );
+    }
+
     public function dataPopup(): Attribute
     {
         return Attribute::make(
@@ -292,7 +341,7 @@ class DepartmentBookRoom extends Model
                     . '<br/>' . $this->users->unit->name_th
                     . '<br/> ติดต่อโทร ' . $this->users->tel
                     . '</div>'
-                    . '<div class="text-left p-3 line-height"> <div class="flex gap-2">';
+                    . '<div class="text-left p-3 line-height"> <div class="flex gap-2 mt-3">';
 
                 if ($this->status_locale === 'รออนุมัติ') {
                     $data = $data . ' <p class="text-amber-500"> ' . $this->status_locale . '</p>';
@@ -307,11 +356,12 @@ class DepartmentBookRoom extends Model
                     $data = $data . ' <p class="text-rose-600"> ' . $this->status_locale . '</p>' . $this->status_text;
                 }
 
-                $data = $data . '</div> <br/> หัวข้อการประชุม : ' . $this->topic
+                $data = $data . '</div> หัวข้อการประชุม : ' . $this->topic
                     . '<br/> วันเดือนปี : ' . $this->start_date->thaidate('วันl ที่ j F Y') . ' เวลา ' . $this->start_date->format('H:i น.') . ' ถึง ' . $this->end_date->format('H:i น.')
                     . '<br/> ห้องประชุม : ' . $this->medicineroom->name_th . ' ผู้เข้าร่วมจำนวน : ' . $this->attendees . ' คน '
                     . $this->description_text
-                    . '<br/> วัตถุประสงค์การใช้งาน : ' . $this->purpose->name_th . '</div>'
+                    . '<br/> วัตถุประสงค์การใช้งาน : ' . $this->purpose->name_th
+                    . $this->unit_popup_text . '</div>'
                     . '<div class="text-left p-3 line-height"> ';
 
                 if ($this->set_room_text || $this->equipment_text || $this->food_text) {
@@ -327,7 +377,7 @@ class DepartmentBookRoom extends Model
                 }
 
                 if ($this->food_text) {
-                    $data = $data . '<br/> อาหาร, เครื่องดื่ม : ' . $this->food_text ;
+                    $data = $data . '<br/> อาหาร, เครื่องดื่ม : ' . $this->food_text;
                 }
                 $data = $data . '</div>';
                 return $data;

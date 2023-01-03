@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\UnitOutter;
+use App\Models\UnitLevel;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class UnitOutterSeeder extends Seeder
+class UnitLevelSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,6 +15,6 @@ class UnitOutterSeeder extends Seeder
      */
     public function run()
     {
-        UnitOutter::seed(storage_path('app/seeders/outterunits.csv'));
+        UnitLevel::seed(storage_path('app/seeders/unitlevel.csv'));
     }
 }

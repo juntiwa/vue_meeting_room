@@ -13,14 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('companies', function (Blueprint $table) {
+        Schema::create('unit_levels', function (Blueprint $table) {
             $table->id();
-            $table->unsignedSmallInteger('unit_id');
-            $table->unsignedSmallInteger('unit_level_id');
             $table->string('name_th');
             $table->string('name_en')->nullable();
-            $table->string('shot_name_th')->nullable();
-            $table->string('shot_name_en')->nullable();
             $table->timestamps();
         });
     }
@@ -32,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('companies');
+        Schema::dropIfExists('unit_levels');
     }
 };

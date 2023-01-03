@@ -259,13 +259,13 @@ import TextareaComponent from "../../Components/TextareaComponent";
 import ButtonComponent from "../../Components/ButtonComponent";
 import {useForm} from "@inertiajs/inertia-vue3";
 import {computed, ref, watch} from "vue";
-import dayjs, {Dayjs} from "dayjs";
+import dayjs from "dayjs";
 import Layout from "../../Layouts/Layout";
 
 const props = defineProps(['messageError', 'can', 'params']);
 
 const form = useForm({
-    date: null,
+    date: ref( dayjs()),
     start_time: null,
     end_time: null,
     start_date: null,
@@ -415,6 +415,7 @@ watch(
     () => [form.start_time, form.end_time],
     (val) => {
         if (val) {
+
             let end = dayjs(form.end_time);
             let diffTimeMinute = end.diff(form.start_time, "minute", true);
             let Hours = end.diff(form.start_time, "hour", false);

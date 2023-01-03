@@ -16,13 +16,11 @@ return new class extends Migration
         Schema::create('unit_outters', function (Blueprint $table) {
             $table->id();
             $table->unsignedSmallInteger('unit_id');
-            $table->string('level');
+            $table->unsignedSmallInteger('unit_level_id');
             $table->string('name_th');
             $table->string('name_en')->nullable();
             $table->string('shot_name_th')->nullable();
             $table->string('shot_name_en')->nullable();
-            $table->foreignId('department_id');
-            $table->foreign('department_id')->references('id')->on('departments');
             $table->timestamps();
         });
     }
