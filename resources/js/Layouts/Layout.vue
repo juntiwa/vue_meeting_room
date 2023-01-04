@@ -17,6 +17,10 @@
             <Link v-if="$page.props.can.view_list_booked_rooms_case" href="/listBookedRoom" class="text-violet-600 hover:text-teal-600">
                 รายการจองห้องประชุมทั้งหมด
             </Link>
+
+            <Link v-if="$page.props.can.booked_room_instead_case" href="/formRequestEquipment" class="text-violet-600 hover:text-teal-600">
+                ขอใช้งานอุปกรณ์
+            </Link>
         </div>
         <div>
             {{ user }}
@@ -25,6 +29,8 @@
                              @click="$inertia.delete(route('loginDestroy'))"
                              buttonText="logout"/>
         </div>
+
+        <slot/>
     </div>
 </template>
 
