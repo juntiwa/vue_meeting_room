@@ -30,7 +30,7 @@ class ListBookedRoomController extends Controller
                     'data_all' => $booking,
                     'date_format' => $booking->date_format,
                     'time' => $booking->time,
-                    'unit_name' => $booking->unit->name_th,
+                    'unit_name' => $booking->unit_text,
                     'equipment_text' => $booking->equipment_text,
                     'food_text' => $booking->food_text,
                     'set_room_text' => $booking->set_room_text,

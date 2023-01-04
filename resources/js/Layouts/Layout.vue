@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center justify-between px-3 sticky top-0 bg-slate-100 w-full h-fit">
+    <div class="flex items-center justify-between px-3 sticky z-10 top-0 bg-slate-100 w-full h-fit">
         <div>
             Welcome ยินดีต้อนรับ
             <Link href="/" class="text-violet-600 hover:text-teal-600">
