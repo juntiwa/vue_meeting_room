@@ -27,30 +27,30 @@
                         <tr v-if="booking.meeting_room_id === room.room_id"
                             class="cursor-pointer hover:bg-slate-100"
                         >
-                            <td class="p-3 text-center align-text-top" @click="modalData(booking,room)"> {{
+                            <td class="p-3 text-center align-text-top" @click="modalData(booking)"> {{
                                     ++key
                                 }}
                             </td>
                             <td class="p-3 text-center align-text-top whitespace-nowrap"
-                                @click="modalData(booking,room)">
+                                @click="modalData(booking)">
                                 {{ booking.date_format }}
                             </td>
                             <td class="p-3 text-center align-text-top whitespace-nowrap"
-                                @click="modalData(booking,room)">
+                                @click="modalData(booking)">
                                 {{ booking.time }}
                             </td>
-                            <td class="p-3 align-text-top" @click="modalData(booking,room)">{{
+                            <td class="p-3 align-text-top" @click="modalData(booking)">{{
                                     booking.data_all.topic
                                 }}
                             </td>
-                            <td class="p-3 text-center align-text-top" @click="modalData(booking,room)">
+                            <td class="p-3 text-center align-text-top" @click="modalData(booking)">
                                 {{ booking.data_all.attendees }}
                             </td>
-                            <td class="p-3 align-text-top" @click="modalData(booking,room)">
+                            <td class="p-3 align-text-top" @click="modalData(booking)">
                                 {{ booking.unit_name }}
                             </td>
                             <td class="p-3 text-center align-text-top whitespace-nowrap"
-                                @click="modalData(booking,room)">
+                                @click="modalData(booking)">
                                 {{ booking.data_all.users.tel }}
                             </td>
                             <td class="p-3 align-text-top whitespace-nowrap"
@@ -59,14 +59,14 @@
                                     'text-violet-600' : booking.status_locale === 'ถูกแก้ไข',
                                     'text-rose-600' : booking.status_locale === 'ถูกยกเลิก' || booking.status_locale === 'ไม่อนุมัติ',
                                     }"
-                                @click="modalData(booking,room)">
+                                @click="modalData(booking)">
                                 {{ booking.status_locale }}
                             </td>
                             <td class="p-3 align-top"
                                 :class="{
                                 'align-text-top': booking.equipment_text
                             }"
-                                @click="modalData(booking,room)">
+                                @click="modalData(booking)">
                                 <svg v-if="!booking.equipment_text" xmlns="http://www.w3.org/2000/svg" width="40"
                                      height="40" viewBox="0 0 24 24">
                                     <path class="fill-red-500"
@@ -78,7 +78,7 @@
                                 :class="{
                                 'align-text-top': booking.set_room_text
                             }"
-                                @click="modalData(booking,room)">
+                                @click="modalData(booking)">
                                 <svg v-if="!booking.set_room_text" xmlns="http://www.w3.org/2000/svg" width="40"
                                      height="40"
                                      viewBox="0 0 24 24">
@@ -91,7 +91,7 @@
                                 :class="{
                                 'align-text-top': booking.food_text
                             }"
-                                @click="modalData(booking,room)">
+                                @click="modalData(booking)">
                                 <svg v-if="!booking.food_text" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
                                      viewBox="0 0 24 24">
                                     <path class="fill-red-500"
@@ -212,7 +212,7 @@ if (props.message === true) {
     })
 }
 
-function modalData(booking, room) {
+function modalData(booking) {
 
     const form = useForm({
         id: booking.data_all.id,

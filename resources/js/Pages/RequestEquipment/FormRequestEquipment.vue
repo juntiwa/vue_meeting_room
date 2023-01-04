@@ -9,7 +9,7 @@
                     <a-date-picker class="date"
                                    name="start_date"
                                    id="start_date"
-                                   v-model:value="form.start_date"
+                                   v-model:value="form.date_start"
                                    format="DD/MM/YYYY"
                                    placeholder="เลือกวันที่ต้องการ"
                     />
@@ -19,7 +19,7 @@
                     <a-date-picker class="date"
                                    name="end_date"
                                    id="end_date"
-                                   v-model:value="form.end_date"
+                                   v-model:value="form.date_end"
                                    format="DD/MM/YYYY"
                                    placeholder="เลือกวันที่ต้องการ"
                     />
@@ -31,6 +31,8 @@
                     <a-time-picker name="start_time"
                                    id="start_time"
                                    v-model:value="form.start_time"
+                                   :disabledHours="disabledHours"
+                                   :hideDisabledOptions="true"
                                    class="time"
                                    placeholder="เลือกเวลาที่ต้องการ"
                                    format="HH:mm"/>
@@ -40,6 +42,8 @@
                     <a-time-picker name="end_time"
                                    id="end_time"
                                    v-model:value="form.end_time"
+                                   :disabledHours="disabledHours"
+                                   :hideDisabledOptions="true"
                                    class="time"
                                    placeholder="เลือกเวลาที่ต้องการ"
                                    format="HH:mm"/>
@@ -47,7 +51,6 @@
             </div>
 
         </section>
-
         <section id="unit" class="flex flex-col gap-2 mb-3 w-1/3">
             <label>ประเภทหน่วยงาน</label>
             <select v-model="form.unit_level" class="bg-white border border-slate-500 rounded py-1.5 px-1 mb-3">
@@ -72,7 +75,6 @@
                 </option>
             </select>
         </section>
-
         <section id="contact" class="flex flex-row gap-2 mb-3 w-1/3">
             <InputTextComponent label="ชื่อ - สกุล ผู้ยืม"
                                 name="full_name"
@@ -83,7 +85,6 @@
                                 v-model="form.tel"
             />
         </section>
-
         <section id="detail" class="flex flex-col gap-2 mb-3 w-1/3">
             สถานที่
             <div class="flex flex-row gap-4">
@@ -131,7 +132,9 @@
             </label>
         </section>
         <ButtonComponent
+            @click="save"
             class="bg-teal-600 hover:bg-teal-700 text-white"
+            :disabled="formIncompleted"
             buttonText="บันทึกข้อมูล"/>
     </div>
 </template>
@@ -141,12 +144,16 @@ import Layout from "../../Layouts/Layout";
 import {useForm} from "@inertiajs/inertia-vue3";
 import InputTextComponent from "../../Components/InputTextComponent";
 import ButtonComponent from "../../Components/ButtonComponent";
+import {computed, watch} from "vue";
+import dayjs from "dayjs";
 
 const props = defineProps(['can', 'unitLevel', 'inners', 'outters', 'company'])
 
 const form = useForm({
     start_date: null,
     end_date: null,
+    date_start: null,
+    date_end: null,
     start_time: null,
     end_time: null,
     unit_level: "",
@@ -156,12 +163,55 @@ const form = useForm({
     building: null,
     floor: null,
     room: null,
-    equipment:{
-        lcdprojector: '0',
-        visualizer: '0',
+    equipment: {
+        lcdprojector: 0,
+        visualizer: 0,
         other: null,
     }
 })
+
+const disabledHours = () => {
+    const hours = [];
+    for (let i = 0; i <= 5; i++) {
+        hours.push(i);
+    }
+    for (let i = 21; i <= 24; i++) {
+        hours.push(i);
+    }
+    return hours;
+};
+
+const formIncompleted = computed(() => {
+    return !form.start_date || !form.end_date || !form.start_time || !form.end_time ||
+        !form.unit_level || !form.unit_id || !form.full_name || !form.tel || !form.building || !form.floor || !form.room ||
+        (!form.equipment.other && form.equipment.lcdprojector <= 0 && form.equipment.visualizer <= 0)
+})
+
+const save = () => {
+    form.post(window.route("formRequestEquipmentStore"));
+};
+
+watch(
+    () => [form.start_date, form.end_date, form.start_time, form.end_time],
+    (val) => {
+        if (val) {
+            form.start_date = dayjs(form.date_start).format('YYYY-MM-DD') + 'T' + dayjs(form.start_time).format('HH:mm');
+            form.end_date = dayjs(form.date_end).format('YYYY-MM-DD') + 'T' + dayjs(form.end_time).format('HH:mm');
+        }
+    }
+)
+
+watch(
+    () => [form.equipment.lcdprojector, form.equipment.visualizer],
+    (val) => {
+        if (val[0] === '') {
+            form.equipment.lcdprojector = 0;
+        }
+        if (val[1] === '') {
+            form.equipment.visualizer = 0;
+        }
+    }
+)
 </script>
 
 <style>

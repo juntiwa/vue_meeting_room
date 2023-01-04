@@ -36,6 +36,8 @@ Route::controller(\App\Http\Controllers\BookedRoomMedicine\ListBookedRoomControl
     Route::get('/listBookedRoom', 'index')->name('listBooked');
 });
 
-Route::controller(\App\Http\Controllers\RequestEquipment\FormRequestEquipmentController::class)->middleware(['auth'])->group(function () {
+Route::controller(\App\Http\Controllers\RequestEquipment\RequestEquipmentController::class)->middleware(['auth'])->group(function () {
+    Route::get('/listRequestEquipment', 'index')->name('listRequestEquipment');
     Route::get('/formRequestEquipment', 'create')->name('formRequestEquipment');
+    Route::post('/formRequestEquipment', 'store')->name('formRequestEquipmentStore');
 });
