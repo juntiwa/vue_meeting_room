@@ -286,7 +286,7 @@ import Layout from "../../Layouts/Layout";
 
 const props = defineProps(['messageError', 'can', 'params']);
 const form = useForm({
-    date: ref(dayjs('2023-01-04')),
+    date: ref(dayjs()),
     start_time: null,
     end_time: null,
     start_date: null,
