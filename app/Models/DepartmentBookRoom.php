@@ -43,7 +43,7 @@ class DepartmentBookRoom extends Model
 
     public function scopeOverlap($query, $start, $end)
     {
-        logger($start);
+//        logger($start);
         $start = $start->addMinute();
         $query->where('start_date', '<=', $end)
             ->where('end_date', '>=', $start);

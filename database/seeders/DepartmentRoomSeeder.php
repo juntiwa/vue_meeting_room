@@ -17,10 +17,7 @@ class DepartmentRoomSeeder extends Seeder
      */
     public function run()
     {
-        DepartmentRoomStatus::create([
-            'name_th'=>'พร้อมใช้งาน',
-            'name_en'=>'Ready',
-        ]);
+        DepartmentRoomStatus::seed(storage_path('app/seeders/department_room_statuses.csv'));
 
         DepartmentRoom::seed(storage_path('app/seeders/department_rooms.csv'));
 

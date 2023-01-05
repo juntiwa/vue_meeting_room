@@ -14,10 +14,20 @@ use Inertia\Inertia;
 
 class RequestEquipmentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $requestEquipments = RequestEquipment::query()->get();
-        return Inertia::render('RequestEquipment/ListRequestEquipment',[
+        $requestEquipments = RequestEquipment::query()
+            ->get()
+            ->transform(function ($requestEquipment) use ($request) {
+                return [
+                    'date' => $requestEquipment->date_format,
+                    'time' => $requestEquipment->time_format,
+                    'unit_text' => $requestEquipment->unit_text,
+                    'all' => $requestEquipment,
+                    'equipment_text' => $requestEquipment->equipment_text
+                ];
+            });
+        return Inertia::render('RequestEquipment/ListRequestEquipment', [
             'requestEquipments' => $requestEquipments
         ]);
     }
@@ -50,6 +60,7 @@ class RequestEquipmentController extends Controller
             'room' => 'required',
             'equipment.lcdprojector' => 'required',
             'equipment.visualizer' => 'required',
+            'equipment.other' => 'required',
         ]);
 
 

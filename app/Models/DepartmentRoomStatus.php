@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Casts\BookingStatus;
+use App\Traits\CSVLoadable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DepartmentRoomStatus extends Model
 {
-    use HasFactory;
+    use HasFactory,CSVLoadable;
 
     public function departmentroom()
     {

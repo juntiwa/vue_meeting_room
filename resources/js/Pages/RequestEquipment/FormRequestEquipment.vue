@@ -164,8 +164,8 @@ const form = useForm({
     floor: null,
     room: null,
     equipment: {
-        lcdprojector: 0,
-        visualizer: 0,
+        lcdprojector: '0',
+        visualizer: '0',
         other: null,
     }
 })
@@ -205,10 +205,10 @@ watch(
     () => [form.equipment.lcdprojector, form.equipment.visualizer],
     (val) => {
         if (val[0] === '') {
-            form.equipment.lcdprojector = 0;
+            form.equipment.lcdprojector = '0';
         }
         if (val[1] === '') {
-            form.equipment.visualizer = 0;
+            form.equipment.visualizer = '0';
         }
     }
 )
