@@ -22,7 +22,6 @@ class FormBookedRoomController extends Controller
 
     public function checkCondition(Request $request)
     {
-//        logger($request->all());
         session()->forget('messageError');
         $validated = $request->validate([
             'start_date' => 'required',
@@ -55,7 +54,6 @@ class FormBookedRoomController extends Controller
             ->whereIn('status', (new BookingStatus())->getOccupiedRawStatuses())
             ->get();
 
-//        return $roomsThoseMeetAttendeeRequirement;
         //query เพิ่มเติมกรณีห้องประชุมรวม ไม่สามารถจองได้
         $meetingRooms = DepartmentRoom::query()->get();
         $unavailableSharedRooms = DepartmentBookRoom::query()
@@ -63,7 +61,6 @@ class FormBookedRoomController extends Controller
             ->whereIn('meeting_room_id', $meetingRooms->pluck('id'))
             ->whereIn('status', (new BookingStatus())->getOccupiedRawStatuses())
             ->get();
-
 
         $result = [];
         foreach ($roomsThoseMeetAttendeeRequirement as $room) {
@@ -78,6 +75,13 @@ class FormBookedRoomController extends Controller
                         $tmp['status'] = $room->name_th . ' ไม่สามารถจองได้ เนื่องจากถูกจองแล้วในช่วง ' . $unavailable->start_date->format('d-m-Y H:i:s') . ' ถึง ' . $unavailable->end_date->format('d-m-Y H:i:s');
                     }
                 }
+            } elseif ($room->status_id == 2) {
+                //สถานะห้องอยู่ระหว่างปรับปรุง ทำให้จองไม่ได้
+                $tmp['available'] = false;
+                $tmp['status'] = $room->name_th . ' ไม่สามารถจองได้ เนื่องจากอยู่ระหว่างปรับปรุง';
+                if ($room->id == 13){
+                    $tmp['status'] = $room->name_th . ' ไม่สามารถจองได้ เนื่องจากศฤงคไพบูลย์ 1 อยู่ระหว่างปรับปรุง';
+                }
             } else {
                 $tmp['available'] = true;
                 $tmp['status'] = $room->name_th;
@@ -86,7 +90,6 @@ class FormBookedRoomController extends Controller
                  * เอาไว้ตรงนี้เพราะ เป็นห้องที่สามารถจองได้ตามเงื่อนไขจากด้านบนทั้งหมด แต่ไม่สามารถจองได้เพราะ เป็นห้องรวมที่มีการใช้งานห้องอื่น ๆ
                  * และเอาไว้ด้านล่าง $tmp['available'] = true; เพราะถ้าเอาไว้ด้านบน $tmp['available'] จะถูก set เป็น true ทั้งหมด
                  */
-
 
                 foreach ($unavailableSharedRooms as $unavailableShared) {
                     if ($unavailableShared->meeting_room_id == 10) {
@@ -126,20 +129,7 @@ class FormBookedRoomController extends Controller
                         }
                     }
                 }
-                foreach ($meetingRooms as $meetingRoom) {
-                    if ($room->status_id == 2) {
-                        $tmp['available'] = false;
-                        $tmp['status'] = $room->name_th . ' ไม่สามารถจองได้ เนื่องจากห้องศฤงคไพบูลย์ 1 อยู่ระหว่างปรับปรุง ';
-                        if ($room->id == 11) {
-                            if ($meetingRoom->id == 13 || $meetingRoom->id == 14) {
-                                $tmp['available'] = false;
-                                $tmp['status'] = $meetingRoom->name_th . ' ไม่สามารถจองได้ เนื่องจากห้องศฤงคไพบูลย์ 1 อยู่ระหว่างปรับปรุง ';
-                            }
-                        }
 
-                    }
-
-                }
             }
             $result[] = $tmp;
         }

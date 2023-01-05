@@ -8,16 +8,16 @@ class BookingStatus implements CastsAttributes
 {
     protected $statuses = ['', 'booked', 'approved', 'corrected', 'canceled', 'disapproved'];
     protected $statusesThai = ['', 'รออนุมัติ', 'อนุมัติ', 'ถูกแก้ไข', 'ถูกยกเลิก', 'ไม่อนุมัติ'];
-    protected $occupiedRawStatuses = [1, 2]; // 'booked', 'approved'
+    protected $occupiedRawStatuses = [1, 2, 3]; // 'booked', 'approved', 'corrected'
     protected $notifyRawStatuses = [1, 3]; // 'booked', 'corrected'
 
     /**
      * Cast the given value.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
-     * @param  mixed  $value
-     * @param  array  $attributes
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param string $key
+     * @param mixed $value
+     * @param array $attributes
      * @return array
      */
     public function get($model, $key, $value, $attributes)
@@ -29,10 +29,10 @@ class BookingStatus implements CastsAttributes
     /**
      * Prepare the given value for storage.
      *
-     * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
-     * @param  array  $value
-     * @param  array  $attributes
+     * @param \Illuminate\Database\Eloquent\Model $model
+     * @param string $key
+     * @param array $value
+     * @param array $attributes
      * @return string
      */
     public function set($model, $key, $value, $attributes)
