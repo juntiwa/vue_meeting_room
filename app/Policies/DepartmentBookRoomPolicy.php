@@ -30,7 +30,7 @@ class DepartmentBookRoomPolicy
                 && $booking->start_date > Carbon::now();
         }
 
-        if ($booking->status === 'booked') {
+        if ($booking->status === 'booked' || $booking->status === 'corrected') {
             return $booking->occupied_raw_statuses_edit->contains($booking->status)
                 && $booking->requester_id === $user->id
                 && $booking->start_date > Carbon::now();
@@ -63,7 +63,7 @@ class DepartmentBookRoomPolicy
                 && $user->role_id->contains(1);
         }
 
-        if ($booking->status === 'booked') {
+        if ($booking->status === 'booked' || $booking->status === 'corrected') {
             return $booking->occupied_raw_statuses_cancel->contains($booking->status)
                 && $booking->start_date > Carbon::now()
                 && $booking->requester_id === $user->id;
