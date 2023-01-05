@@ -71,17 +71,13 @@ class FormBookedRoomController extends Controller
             $tmp['room'] = $room;
             $tmp['id'] = $room->id;
             if ($unavailableRooms->pluck('meeting_room_id')->contains($room->id)) {
-                //มีการของห้องในตาราง department_book_rooms แล้วทำให้จองไม่ได้
+                //มีการจองห้องในตาราง department_book_rooms แล้วทำให้จองไม่ได้
                 foreach ($unavailableRooms as $unavailable) {
                     if ($unavailable->meeting_room_id == $room->id) {
                         $tmp['available'] = false;
                         $tmp['status'] = $room->name_th . ' ไม่สามารถจองได้ เนื่องจากถูกจองแล้วในช่วง ' . $unavailable->start_date->format('d-m-Y H:i:s') . ' ถึง ' . $unavailable->end_date->format('d-m-Y H:i:s');
                     }
                 }
-            } elseif ($room->status_id == 2) {
-                //สถานะห้องอยู่ระหว่างปรับปรุง ทำให้จองไม่ได้
-                $tmp['available'] = false;
-                $tmp['status'] = $room->name_th . ' ไม่สามารถจองได้ เนื่องจากอยู่ระหว่างปรับปรุง';
             } else {
                 $tmp['available'] = true;
                 $tmp['status'] = $room->name_th;
@@ -90,6 +86,8 @@ class FormBookedRoomController extends Controller
                  * เอาไว้ตรงนี้เพราะ เป็นห้องที่สามารถจองได้ตามเงื่อนไขจากด้านบนทั้งหมด แต่ไม่สามารถจองได้เพราะ เป็นห้องรวมที่มีการใช้งานห้องอื่น ๆ
                  * และเอาไว้ด้านล่าง $tmp['available'] = true; เพราะถ้าเอาไว้ด้านบน $tmp['available'] จะถูก set เป็น true ทั้งหมด
                  */
+
+
                 foreach ($unavailableSharedRooms as $unavailableShared) {
                     if ($unavailableShared->meeting_room_id == 10) {
                         if ($room->id == 14 || $room->id == 15) {
@@ -127,6 +125,20 @@ class FormBookedRoomController extends Controller
                             $tmp['status'] = $room->name_th . ' ไม่สามารถจองได้ เนื่องจากห้องศฤงคไพบูลย์ 2 และ ประพาฬ ยงใจยุทธ ถูกจองแล้วช่วง ' . $unavailableShared->start_date->format('d-m-Y H:i:s') . ' ถึง ' . $unavailableShared->end_date->format('d-m-Y H:i:s');
                         }
                     }
+                }
+                foreach ($meetingRooms as $meetingRoom) {
+                    if ($room->status_id == 2) {
+                        $tmp['available'] = false;
+                        $tmp['status'] = $room->name_th . ' ไม่สามารถจองได้ เนื่องจากห้องศฤงคไพบูลย์ 1 อยู่ระหว่างปรับปรุง ';
+                        if ($room->id == 11) {
+                            if ($meetingRoom->id == 13 || $meetingRoom->id == 14) {
+                                $tmp['available'] = false;
+                                $tmp['status'] = $meetingRoom->name_th . ' ไม่สามารถจองได้ เนื่องจากห้องศฤงคไพบูลย์ 1 อยู่ระหว่างปรับปรุง ';
+                            }
+                        }
+
+                    }
+
                 }
             }
             $result[] = $tmp;

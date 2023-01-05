@@ -6,16 +6,13 @@
                 <thead class="bg-gray-50 border-b-2 border-gray-200">
                 <tr>
                     <th class="w-5 p-3 font-semibold tracking-wide text-center">ลำดับ</th>
-                    <th class="w-24 p-3 font-semibold tracking-wide text-center">วัน เดือน ปี ที่จอง</th>
-                    <th class="w-24 p-3 font-semibold tracking-wide text-center">เวลา ที่จอง</th>
-                    <th class="w-40 p-3 font-semibold tracking-wide text-left">หัวข้อการประชุม</th>
-                    <th class="w-12 p-3 font-semibold tracking-wide text-center">ผู้เข้าร่วม</th>
-                    <th class="w-24 p-3 font-semibold tracking-wide text-left">หน่วยงาน</th>
-                    <th class="w-24 p-3 font-semibold tracking-wide text-center">เบอร์ติดต่อ</th>
-                    <th class="w-20 p-3 font-semibold tracking-wide text-left">สถานะ</th>
-                    <th class="w-20 p-3 font-semibold tracking-wide text-left">อุปกรณ์</th>
-                    <th class="w-20 p-3 font-semibold tracking-wide text-left">จัดห้อง</th>
-                    <th class="w-20 p-3 font-semibold tracking-wide text-left">อาหาร</th>
+                    <th class="w-24 p-3 font-semibold tracking-wide text-center">วัน</th>
+                    <th class="w-24 p-3 font-semibold tracking-wide text-center">เวลา</th>
+                    <th class="w-24 p-3 font-semibold tracking-wide text-center">หน่วยวานที่ขอ</th>
+                    <th class="w-40 p-3 font-semibold tracking-wide text-left">ชื่อผู้ขอ</th>
+                    <th class="w-12 p-3 font-semibold tracking-wide text-center">เบอร์ติดต่อ</th>
+                    <th class="w-24 p-3 font-semibold tracking-wide text-left">สถานที่</th>
+                    <th class="w-24 p-3 font-semibold tracking-wide text-center">อุปกรณ์ที่ต้องการ</th>
                     <th class="w-20 p-3 font-semibold tracking-wide text-center">แก้ไข</th>
                 </tr>
                 </thead>
@@ -27,7 +24,31 @@
                     </td>
                     <td class="p-3 text-center align-text-top whitespace-nowrap"
                         @click="modalData(requestEquipment)">
-                        {{ requestEquipment.start_date }}
+                        {{ requestEquipment.date }}
+                    </td>
+                    <td class="p-3 text-center align-text-top whitespace-nowrap"
+                        @click="modalData(requestEquipment)">
+                        {{ requestEquipment.time }}
+                    </td>
+                    <td class="p-3 text-center align-text-top whitespace-nowrap"
+                        @click="modalData(requestEquipment)">
+                        {{ requestEquipment.unit_text}}
+                    </td>
+                    <td class="p-3 text-center align-text-top whitespace-nowrap"
+                        @click="modalData(requestEquipment)">
+                        {{ requestEquipment.all.full_name }}
+                    </td>
+                    <td class="p-3 text-center align-text-top whitespace-nowrap"
+                        @click="modalData(requestEquipment)">
+                        {{ requestEquipment.all.tel }}
+                    </td>
+                    <td class="p-3 text-center align-text-top whitespace-nowrap"
+                        @click="modalData(requestEquipment)">
+                        {{ requestEquipment.all.place }}
+                    </td>
+                    <td class="p-3 text-center align-text-top whitespace-nowrap"
+                        @click="modalData(requestEquipment)">
+                        {{ requestEquipment.equipment_text }}
                     </td>
 
 
