@@ -36,14 +36,21 @@ class FakeUserAPI implements AuthUserAPI
                 $data['full_name_en'] = 'Miss User Med';
                 $data['name'] = 'น.ส. ผู้ใช้งาน อายุรศาสตร์';
                 $data['name_en'] = 'Miss User Med';
-            }elseif ($login === 'user.uni') {
+            } elseif ($login === 'user.uni') {
                 $data['login'] = 'user.uni';
                 $data['org_id'] = '10012343';
                 $data['full_name'] = 'น.ส. ผู้ใช้งาน สาขา';
                 $data['full_name_en'] = 'Miss User Uni';
                 $data['name'] = 'น.ส. ผู้ใช้งาน สาขา';
                 $data['name_en'] = 'Miss User Uni';
-            } else {
+            } elseif ($login === 'user.edu') {
+                $data['login'] = 'user.edu';
+                $data['org_id'] = '10012345';
+                $data['full_name'] = 'น.ส. ผู้ใช้งาน การศึกษา';
+                $data['full_name_en'] = 'Miss User Edu';
+                $data['name'] = 'น.ส. ผู้ใช้งาน การศึกษา';
+                $data['name_en'] = 'Miss User Edu';
+            }  else {
                 $data['login'] = 'user.sys';
                 $data['org_id'] = '10012346';
                 $data['full_name'] = 'น.ส. ผู้ใช้งาน ทั่วไป';

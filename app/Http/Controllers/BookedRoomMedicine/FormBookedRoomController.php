@@ -16,7 +16,6 @@ class FormBookedRoomController extends Controller
     public function create()
     {
         session()->forget('message');
-
         return Inertia::render('BookedRoomMedicine/FormBookedRoom');
     }
 
@@ -29,24 +28,31 @@ class FormBookedRoomController extends Controller
             'attendees' => 'required|integer|min:3|max:200',
             'set_room.status' => 'required|boolean'
         ]);
+        $start_date = Carbon::create($validated['start_date']);
+        $end_date = Carbon::create($validated['end_date']);
         $attendees = $validated['attendees'];
 
+        if ($end_date < $start_date) {
+            $msgError = 'true';
+            return [
+                'msgError' => $msgError,
+            ];
+        }
+
         if ($validated['set_room']['status'] === true) {
-            $start_date = Carbon::create($validated['start_date'])->subMinute(30);
+            $start_date = $start_date->subMinute(30);
             $roomsThoseMeetAttendeeRequirement = DepartmentRoom::query()
                 ->where('minimum_attendees', '<=', $attendees)
                 ->where('maximum_attendees', '>=', $attendees)
                 ->where('can_set_table', 1) //เฉพาะห้องที่สามารถเปลี่ยนแปลงรูปแบบโต๊ะได้เท่านั้น
                 ->get();
         } else {
-            $start_date = Carbon::create($validated['start_date']);
             $roomsThoseMeetAttendeeRequirement = DepartmentRoom::query()
                 ->where('minimum_attendees', '<=', $attendees)
                 ->where('maximum_attendees', '>=', $attendees)
                 ->get();
         }
 
-        $end_date = Carbon::create($validated['end_date']);
 
         $unavailableRooms = DepartmentBookRoom::query()
             ->overlap($start_date, $end_date)

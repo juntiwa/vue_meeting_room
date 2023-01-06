@@ -4,68 +4,84 @@
         ระบบจองห้องประชุม
 
         <section id="condition" class="flex flex-col">
-            กรอกข้อมูลการขอใช้งานห้องประชุม N
+            กรอกข้อมูลการขอใช้งานห้องประชุม
             <div id="date_time" class="flex flex-row gap-2 mb-3">
-                <label for="date" class="flex flex-col">
+                <div v-if="! $page.props.can.period_booked_room_case">
+                    <label for="date" class="flex flex-col">
+                        วัน
+                        <a-date-picker class="date"
+                                       name="date"
+                                       id="date"
+                                       v-model:value="form.date"
+                                       format="DD/MM/YYYY"
+                                       :disabled-date="disabledDate"
+                                       placeholder="เลือกวันที่ต้องการ"
+                        />
+                    </label>
+                    <label for="start_time" class="flex flex-col">
+                        เวลาเริ่ม
+                        <a-time-picker name="start_time"
+                                       id="start_time"
+                                       v-model:value="form.start_time"
+                                       :disabledHours="disabledHours"
+                                       :disabledMinutes="disabledMinutes"
+                                       :hideDisabledOptions="true"
+                                       :disabled="form.date === null"
+                                       class="time"
+                                       placeholder="เลือกเวลาที่ต้องการ"
+                                       format="HH:mm"/>
+                    </label>
+                    <label for="end_time" class="flex flex-col">
+                        เวลาสิ้นสุด
+                        <a-time-picker name="end_time"
+                                       id="end_time"
+                                       v-model:value="form.end_time"
+                                       :disabledHours="disabledHours"
+                                       :disabledMinutes="disabledMinutes"
+                                       :hideDisabledOptions="true"
+                                       :disabled="form.date === null"
+                                       class="time"
+                                       placeholder="เลือกเวลาที่ต้องการ"
+                                       format="HH:mm"/>
+                    </label>
+                </div>
+
+                <label for="date_range" class="flex flex-col" v-if="$page.props.can.period_booked_room_case">
                     วัน
-                    <a-date-picker class="date"
-                                   name="date"
-                                   id="date"
-                                   v-model:value="form.date"
-                                   format="DD/MM/YYYY"
-                                   :disabled-date="disabledDate"
-                                   placeholder="เลือกวันที่ต้องการ"
+                    <a-range-picker
+                        class="date"
+                        name="date_range"
+                        id="date_range"
+                        :ranges="{ Today: [dayjs(),dayjs()], 'This Month': [dayjs(),dayjs().endOf('month')] }"
+                        v-model:value="date_range"
+                        show-time
+                        format="DD/MM/YYYY HH:mm"
+                        @change="onChange"
+                        :disabled-date="disabledDate"
+                        :disabledHours="disabledHours"
+                        :disabledMinutes="disabledMinutes"
+                        :hideDisabledOptions="true"
+                        :placeholder="placeholderRange"
                     />
                 </label>
-                <label for="start_time" class="flex flex-col">
-                    เวลาเริ่ม
-                    <a-time-picker name="start_time"
-                                   id="start_time"
-                                   v-model:value="form.start_time"
-                                   :disabledHours="disabledHours"
-                                   :disabledMinutes="disabledMinutes"
-                                   :hideDisabledOptions="true"
-                                   :disabled="form.date === null"
-                                   class="time"
-                                   placeholder="เลือกเวลาที่ต้องการ"
-                                   format="HH:mm"/>
-                </label>
-                <label for="end_time" class="flex flex-col">
-                    เวลาสิ้นสุด
-                    <a-time-picker name="end_time"
-                                   id="end_time"
-                                   v-model:value="form.end_time"
-                                   :disabledHours="disabledHours"
-                                   :disabledMinutes="disabledMinutes"
-                                   :hideDisabledOptions="true"
-                                   :disabled="form.date === null"
-                                   class="time"
-                                   placeholder="เลือกเวลาที่ต้องการ"
-                                   format="HH:mm"/>
-                </label>
+
             </div>
             <p :class="{
                 'text-teal-600': statusMessageCalculateTime,
                 'text-rose-600': !statusMessageCalculateTime,
             }">{{ messageCalculateTime }}</p>
-
-
             <InputTextComponent label="จำนวนผู้เข้าร่วม"
                                 type="number"
                                 name="attendees"
                                 class="w-fit"
                                 v-model="form.attendees"
             />
-
             {{ messageAttendeesInvalid }}
-
             <InputCheckboxComponent
                 label="ต้องการให้จัดห้องประชุม (ในการจัดห้องประชุมจะต้องเผื่อเวลา 30 นาที โดยระบบจะเพิ่มอัตโนมัติ
                 และระบบจะแสดงเฉพาะห้องที่สามารถเปลี่ยนแปลงรูปแบบโต๊ะได้เท่านั้น)"
                 name="setRoomStatus"
                 v-model="form.set_room.status"/>
-
-
             <ButtonComponent @click="checkCondition"
                              class="bg-amber-300 hover:bg-amber-400 w-fit"
                              :disabled="conditionIncompleted"
@@ -265,7 +281,8 @@ import Layout from "../../Layouts/Layout";
 const props = defineProps(['messageError', 'can', 'params']);
 
 const form = useForm({
-    date: ref( dayjs()),
+    date: ref(dayjs()),
+
     start_time: null,
     end_time: null,
     start_date: null,
@@ -297,13 +314,22 @@ const form = useForm({
         note: null
     }
 })
+const date_range = ref([dayjs(),dayjs()]);
 const result = ref([]);
 const purposes = ref([]);
 const unitType = ref(null);
+const msgError = ref(null);
 const statusMessageCalculateTime = ref(null);
 const messageCalculateTime = ref(null);
 const messageAttendeesInvalid = ref(null)
-
+const placeholderRange = ['เลือกวันเวลาเริ่ม', 'เลือกวันเวลาสิ้นสุด'];
+const onChange = (dates, dateStrings) => {
+    // console.log('From: ', dates[0], ', to: ', dates[1]);
+    console.log(date_range.value)
+    form.start_date = dayjs(date_range[0]).format('YYYY-MM-DD') + 'T' + dayjs(date_range[0]).format('HH:mm');
+    form.end_date = dayjs(date_range[1]).format('YYYY-MM-DD') + 'T' + dayjs(date_range[1]).format('HH:mm');
+    console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
+}
 const disabledDate = function (current) {
     // Can not select days before today
     return current < dayjs().endOf('day').add(-1, 'day');
@@ -350,7 +376,8 @@ const checkCondition = () => {
     window.axios
         .post(window.route("formBookedRoomCheckCondition"), form)
         .then((res) => {
-            // console.log(res.data);
+            console.log(res.data);
+            msgError.value = res.data.msgError;
             result.value = [...res.data.result];
             purposes.value = [...res.data.purposes];
             unitType.value = res.data.unitType;
@@ -362,7 +389,7 @@ const save = () => {
 };
 
 const conditionIncompleted = computed(() => {
-    return !form.date || !form.start_time || !form.end_time || !form.attendees || !(form.attendees >= 3)
+    return (!form.date || !date_range.value)  || !form.attendees || !(form.attendees >= 3)
 })
 const detailIncomplete = computed(() => {
     /**
@@ -384,6 +411,7 @@ const detailIncomplete = computed(() => {
     }
 
 })
+
 
 watch(
     () => props.messageError,
@@ -410,12 +438,36 @@ watch(
         }
     }
 )
+watch(
+    () => msgError.value,
+    (val) => {
+        // console.log(msgError.value)
+        if (msgError.value === 'true') {
+            const Toast = swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', swal.stopTimer)
+                    toast.addEventListener('mouseleave', swal.resumeTimer)
+                }
+            })
+
+            Toast.fire({
+                icon: 'error',
+                title: 'ตรวจสอบ',
+                text: 'กรุณาเลือกเวลาให้ถูกต้อง'
+            })
+        }
+    }
+)
 
 watch(
     () => [form.start_time, form.end_time],
     (val) => {
         if (val) {
-
             let end = dayjs(form.end_time);
             let diffTimeMinute = end.diff(form.start_time, "minute", true);
             let Hours = end.diff(form.start_time, "hour", false);
@@ -486,6 +538,14 @@ watch(
 )
 
 watch(
+    () => date_range,
+    (val) => {
+        form.start_date = dayjs(date_range[0]).format('YYYY-MM-DD') + 'T' + dayjs(date_range[0]).format('HH:mm');
+        form.end_date = dayjs(date_range[1]).format('YYYY-MM-DD') + 'T' + dayjs(date_range[1]).format('HH:mm');
+    }
+)
+
+watch(
     () => !form.set_room.status,
     (val) => {
         if (val) {
@@ -539,6 +599,11 @@ watch(
     font-size: 1rem; /* 18px */
     line-height: 1.75rem; /* 28px */
     width: 200px;
+    padding: 5px 3px;
+}
+
+#date_range {
+    line-height: 1.75rem; /* 28px */
     padding: 5px 3px;
 }
 </style>
