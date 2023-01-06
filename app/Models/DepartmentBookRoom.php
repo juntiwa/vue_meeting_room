@@ -335,16 +335,16 @@ class DepartmentBookRoom extends Model
     {
         return Attribute::make(
             get: function () {
-                $data = '<h1 class="text-3xl font-medium"> ข้อมูลเพิ่มเติม </h1>'
-                    . '<div class="text-right"> บันทึกข้อมูลเมื่อ ' . $this->created_at->thaidate('j F Y')
-                    . '<br/><br/> โดย ' . $this->users->full_name
+                $data = '<h1 class="text-5xl text-shadow-md font-medium"> ข้อมูลเพิ่มเติม </h1>'
+                    . '<div class="text-right line-height" style="font-size: 16px"> บันทึกข้อมูลเมื่อ ' . $this->created_at->thaidate('j F Y')
+                    . '<br/> โดย ' . $this->users->full_name
                     . '<br/>' . $this->users->unit->name_th
                     . '<br/> ติดต่อโทร ' . $this->users->tel
                     . '</div>'
-                    . '<div class="text-left p-3 line-height"> <div class="flex gap-2 mt-3">';
+                    . '<div class="text-left p-3 line-height " style="font-size: 16px"> <div class="flex gap-2 mt-3">';
 
                 if ($this->status_locale === 'รออนุมัติ') {
-                    $data = $data . ' <p class="text-amber-500"> ' . $this->status_locale . '</p>';
+                    $data = $data . ' <p class="text-amber-500 font-semibold"> ' . $this->status_locale . '</p>';
                 }
                 if ($this->status_locale === 'อนุมัติ') {
                     $data = $data . ' <p class="text-teal-600"> ' . $this->status_locale . '</p>' . $this->status_text;
@@ -362,10 +362,10 @@ class DepartmentBookRoom extends Model
                     . $this->description_text
                     . '<br/> วัตถุประสงค์การใช้งาน : ' . $this->purpose->name_th
                     . $this->unit_popup_text . '</div>'
-                    . '<div class="text-left p-3 line-height"> ';
+                    . '<div class="text-left p-3 line-height" style="font-size: 16px"> ';
 
                 if ($this->set_room_text || $this->equipment_text || $this->food_text) {
-                    $data = $data . ' อื่น ๆ ';
+                    $data = $data . '<b> อื่น ๆ </b>';
                 }
 
                 if ($this->set_room_text) {

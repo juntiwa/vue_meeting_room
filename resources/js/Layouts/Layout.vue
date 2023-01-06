@@ -6,7 +6,7 @@
                 หน้าหลัก
             </Link>
 
-            <Link v-if="$page.props.can.booked_room_instead_case" href="/formBookRoomInstead" class="text-violet-600 hover:text-teal-600">
+            <Link v-if="$page.props.can.record_data_booked_room_case" href="/formBookRoomInstead" class="text-violet-600 hover:text-teal-600">
                 จองแทน
             </Link>
 
@@ -14,12 +14,16 @@
                 จองห้องประชุม
             </Link>
 
-            <Link v-if="$page.props.can.view_list_booked_rooms_case" href="/listBookedRoom" class="text-violet-600 hover:text-teal-600">
+            <Link v-if="$page.props.can.view_list_booked_room_case" href="/listBookedRoom" class="text-violet-600 hover:text-teal-600">
                 รายการจองห้องประชุมทั้งหมด
             </Link>
 
-            <Link v-if="$page.props.can.booked_room_instead_case" href="/formRequestEquipment" class="text-violet-600 hover:text-teal-600">
+            <Link v-if="$page.props.can.record_data_request_equipment_case" href="/formRequestEquipment" class="text-violet-600 hover:text-teal-600">
                 ขอใช้งานอุปกรณ์
+            </Link>
+
+            <Link v-if="$page.props.can.view_list_request_equipment_case" href="#" class="text-violet-600 hover:text-teal-600">
+                รายการขอใช้งานอุปกรณ์
             </Link>
         </div>
         <div>

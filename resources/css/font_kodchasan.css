@@ -1,0 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Kodchasan:wght@200;300;400;500;600;700&display=swap');
+
+/* thai */
+@font-face {
+    font-family: 'Kodchasan';
+    font-style: normal;
+    font-weight: 200;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/kodchasan/v16/1cX0aUPOAJv9sG4I-DJeR1CQkuCp_-AOoagN.woff2) format('woff2');
+    unicode-range: U+0E00-U+0E7F;
+}
+/* thai */
+@font-face {
+    font-family: 'Kodchasan';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/kodchasan/v16/1cX0aUPOAJv9sG4I-DJeI1OQkuCp_-AOoagN.woff2) format('woff2');
+    unicode-range: U+0E00-U+0E7F;
+}
+/* thai */
+@font-face {
+    font-family: 'Kodchasan';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/kodchasan/v16/1cXxaUPOAJv9sG4I-DJWnHGFq8Kk1doH.woff2) format('woff2');
+    unicode-range: U+0E00-U+0E7F;
+}
+/* thai */
+@font-face {
+    font-family: 'Kodchasan';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/kodchasan/v16/1cX0aUPOAJv9sG4I-DJee1KQkuCp_-AOoagN.woff2) format('woff2');
+    unicode-range: U+0E00-U+0E7F;
+}
+
+/* thai */
+@font-face {
+    font-family: 'Kodchasan';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/kodchasan/v16/1cX0aUPOAJv9sG4I-DJeV1WQkuCp_-AOoagN.woff2) format('woff2');
+    unicode-range: U+0E00-U+0E7F;
+}
+
+/* thai */
+@font-face {
+    font-family: 'Kodchasan';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/kodchasan/v16/1cX0aUPOAJv9sG4I-DJeM1SQkuCp_-AOoagN.woff2) format('woff2');
+    unicode-range: U+0E00-U+0E7F;
+}

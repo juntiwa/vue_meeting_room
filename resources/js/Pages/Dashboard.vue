@@ -4,7 +4,7 @@
 
         <div v-for="(room, keyroom) in rooms" :key="keyroom">
             <div v-if="room.can_view_list_booked_room">
-                <h1 class="font-medium text-center text-xl mt-7 mb-5">{{ room.room_name }}</h1>
+                <h1 class="font-black text-center text-shadow-md text-xl mt-7 mb-5">{{ room.room_name }}</h1>
                 <div class="overflow-auto rounded-lg shadow hidden md:block">
                     <table class="w-full">
                         <thead class="bg-gray-50 border-b-2 border-gray-200">
@@ -12,14 +12,11 @@
                             <th class="w-5 p-3 font-semibold tracking-wide text-center">ลำดับ</th>
                             <th class="w-24 p-3 font-semibold tracking-wide text-center">วัน เดือน ปี ที่จอง</th>
                             <th class="w-24 p-3 font-semibold tracking-wide text-center">เวลา ที่จอง</th>
-                            <th class="w-40 p-3 font-semibold tracking-wide text-left">หัวข้อการประชุม</th>
+                            <th class="w-36 p-3 font-semibold tracking-wide text-left">หัวข้อการประชุม</th>
                             <th class="w-12 p-3 font-semibold tracking-wide text-center">ผู้เข้าร่วม</th>
                             <th class="w-24 p-3 font-semibold tracking-wide text-left">หน่วยงาน</th>
                             <th class="w-24 p-3 font-semibold tracking-wide text-center">เบอร์ติดต่อ</th>
                             <th class="w-20 p-3 font-semibold tracking-wide text-left">สถานะ</th>
-                            <th class="w-20 p-3 font-semibold tracking-wide text-left">อุปกรณ์</th>
-                            <th class="w-20 p-3 font-semibold tracking-wide text-left">จัดห้อง</th>
-                            <th class="w-20 p-3 font-semibold tracking-wide text-left">อาหาร</th>
                             <th class="w-20 p-3 font-semibold tracking-wide text-center">แก้ไข</th>
                         </tr>
                         </thead>
@@ -62,43 +59,7 @@
                                 @click="modalData(booking)">
                                 {{ booking.status_locale }}
                             </td>
-                            <td class="p-3 align-top"
-                                :class="{
-                                'align-text-top': booking.equipment_text
-                            }"
-                                @click="modalData(booking)">
-                                <svg v-if="!booking.equipment_text" xmlns="http://www.w3.org/2000/svg" width="40"
-                                     height="40" viewBox="0 0 24 24">
-                                    <path class="fill-red-500"
-                                          d="M13.41,12l4.3-4.29a1,1,0,1,0-1.42-1.42L12,10.59,7.71,6.29A1,1,0,0,0,6.29,7.71L10.59,12l-4.3,4.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0L12,13.41l4.29,4.3a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42Z"/>
-                                </svg>
-                                <p v-if="booking.equipment_text">{{ booking.equipment_text }}</p>
-                            </td>
-                            <td class="p-3 align-top"
-                                :class="{
-                                'align-text-top': booking.set_room_text
-                            }"
-                                @click="modalData(booking)">
-                                <svg v-if="!booking.set_room_text" xmlns="http://www.w3.org/2000/svg" width="40"
-                                     height="40"
-                                     viewBox="0 0 24 24">
-                                    <path class="fill-red-500"
-                                          d="M13.41,12l4.3-4.29a1,1,0,1,0-1.42-1.42L12,10.59,7.71,6.29A1,1,0,0,0,6.29,7.71L10.59,12l-4.3,4.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0L12,13.41l4.29,4.3a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42Z"/>
-                                </svg>
-                                <p v-if="booking.set_room_text">{{ booking.set_room_text }}</p>
-                            </td>
-                            <td class="p-3 align-top"
-                                :class="{
-                                'align-text-top': booking.food_text
-                            }"
-                                @click="modalData(booking)">
-                                <svg v-if="!booking.food_text" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
-                                     viewBox="0 0 24 24">
-                                    <path class="fill-red-500"
-                                          d="M13.41,12l4.3-4.29a1,1,0,1,0-1.42-1.42L12,10.59,7.71,6.29A1,1,0,0,0,6.29,7.71L10.59,12l-4.3,4.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0L12,13.41l4.29,4.3a1,1,0,0,0,1.42,0,1,1,0,0,0,0-1.42Z"/>
-                                </svg>
-                                <p v-if="booking.food_text">{{ booking.food_text }}</p>
-                            </td>
+
 
                             <td class="p-3"
                                 :class="{

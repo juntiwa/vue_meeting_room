@@ -1,0 +1,24 @@
+@import "font_kanit.css";
+@import "font_kodchasan.css";
+
+
+.font-kanit {
+    font-family: 'Kanit';
+}
+
+.font-kodchasan {
+    font-family: 'Kodchasan';
+    font-size: 16px;
+}
+
+.font-tahomo {
+    font-family: 'Tahomo';
+    font-weight: 900;
+}
+
+@font-face {
+    font-family: 'Kodchasan';
+    src: url(../fonts/tahomo.ttf) format('truetype');
+    unicode-range: U+41-5A, U+61-7A, U+C0-FF;
+}
+

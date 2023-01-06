@@ -15,7 +15,7 @@ class RegisterController extends Controller
     public function create(Request $request)
     {
         $sirirajUser = session('sirirajUser');
-        $units = UnitInner::query()->orderBy('name_th','asc')->get();
+        $units = UnitInner::query()->orderBy('name_th', 'asc')->get();
         if (!$sirirajUser) {
             return redirect()->route('login');
         }
@@ -40,8 +40,17 @@ class RegisterController extends Controller
         $user = User::query()->create($validated);
         $addPermission = AddPermissionAuto::query()->where('sap_id', $validated['sap_id'])->first();
         if ($addPermission) {
-            $user->assignRole($addPermission['role']);
-        }elseif ($validated['unit_id']){
+            if ($addPermission['role'] === 'admin') {
+                $user->assignRole('user_med');
+                $user->assignRole('period_booked');
+                $user->assignRole($addPermission['role']);
+            }
+
+            if ($addPermission['role'] === 'period_booked'){
+                $user->assignRole('user_med');
+                $user->assignRole($addPermission['role']);
+            }
+        } elseif ($validated['unit_id']) {
             $user->assignRole('user_med');
         } else {
             $user->assignRole('user');

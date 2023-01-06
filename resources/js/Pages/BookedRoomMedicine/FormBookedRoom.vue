@@ -4,7 +4,7 @@
         ระบบจองห้องประชุม
 
         <section id="condition" class="flex flex-col">
-            กรอกข้อมูลการขอใช้งานห้องประชุม
+            กรอกข้อมูลการขอใช้งานห้องประชุม N
             <div id="date_time" class="flex flex-row gap-2 mb-3">
                 <label for="date" class="flex flex-col">
                     วัน
@@ -536,7 +536,7 @@ watch(
 }
 
 #date, #start_time, #end_time {
-    font-size: 1.125rem; /* 18px */
+    font-size: 1rem; /* 18px */
     line-height: 1.75rem; /* 28px */
     width: 200px;
     padding: 5px 3px;

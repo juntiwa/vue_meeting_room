@@ -1,6 +1,5 @@
 import "./bootstrap";
-import "../css/app.css";
-import "../css/modal.css";
+import "../css/app.css"
 import "../scss/app.scss";
 
 import { createApp, h } from "vue";

@@ -23,6 +23,7 @@
         "ant-design-vue": "^3.2.15",
         "dayjs": "^1.11.6",
         "jquery": "^3.6.2",
-        "sweetalert2": "^11.6.14"
+        "sweetalert2": "^11.6.14",
+        "tailwindcss-textshadow": "^2.1.3"
     }
 }

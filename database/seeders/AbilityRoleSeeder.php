@@ -17,9 +17,14 @@ class AbilityRoleSeeder extends Seeder
     public function run()
     {
         $abilities = [
-            'booked_room_instead_case',
             'booked_room_case',
-            'view_list_booked_rooms_case',
+            'edit_booked_room_case',
+            'cancel_booked_room_case',
+            'record_data_booked_room_case',
+            'record_data_request_equipment_case',
+            'period_booked_room_case',
+            'view_list_booked_room_case',
+            'view_list_request_equipment_case',
         ];
 
         foreach ($abilities as $ability) {
@@ -27,9 +32,9 @@ class AbilityRoleSeeder extends Seeder
         }
 
         $roles = [
-            'admin',
-            'attendant_room',
             'user_med',
+            'admin',
+            'period_booked',
             'user'
         ];
 
@@ -37,21 +42,19 @@ class AbilityRoleSeeder extends Seeder
             Role::query()->create(['name' => $role]);
         }
 
-        $admin = Role::whereName('admin')->first();
-        $admin->allowTo('view_any_cases');
-        $admin->allowTo('booked_room_instead_case');
+        $admin = Role::whereName('user_med')->first();
         $admin->allowTo('booked_room_case');
-        $admin->allowTo('view_list_booked_rooms_case');
+        $admin->allowTo('edit_booked_room_case');
+        $admin->allowTo('cancel_booked_room_case');
+        $admin->allowTo('view_list_booked_room_case');
 
-        $attendant_room = Role::whereName('attendant_room')->first();
-        $attendant_room->allowTo('view_any_cases');
-        $attendant_room->allowTo('booked_room_case');
-        $attendant_room->allowTo('view_list_booked_rooms_case');
+        $user_med = Role::whereName('admin')->first();
+        $user_med->allowTo('record_data_booked_room_case');
+        $user_med->allowTo('record_data_request_equipment_case');
+        $user_med->allowTo('view_list_request_equipment_case');
 
-        $user_med = Role::whereName('user_med')->first();
-        $user_med->allowTo('view_any_cases');
-        $user_med->allowTo('booked_room_case');
-        $user_med->allowTo('view_list_booked_rooms_case');
+        $period_booked = Role::whereName('period_booked')->first();
+        $period_booked->allowTo('period_booked_room_case');
 
     }
 }

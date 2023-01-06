@@ -45,14 +45,29 @@ class HandleInertiaRequests extends Middleware
                 ? $request->user()->only('full_name')
                 : null,
             'can' => [
-                'booked_room_instead_case' => fn () => $request->user()
-                    ? $request->user()->abilities->contains('booked_room_instead_case')
-                    : null,
                 'booked_room_case' => fn () => $request->user()
                     ? $request->user()->abilities->contains('booked_room_case')
                     : null,
-                'view_list_booked_rooms_case' => fn () => $request->user()
-                    ? $request->user()->abilities->contains('view_list_booked_rooms_case')
+                'edit_booked_room_case' => fn () => $request->user()
+                    ? $request->user()->abilities->contains('edit_booked_room_case')
+                    : null,
+                'cancel_booked_room_case' => fn () => $request->user()
+                    ? $request->user()->abilities->contains('cancel_booked_room_case')
+                    : null,
+                'record_data_booked_room_case' => fn () => $request->user()
+                    ? $request->user()->abilities->contains('record_data_booked_room_case')
+                    : null,
+                'record_data_request_equipment_case' => fn () => $request->user()
+                    ? $request->user()->abilities->contains('record_data_request_equipment_case')
+                    : null,
+                'period_booked_room_case' => fn () => $request->user()
+                    ? $request->user()->abilities->contains('period_booked_room_case')
+                    : null,
+                'view_list_booked_room_case' => fn () => $request->user()
+                    ? $request->user()->abilities->contains('view_list_booked_room_case')
+                    : null,
+                'view_list_request_equipment_case' => fn () => $request->user()
+                    ? $request->user()->abilities->contains('view_list_request_equipment_case')
                     : null,
             ]
         ]);
