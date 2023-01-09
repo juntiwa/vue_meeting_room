@@ -46,25 +46,46 @@
                     </label>
                 </div>
 
-                <label for="date_range" class="flex flex-col" v-if="$page.props.can.period_booked_room_case">
-                    วัน
-                    <a-range-picker
-                        class="date"
-                        name="date_range"
-                        id="date_range"
-                        :ranges="{ Today: [dayjs(),dayjs()], 'This Month': [dayjs(),dayjs().endOf('month')] }"
-                        v-model:value="date_range"
-                        show-time
-                        format="DD/MM/YYYY HH:mm"
-                        @change="onChange"
-                        :disabled-date="disabledDate"
-                        :disabledHours="disabledHours"
-                        :disabledMinutes="disabledMinutes"
-                        :hideDisabledOptions="true"
-                        :placeholder="placeholderRange"
-                    />
-                </label>
-
+                <div class="flex flex-col">
+                    <label v-if="$page.props.can.period_booked_room_case" for="date_range" class="flex flex-col">
+                        วัน
+                        <a-range-picker
+                            class="date"
+                            name="date_range"
+                            id="date_range"
+                            v-model:value="date_range"
+                            show-time
+                            @change="onChange"
+                            format="DD/MM/YYYY HH:mm"
+                            :disabled-date="disabledDate"
+                            :disabledHours="disabledHours"
+                            :disabledMinutes="disabledMinutes"
+                            :hideDisabledOptions="true"
+                            :placeholder="placeholderRange"
+                        />
+                    </label>
+                    <InputCheckboxComponent label="เลือกเฉพาะวัน"
+                                            name="periodBookedStatus"
+                                            v-if="periodBookStatus"
+                                            v-model="form.period_booked.status"/>
+                    <div v-if="form.period_booked.status" class="flex flex-row">
+                        <InputCheckboxComponent label="วันจันทร์"
+                                                name="periodBookedMon"
+                                                v-model="form.period_booked.mon"/>
+                        <InputCheckboxComponent label="วันอังคาร"
+                                                name="periodBookedTue"
+                                                v-model="form.period_booked.tue"/>
+                        <InputCheckboxComponent label="วันพุธ"
+                                                name="periodBookedWed"
+                                                v-model="form.period_booked.wed"/>
+                        <InputCheckboxComponent label="วันพฤหัสบดี"
+                                                name="periodBookedThu"
+                                                v-model="form.period_booked.thu"/>
+                        <InputCheckboxComponent label="วันศุกร์"
+                                                name="periodBookedFri"
+                                                v-model="form.period_booked.fri"/>
+                    </div>
+                </div>
             </div>
             <p :class="{
                 'text-teal-600': statusMessageCalculateTime,
@@ -282,7 +303,6 @@ const props = defineProps(['messageError', 'can', 'params']);
 
 const form = useForm({
     date: ref(dayjs()),
-
     start_time: null,
     end_time: null,
     start_date: null,
@@ -312,9 +332,17 @@ const form = useForm({
         snack: '0',
         drink: '0',
         note: null
+    },
+    period_booked: {
+        status: false,
+        mon: false,
+        tue: false,
+        wed: false,
+        thu: false,
+        fri: false,
     }
 })
-const date_range = ref([dayjs(),dayjs()]);
+const date_range = ref(null);
 const result = ref([]);
 const purposes = ref([]);
 const unitType = ref(null);
@@ -323,12 +351,10 @@ const statusMessageCalculateTime = ref(null);
 const messageCalculateTime = ref(null);
 const messageAttendeesInvalid = ref(null)
 const placeholderRange = ['เลือกวันเวลาเริ่ม', 'เลือกวันเวลาสิ้นสุด'];
+const periodBookStatus = ref(false);
 const onChange = (dates, dateStrings) => {
-    // console.log('From: ', dates[0], ', to: ', dates[1]);
-    console.log(date_range.value)
-    form.start_date = dayjs(date_range[0]).format('YYYY-MM-DD') + 'T' + dayjs(date_range[0]).format('HH:mm');
-    form.end_date = dayjs(date_range[1]).format('YYYY-MM-DD') + 'T' + dayjs(date_range[1]).format('HH:mm');
-    console.log('From: ', dateStrings[0], ', to: ', dateStrings[1]);
+    form.start_date = dayjs(date_range.value[0]).format('YYYY-MM-DD') + 'T' + dayjs(date_range.value[0]).format('HH:mm');
+    form.end_date = dayjs(date_range.value[1]).format('YYYY-MM-DD') + 'T' + dayjs(date_range.value[1]).format('HH:mm');
 }
 const disabledDate = function (current) {
     // Can not select days before today
@@ -389,7 +415,7 @@ const save = () => {
 };
 
 const conditionIncompleted = computed(() => {
-    return (!form.date || !date_range.value)  || !form.attendees || !(form.attendees >= 3)
+    return (!form.date || !date_range.value) || !form.attendees || !(form.attendees >= 3)
 })
 const detailIncomplete = computed(() => {
     /**
@@ -412,12 +438,11 @@ const detailIncomplete = computed(() => {
 
 })
 
-
 watch(
     () => props.messageError,
     (val) => {
         // console.log(props.messageError)
-        if (props.messageError === 'true') {
+        if (val === 'true') {
             const Toast = swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -442,7 +467,7 @@ watch(
     () => msgError.value,
     (val) => {
         // console.log(msgError.value)
-        if (msgError.value === 'true') {
+        if (val === 'true') {
             const Toast = swal.mixin({
                 toast: true,
                 position: 'top-end',
@@ -532,16 +557,24 @@ watch(
         if (val) {
             form.start_date = dayjs(form.date).format('YYYY-MM-DD') + 'T' + dayjs(form.start_time).format('HH:mm');
             form.end_date = dayjs(form.date).format('YYYY-MM-DD') + 'T' + dayjs(form.end_time).format('HH:mm');
-            // console.log(form.end_date)
+
         }
     }
 )
 
 watch(
-    () => date_range,
+    () => [form.start_date, form.end_date],
     (val) => {
-        form.start_date = dayjs(date_range[0]).format('YYYY-MM-DD') + 'T' + dayjs(date_range[0]).format('HH:mm');
-        form.end_date = dayjs(date_range[1]).format('YYYY-MM-DD') + 'T' + dayjs(date_range[1]).format('HH:mm');
+        if (val) {
+            let end = dayjs(form.end_date);
+            let start = dayjs(form.start_date);
+            let diff = end.diff(start, 'day');
+
+            if (diff > 1) {
+                periodBookStatus.value = true
+            }
+            console.log(end.diff(start, 'day'))
+        }
     }
 )
 

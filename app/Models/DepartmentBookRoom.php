@@ -62,7 +62,8 @@ class DepartmentBookRoom extends Model
     {
         return Attribute::make(
         //  get: fn() => $this->start_date->thaidate('j F Y'),
-            get: fn() => $this->start_date->thaidate('d/m/Y'),
+        //    get: fn() => $this->start_date->thaidate('d/m/Y'),
+            get: fn() => $this->start_date->thaidate('d/m/Y') . ' ถึง ' . $this->end_date->thaidate('d/m/Y'),
         );
     }
 

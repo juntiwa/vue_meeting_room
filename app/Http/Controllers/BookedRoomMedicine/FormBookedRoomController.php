@@ -22,6 +22,7 @@ class FormBookedRoomController extends Controller
     public function checkCondition(Request $request)
     {
         session()->forget('messageError');
+
         $validated = $request->validate([
             'start_date' => 'required',
             'end_date' => 'required',
@@ -30,6 +31,7 @@ class FormBookedRoomController extends Controller
         ]);
         $start_date = Carbon::create($validated['start_date']);
         $end_date = Carbon::create($validated['end_date']);
+
         $attendees = $validated['attendees'];
 
         if ($end_date < $start_date) {
@@ -85,7 +87,7 @@ class FormBookedRoomController extends Controller
                 //สถานะห้องอยู่ระหว่างปรับปรุง ทำให้จองไม่ได้
                 $tmp['available'] = false;
                 $tmp['status'] = $room->name_th . ' ไม่สามารถจองได้ เนื่องจากอยู่ระหว่างปรับปรุง';
-                if ($room->id == 13){
+                if ($room->id == 13) {
                     $tmp['status'] = $room->name_th . ' ไม่สามารถจองได้ เนื่องจากศฤงคไพบูลย์ 1 อยู่ระหว่างปรับปรุง';
                 }
             } else {
@@ -210,6 +212,7 @@ class FormBookedRoomController extends Controller
         $validated['requester_id'] = $request->user()->id;
         $validated['unit_level'] = 1;
         $validated['unit_id'] = $request->user()->unit_id;
+        
 
         DepartmentBookRoom::query()->create($validated);
 
