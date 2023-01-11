@@ -6,17 +6,32 @@
         <section id="condition" class="flex flex-col">
             กรอกข้อมูลการขอใช้งานห้องประชุม
             <div id="date_time" class="flex flex-row gap-2 mb-3">
-                <div v-if="! $page.props.can.period_booked_room_case">
-                    <label for="date" class="flex flex-col">
-                        วัน
+
+
+                <div class="flex flex-row">
+                    <label for="date_start" class="flex flex-col">
+                        วันเริ่ม
                         <a-date-picker class="date"
-                                       name="date"
-                                       id="date"
-                                       v-model:value="form.date"
+                                       name="date_start"
+                                       id="date_start"
+                                       v-model:value="form.date_start"
                                        format="DD/MM/YYYY"
                                        :disabled-date="disabledDate"
                                        placeholder="เลือกวันที่ต้องการ"
                         />
+                    </label>
+
+                    <label v-if="$page.props.can.period_booked_room_case" for="date_end" class="flex flex-col">
+                        วันเริ่ม
+                        <a-date-picker class="date"
+                                       name="date_end"
+                                       id="date_end"
+                                       v-model:value="form.date_end"
+                                       format="DD/MM/YYYY"
+                                       :disabled-date="disabledDate"
+                                       placeholder="เลือกวันที่ต้องการ"
+                        />
+
                     </label>
                     <label for="start_time" class="flex flex-col">
                         เวลาเริ่ม
@@ -31,6 +46,7 @@
                                        placeholder="เลือกเวลาที่ต้องการ"
                                        format="HH:mm"/>
                     </label>
+
                     <label for="end_time" class="flex flex-col">
                         เวลาสิ้นสุด
                         <a-time-picker name="end_time"
@@ -44,26 +60,7 @@
                                        placeholder="เลือกเวลาที่ต้องการ"
                                        format="HH:mm"/>
                     </label>
-                </div>
 
-                <div class="flex flex-col">
-                    <label v-if="$page.props.can.period_booked_room_case" for="date_range" class="flex flex-col">
-                        วัน
-                        <a-range-picker
-                            class="date"
-                            name="date_range"
-                            id="date_range"
-                            v-model:value="date_range"
-                            show-time
-                            @change="onChange"
-                            format="DD/MM/YYYY HH:mm"
-                            :disabled-date="disabledDate"
-                            :disabledHours="disabledHours"
-                            :disabledMinutes="disabledMinutes"
-                            :hideDisabledOptions="true"
-                            :placeholder="placeholderRange"
-                        />
-                    </label>
                     <InputCheckboxComponent label="เลือกเฉพาะวัน"
                                             name="periodBookedStatus"
                                             v-if="periodBookStatus"
@@ -299,10 +296,11 @@ import {computed, ref, watch} from "vue";
 import dayjs from "dayjs";
 import Layout from "../../Layouts/Layout";
 
-const props = defineProps(['messageError', 'can', 'params']);
+const props = defineProps(['messageError', 'can', 'params', 'holidays']);
 
 const form = useForm({
-    date: ref(dayjs()),
+    date_start: ref(dayjs()),
+    date_end: ref(dayjs()),
     start_time: null,
     end_time: null,
     start_date: null,
@@ -352,13 +350,11 @@ const messageCalculateTime = ref(null);
 const messageAttendeesInvalid = ref(null)
 const placeholderRange = ['เลือกวันเวลาเริ่ม', 'เลือกวันเวลาสิ้นสุด'];
 const periodBookStatus = ref(false);
-const onChange = (dates, dateStrings) => {
-    form.start_date = dayjs(date_range.value[0]).format('YYYY-MM-DD') + 'T' + dayjs(date_range.value[0]).format('HH:mm');
-    form.end_date = dayjs(date_range.value[1]).format('YYYY-MM-DD') + 'T' + dayjs(date_range.value[1]).format('HH:mm');
-}
-const disabledDate = function (current) {
+
+const disabledDate = (current) => {
     // Can not select days before today
-    return current < dayjs().endOf('day').add(-1, 'day');
+    return current < dayjs().endOf('day').add(-1, 'day')
+    // return current < dayjs().endOf('day').add(-1, 'day') && props.holidays[0].date;
 };
 const disabledHours = () => {
     const hours = [];
@@ -415,7 +411,7 @@ const save = () => {
 };
 
 const conditionIncompleted = computed(() => {
-    return (!form.date || !date_range.value) || !form.attendees || !(form.attendees >= 3)
+    return !form.date_start || !form.attendees || !(form.attendees >= 3)
 })
 const detailIncomplete = computed(() => {
     /**
@@ -542,7 +538,7 @@ watch(
 )
 
 watch(
-    () => [form.date, form.start_time, form.end_time, form.attendees, form.set_room.status, !form.set_room.status],
+    () => [form.date_start, form.start_time, form.end_time, form.attendees, form.set_room.status, !form.set_room.status],
     (val) => {
         if (val) {
             result.value = [];
@@ -552,20 +548,23 @@ watch(
 )
 
 watch(
-    () => [form.date, form.start_time, form.end_time],
+    () => [form.date_start, form.start_time, form.end_time],
     (val) => {
         if (val) {
-            form.start_date = dayjs(form.date).format('YYYY-MM-DD') + 'T' + dayjs(form.start_time).format('HH:mm');
-            form.end_date = dayjs(form.date).format('YYYY-MM-DD') + 'T' + dayjs(form.end_time).format('HH:mm');
+            form.start_date = dayjs(form.date_start).format('YYYY-MM-DD') + 'T' + dayjs(form.start_time).format('HH:mm');
+            form.end_date = dayjs(form.date_start).format('YYYY-MM-DD') + 'T' + dayjs(form.end_time).format('HH:mm');
 
         }
     }
 )
 
 watch(
-    () => [form.start_date, form.end_date],
+    () => [form.date_start, form.date_end, form.start_time, form.end_time],
     (val) => {
         if (val) {
+            form.start_date = dayjs(form.date_start).format('YYYY-MM-DD') + 'T' + dayjs(form.start_time).format('HH:mm');
+            form.end_date = dayjs(form.date_end).format('YYYY-MM-DD') + 'T' + dayjs(form.end_time).format('HH:mm');
+
             let end = dayjs(form.end_date);
             let start = dayjs(form.start_date);
             let diff = end.diff(start, 'day');
@@ -574,9 +573,12 @@ watch(
                 periodBookStatus.value = true
             }
             console.log(end.diff(start, 'day'))
+
         }
     }
 )
+
+
 
 watch(
     () => !form.set_room.status,

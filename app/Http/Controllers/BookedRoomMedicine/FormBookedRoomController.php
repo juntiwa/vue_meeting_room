@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DepartmentBookRoom;
 use App\Models\DepartmentPurposeBookRoom;
 use App\Models\DepartmentRoom;
+use App\Models\Holiday;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,7 +17,10 @@ class FormBookedRoomController extends Controller
     public function create()
     {
         session()->forget('message');
-        return Inertia::render('BookedRoomMedicine/FormBookedRoom');
+        $holidays = Holiday::query()->get();
+        return Inertia::render('BookedRoomMedicine/FormBookedRoom', [
+            'holidays' => $holidays,
+        ]);
     }
 
     public function checkCondition(Request $request)
@@ -149,6 +153,7 @@ class FormBookedRoomController extends Controller
         $unitType = auth()->user()->unit->unit_type;
         return [
             'start_date' => $start_date,
+            'end_date' => $end_date,
             'result' => $resultComplete,
             'purposes' => $purposes,
             'unitType' => $unitType
@@ -212,7 +217,10 @@ class FormBookedRoomController extends Controller
         $validated['requester_id'] = $request->user()->id;
         $validated['unit_level'] = 1;
         $validated['unit_id'] = $request->user()->unit_id;
-        
+
+
+
+        return $request->all();
 
         DepartmentBookRoom::query()->create($validated);
 
